@@ -37,17 +37,32 @@ class MediaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'file' => 'sometimes|required|file|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'url' => 'sometimes|required|url',
             'tags' => 'nullable|string',
             'destination_id' => 'nullable|exists:destinations,id',
         ]);
 
         try {
-            $file = $request->file('file');
-            $tags = $request->input('tags') ? json_decode($request->input('tags'), true) : [];
-            $destinationId = $request->input('destination_id');
+            $options = [
+                'tags' => $request->input('tags') ? json_decode($request->input('tags'), true) : [],
+                'destination_id' => $request->input('destination_id'),
+            ];
+            $source = null;
 
-            $media = $this->uploadAndSaveMedia($file, $tags, $destinationId);
+            if ($request->hasFile('file')) {
+                $source = $request->file('file');
+            } elseif ($request->has('url')) {
+                $source = $request->input('url');
+            } else {
+                return response()->json(['error' => 'Yüklenecek bir dosya veya URL sağlanmadı.'], 400);
+            }
+            
+            $media = $this->uploadAndSaveMedia($source, $options);
+
+            if (!$media) {
+                return response()->json(['error' => 'Medya yüklenirken bir hata oluştu. Lütfen URL\'nin geçerli bir resim olduğundan ve sunucunun erişilebilir olduğundan emin olun.'], 500);
+            }
 
             return response()->json(['message' => 'Medya başarıyla yüklendi.', 'media' => $media], 201);
         } catch (\Exception $e) {

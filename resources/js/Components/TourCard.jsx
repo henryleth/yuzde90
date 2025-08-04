@@ -3,10 +3,7 @@ import { Link } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import { Card } from '@/Components/ui/card';
 import { Star, Users } from 'lucide-react';
-// SSR (Sunucu Tarafı Oluşturma) hatasını çözmek için içe aktarma yöntemi güncellendi.
-import LazyLoadImagePkg from 'react-lazy-load-image-component';
-const { LazyLoadImage } = LazyLoadImagePkg;
-import 'react-lazy-load-image-component/src/effects/blur.css';
+import LazyImage from './LazyImage'; // Yeni merkezi LazyImage bileşenimizi import ediyoruz
 
 // Merkezi ve Yeniden Kullanılabilir Tur Kartı Bileşeni
 export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
@@ -19,16 +16,10 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
 
       <Link href={route('tour.show', tour.slug)} className="block">
         <div className="relative overflow-hidden h-48">
-          {/*
-            LazyLoadImage bileşeni, resimlerin sadece kullanıcı ekranına geldiğinde yüklenmesini sağlar.
-            'effect="blur"' prop'u, resim yüklenene kadar bulanık bir placeholder gösterir.
-            Bu, sayfa yükleme performansını artırır ve kullanıcı deneyimini iyileştirir.
-          */}
-          <LazyLoadImage
+          <LazyImage
             src={tour.image?.thumbnail_url || 'https://via.placeholder.com/400x200?text=Görsel+Bulunamadı'}
             alt={tour.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            effect="blur"
             wrapperClassName="w-full h-full"
           />
           <div className="absolute top-4 right-4">

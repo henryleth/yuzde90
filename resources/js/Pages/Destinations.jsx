@@ -3,11 +3,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Link, usePage } from '@inertiajs/react';
 import { Card, CardContent } from '@/Components/ui/card'; // Card bileşenlerini import et
 import { useTheme } from '@/Context/ThemeContext'; // useTheme hook'unu import et
-// SSR (Sunucu Tarafı Oluşturma) hatasını çözmek için içe aktarma yöntemi güncellendi.
-// Paket bir CommonJS modülü olduğundan, varsayılan olarak içe aktarılıp bileşen içinden alınmalıdır.
-import LazyLoadImagePkg from 'react-lazy-load-image-component';
-const { LazyLoadImage } = LazyLoadImagePkg;
-import 'react-lazy-load-image-component/src/effects/blur.css'; // Efekt için CSS'i import et
+import LazyImage from '@/Components/LazyImage'; // Merkezi LazyImage bileşenini import et
 
 export default function Destinations({ seo }) {
   const { destinations } = usePage().props; // Backend'den gelen destinasyon verisi
@@ -39,11 +35,11 @@ export default function Destinations({ seo }) {
                   <Card className="destination-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group">
                     <div className="relative w-full h-48 overflow-hidden">
                       {/* 
-                        LazyLoadImage bileşeni, resimlerin sadece kullanıcı ekranına geldiğinde yüklenmesini sağlar.
+                        LazyImage bileşeni, resimlerin sadece kullanıcı ekranına geldiğinde yüklenmesini sağlar.
                         'effect="blur"' prop'u, resim yüklenene kadar bulanık bir placeholder gösterir.
                         Bu, sayfa yükleme performansını artırır ve kullanıcı deneyimini iyileştirir.
                       */}
-                      <LazyLoadImage
+                      <LazyImage
                         src={destination.image?.thumbnail_url || '/placeholder.svg'} // Resim kaynağı
                         alt={destination.name} // Alternatif metin
                         className="destination-image w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"

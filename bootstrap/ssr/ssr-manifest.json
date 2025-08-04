@@ -13,6 +13,7 @@
   "resources/js/Components/Header.jsx": [],
   "resources/js/Components/InputError.jsx": [],
   "resources/js/Components/InputLabel.jsx": [],
+  "resources/js/Components/LazyImage.jsx": [],
   "resources/js/Components/MediaItemCard.jsx": [],
   "resources/js/Components/MediaManagerModal.jsx": [],
   "resources/js/Components/Modal.jsx": [],

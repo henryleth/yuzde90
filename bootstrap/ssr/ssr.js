@@ -1537,6 +1537,8 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadTags, setUploadTags] = useState("");
   const [uploadDestinationId, setUploadDestinationId] = useState("");
+  const [uploadUrl, setUploadUrl] = useState("");
+  const [uploadType, setUploadType] = useState("file");
   const [filterDestination, setFilterDestination] = useState("all");
   const [filterTags, setFilterTags] = useState("");
   const [destinations, setDestinations] = useState([]);
@@ -1598,6 +1600,13 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
     }
   };
   const handleFileUpload = async () => {
+    if (uploadType === "file") {
+      await handleLocalFileUpload();
+    } else if (uploadType === "url") {
+      await handleUrlUpload();
+    }
+  };
+  const handleLocalFileUpload = async () => {
     if (!uploadFile) {
       toast2({
         title: "Uyarı",
@@ -1606,9 +1615,25 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
       });
       return;
     }
-    setIsUploading(true);
     const formData = new FormData();
     formData.append("file", uploadFile);
+    await upload(formData);
+  };
+  const handleUrlUpload = async () => {
+    if (!uploadUrl.trim()) {
+      toast2({
+        title: "Uyarı",
+        description: "Lütfen bir URL girin.",
+        variant: "warning"
+      });
+      return;
+    }
+    const formData = new FormData();
+    formData.append("url", uploadUrl);
+    await upload(formData);
+  };
+  const upload = async (formData) => {
+    setIsUploading(true);
     if (uploadDestinationId) {
       formData.append("destination_id", uploadDestinationId);
     }
@@ -1621,8 +1646,6 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
         method: "POST",
         headers: {
           "X-CSRF-TOKEN": csrfToken
-          // CSRF tokenini başlığa ekle
-          // 'Authorization': `Bearer ${auth.user.token}`, 
         },
         body: formData
       });
@@ -1634,6 +1657,7 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
           variant: "default"
         });
         setUploadFile(null);
+        setUploadUrl("");
         setUploadTags("");
         setUploadDestinationId("");
         fetchMediaItems();
@@ -1790,17 +1814,36 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
           )) : /* @__PURE__ */ jsx("p", { className: "col-span-full text-center text-gray-500 media-no-media-found", children: "Hiç medya bulunamadı." }) })
         ] }),
         /* @__PURE__ */ jsxs(TabsContent, { value: "upload", className: "space-y-4 pt-4 media-upload-content", children: [
-          /* @__PURE__ */ jsxs("div", { className: "grid w-full max-w-sm items-center gap-1.5 media-file-upload-section", children: [
-            /* @__PURE__ */ jsx(Label, { htmlFor: "media-file", className: "media-file-label", children: "Dosya Seç" }),
-            /* @__PURE__ */ jsx(
-              Input,
-              {
-                id: "media-file",
-                type: "file",
-                onChange: (e2) => setUploadFile(e2.target.files[0]),
-                className: "media-file-input"
-              }
-            )
+          /* @__PURE__ */ jsxs(Tabs, { value: uploadType, onValueChange: setUploadType, children: [
+            /* @__PURE__ */ jsxs(TabsList, { className: "grid w-full grid-cols-2", children: [
+              /* @__PURE__ */ jsx(TabsTrigger, { value: "file", children: "Dosyadan Yükle" }),
+              /* @__PURE__ */ jsx(TabsTrigger, { value: "url", children: "URL'den Yükle" })
+            ] }),
+            /* @__PURE__ */ jsx(TabsContent, { value: "file", className: "space-y-4 pt-4", children: /* @__PURE__ */ jsxs("div", { className: "grid w-full max-w-sm items-center gap-1.5 media-file-upload-section", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "media-file", className: "media-file-label", children: "Dosya Seç" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "media-file",
+                  type: "file",
+                  onChange: (e2) => setUploadFile(e2.target.files[0]),
+                  className: "media-file-input"
+                }
+              )
+            ] }) }),
+            /* @__PURE__ */ jsx(TabsContent, { value: "url", className: "space-y-4 pt-4", children: /* @__PURE__ */ jsxs("div", { className: "grid w-full max-w-sm items-center gap-1.5", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "media-url", children: "Resim URL'i" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "media-url",
+                  type: "text",
+                  value: uploadUrl,
+                  onChange: (e2) => setUploadUrl(e2.target.value),
+                  placeholder: "https://example.com/image.jpg"
+                }
+              )
+            ] }) })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "grid w-full max-w-sm items-center gap-1.5 media-tags-input-section", children: [
             /* @__PURE__ */ jsx(Label, { htmlFor: "media-tags", className: "media-tags-label", children: "Etiketler (virgülle ayırın)" }),
@@ -5472,7 +5515,7 @@ const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: Dashboard
 }, Symbol.toStringTag, { value: "Module" }));
-const { LazyLoadImage: LazyLoadImage$3 } = LazyLoadImagePkg;
+const { LazyLoadImage } = LazyLoadImagePkg;
 function DestinationDetail({ seo }) {
   var _a;
   const { destination } = usePage().props;
@@ -5594,7 +5637,7 @@ function DestinationDetail({ seo }) {
             return /* @__PURE__ */ jsxs(Card, { className: "overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group tours-card flex flex-col", children: [
               /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), className: "block", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden tours-card-image-wrapper h-48", children: [
                 /* @__PURE__ */ jsx(
-                  LazyLoadImage$3,
+                  LazyLoadImage,
                   {
                     src: ((_a2 = tour.image) == null ? void 0 : _a2.thumbnail_url) || "https://via.placeholder.com/400x200?text=Görsel+Bulunamadı",
                     alt: tour.title,
@@ -5656,7 +5699,7 @@ function DestinationDetail({ seo }) {
             var _a2;
             return /* @__PURE__ */ jsxs(Card, { className: "blog-post-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group h-full flex flex-col", children: [
               /* @__PURE__ */ jsx(Link, { href: route("contents.show", content.slug), className: "block", children: /* @__PURE__ */ jsx("div", { className: "relative w-full h-48 overflow-hidden", children: /* @__PURE__ */ jsx(
-                LazyLoadImage$3,
+                LazyLoadImage,
                 {
                   src: ((_a2 = content.image) == null ? void 0 : _a2.thumbnail_url) || "https://placehold.co/600x400?text=Görsel+Bulunamadı",
                   alt: content.title,
@@ -5715,7 +5758,7 @@ function DestinationDetail({ seo }) {
           ] }) }),
           " ",
           /* @__PURE__ */ jsx(CardContent, { children: destination.gallery_images.length > 0 ? /* @__PURE__ */ jsx("div", { className: "columns-2 md:columns-3 lg:columns-4 gap-4", children: destination.gallery_images.map((image) => /* @__PURE__ */ jsx("div", { className: "mb-4 break-inside-avoid relative group rounded-lg overflow-hidden border border-border shadow-sm hover:shadow-md transition-all duration-200", children: /* @__PURE__ */ jsx(
-            LazyLoadImage$3,
+            LazyLoadImage,
             {
               src: image.thumbnail_url || "/placeholder.svg",
               alt: image.file_name,
@@ -5732,7 +5775,22 @@ const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: DestinationDetail
 }, Symbol.toStringTag, { value: "Module" }));
-const { LazyLoadImage: LazyLoadImage$2 } = LazyLoadImagePkg;
+const LazyLoadedImageComponent = lazy(
+  () => import("react-lazy-load-image-component").then((module) => ({ default: module.LazyLoadImage }))
+);
+const ImagePlaceholder = ({ wrapperClassName }) => /* @__PURE__ */ jsx("div", { className: wrapperClassName, children: /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 rounded-md animate-pulse" }) });
+const LazyImage = ({ src, alt, className, wrapperClassName, effect = "blur" }) => {
+  return /* @__PURE__ */ jsx(Suspense, { fallback: /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName }), children: /* @__PURE__ */ jsx(
+    LazyLoadedImageComponent,
+    {
+      src,
+      alt,
+      className,
+      wrapperClassName,
+      effect
+    }
+  ) });
+};
 function Destinations({ seo }) {
   var _a, _b;
   const { destinations } = usePage().props;
@@ -5751,7 +5809,7 @@ function Destinations({ seo }) {
         var _a2;
         return /* @__PURE__ */ jsx(Link, { href: route("destinations.show", destination.slug), className: "block", children: /* @__PURE__ */ jsxs(Card, { className: "destination-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group", children: [
           /* @__PURE__ */ jsx("div", { className: "relative w-full h-48 overflow-hidden", children: /* @__PURE__ */ jsx(
-            LazyLoadImage$2,
+            LazyImage,
             {
               src: ((_a2 = destination.image) == null ? void 0 : _a2.thumbnail_url) || "/placeholder.svg",
               alt: destination.name,
@@ -5777,19 +5835,17 @@ const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: Destinations
 }, Symbol.toStringTag, { value: "Module" }));
-const { LazyLoadImage: LazyLoadImage$1 } = LazyLoadImagePkg;
 function TourCard({ tour, featuredBadge: FeaturedBadge }) {
   var _a;
   return /* @__PURE__ */ jsxs(Card, { className: "w-full h-full flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative", children: [
     tour.is_featured && FeaturedBadge && /* @__PURE__ */ jsx(FeaturedBadge, {}),
     /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), className: "block", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden h-48", children: [
       /* @__PURE__ */ jsx(
-        LazyLoadImage$1,
+        LazyImage,
         {
           src: ((_a = tour.image) == null ? void 0 : _a.thumbnail_url) || "https://via.placeholder.com/400x200?text=Görsel+Bulunamadı",
           alt: tour.title,
           className: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300",
-          effect: "blur",
           wrapperClassName: "w-full h-full"
         }
       ),
@@ -6657,7 +6713,6 @@ const CarouselNext = React.forwardRef(({ className, variant = "outline", size = 
   );
 });
 CarouselNext.displayName = "CarouselNext";
-const { LazyLoadImage } = LazyLoadImagePkg;
 function TourDetail({ tour, config, seo }) {
   var _a;
   const [activeSection, setActiveSection] = useState("overview");
@@ -6895,7 +6950,7 @@ function TourDetail({ tour, config, seo }) {
               className: "w-full",
               children: [
                 /* @__PURE__ */ jsx(CarouselContent, { children: galleryImages.map((image, index) => /* @__PURE__ */ jsx(CarouselItem, { className: "md:basis-1/2 lg:basis-1/3", children: /* @__PURE__ */ jsx("div", { className: "p-1", children: /* @__PURE__ */ jsx(Card, { className: "overflow-hidden cursor-pointer", onClick: () => setLightboxIndex(index), children: /* @__PURE__ */ jsx(CardContent, { className: "flex aspect-square items-center justify-center p-0", children: /* @__PURE__ */ jsx(
-                  LazyLoadImage,
+                  LazyImage,
                   {
                     src: image.thumbnail_url,
                     alt: image.alt || `Galeri ${index + 1}`,
@@ -6983,7 +7038,7 @@ function TourDetail({ tour, config, seo }) {
             var _a2;
             return /* @__PURE__ */ jsxs("div", { className: "bg-card rounded-lg border border-border overflow-hidden shadow-sm", children: [
               /* @__PURE__ */ jsx("div", { className: "w-full h-48", children: ((_a2 = activity.image) == null ? void 0 : _a2.thumbnail_url) ? /* @__PURE__ */ jsx(
-                LazyLoadImage,
+                LazyImage,
                 {
                   src: activity.image.thumbnail_url,
                   alt: activity.name,

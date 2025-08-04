@@ -21,11 +21,8 @@ import {
 } from "@/Components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 import Lightbox from "yet-another-react-lightbox";
+import LazyImage from '@/Components/LazyImage';
 import "yet-another-react-lightbox/styles.css";
-// SSR (Sunucu Tarafı Oluşturma) hatasını çözmek için içe aktarma yöntemi güncellendi.
-import LazyLoadImagePkg from 'react-lazy-load-image-component';
-const { LazyLoadImage } = LazyLoadImagePkg;
-import 'react-lazy-load-image-component/src/effects/blur.css';
 
 export default function TourDetail({ tour, config, seo }) {
   const [activeSection, setActiveSection] = useState('overview');
@@ -261,7 +258,7 @@ export default function TourDetail({ tour, config, seo }) {
                             <div className="p-1">
                               <Card className="overflow-hidden cursor-pointer" onClick={() => setLightboxIndex(index)}>
                                 <CardContent className="flex aspect-square items-center justify-center p-0">
-                                  <LazyLoadImage
+                                  <LazyImage
                                     src={image.thumbnail_url}
                                     alt={image.alt || `Galeri ${index + 1}`}
                                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
@@ -385,7 +382,7 @@ export default function TourDetail({ tour, config, seo }) {
                         <div key={activity.id} className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
                           <div className="w-full h-48">
                             {activity.image?.thumbnail_url ? (
-                              <LazyLoadImage
+                              <LazyImage
                                 src={activity.image.thumbnail_url}
                                 alt={activity.name}
                                 className="w-full h-full object-cover"

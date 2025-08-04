@@ -22,6 +22,8 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
     const [uploadFile, setUploadFile] = useState(null);
     const [uploadTags, setUploadTags] = useState('');
     const [uploadDestinationId, setUploadDestinationId] = useState('');
+    const [uploadUrl, setUploadUrl] = useState(''); // URL'den yükleme için state
+    const [uploadType, setUploadType] = useState('file'); // 'file' veya 'url'
     const [filterDestination, setFilterDestination] = useState("all");
     const [filterTags, setFilterTags] = useState('');
     const [destinations, setDestinations] = useState([]);
@@ -89,6 +91,14 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
     };
 
     const handleFileUpload = async () => {
+        if (uploadType === 'file') {
+            await handleLocalFileUpload();
+        } else if (uploadType === 'url') {
+            await handleUrlUpload();
+        }
+    };
+
+    const handleLocalFileUpload = async () => {
         if (!uploadFile) {
             toast({
                 title: "Uyarı",
@@ -98,9 +108,29 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
             return;
         }
 
-        setIsUploading(true);
         const formData = new FormData();
         formData.append('file', uploadFile);
+        await upload(formData);
+    };
+
+    const handleUrlUpload = async () => {
+        if (!uploadUrl.trim()) {
+            toast({
+                title: "Uyarı",
+                description: "Lütfen bir URL girin.",
+                variant: "warning",
+            });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('url', uploadUrl);
+        await upload(formData);
+    };
+    
+    const upload = async (formData) => {
+        setIsUploading(true);
+
         if (uploadDestinationId) {
             formData.append('destination_id', uploadDestinationId);
         }
@@ -109,12 +139,11 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
         }
 
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // CSRF tokenini al
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const response = await fetch('/api/admin/media', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken, // CSRF tokenini başlığa ekle
-                    // 'Authorization': `Bearer ${auth.user.token}`, 
+                    'X-CSRF-TOKEN': csrfToken,
                 },
                 body: formData,
             });
@@ -127,26 +156,24 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
                     variant: "default",
                 });
                 setUploadFile(null);
+                setUploadUrl('');
                 setUploadTags('');
                 setUploadDestinationId('');
-                fetchMediaItems(); // Medya listesini güncelle
+                fetchMediaItems(); 
 
-                // Yeni yüklenen medya öğesini ana bileşene bildir ve dahili state'i güncelle
                 setSelectedMedia(prev => {
                     let updatedSelection;
                     if (isMultiSelect) {
-                        // Eğer çoklu seçimse, mevcut seçili medyaları ve yeni yükleneni birleştir
                         const currentPrev = Array.isArray(prev) ? prev : (prev ? [prev] : []);
                         updatedSelection = [...currentPrev, data.media];
                     } else {
-                        // Eğer tekli seçimse, sadece yeni yükleneni ata
                         updatedSelection = data.media;
                     }
-                    onMediaSelect(updatedSelection); // Ana bileşene seçimi ilet
-                    return updatedSelection; // Dahili state'i güncelle
+                    onMediaSelect(updatedSelection);
+                    return updatedSelection;
                 });
 
-                onClose(); // Başarılı yüklemeden sonra modalı kapat
+                onClose();
             } else {
                 const errorMessage = data.errors ? Object.values(data.errors).flat().join(' ') : (data.error || "Dosya yüklenirken bir hata oluştu.");
                 toast({
@@ -313,15 +340,38 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
                         </div>
                     </TabsContent>
                     <TabsContent value="upload" className="space-y-4 pt-4 media-upload-content">
-                        <div className="grid w-full max-w-sm items-center gap-1.5 media-file-upload-section">
-                            <Label htmlFor="media-file" className="media-file-label">Dosya Seç</Label>
-                            <Input 
-                                id="media-file" 
-                                type="file" 
-                                onChange={(e) => setUploadFile(e.target.files[0])}
-                                className="media-file-input"
-                            />
-                        </div>
+                        {/* Yükleme Tipi Seçimi için Tabs */}
+                        <Tabs value={uploadType} onValueChange={setUploadType}>
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="file">Dosyadan Yükle</TabsTrigger>
+                                <TabsTrigger value="url">URL'den Yükle</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="file" className="space-y-4 pt-4">
+                                <div className="grid w-full max-w-sm items-center gap-1.5 media-file-upload-section">
+                                    <Label htmlFor="media-file" className="media-file-label">Dosya Seç</Label>
+                                    <Input 
+                                        id="media-file" 
+                                        type="file" 
+                                        onChange={(e) => setUploadFile(e.target.files[0])}
+                                        className="media-file-input"
+                                    />
+                                </div>
+                            </TabsContent>
+                            <TabsContent value="url" className="space-y-4 pt-4">
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <Label htmlFor="media-url">Resim URL'i</Label>
+                                    <Input
+                                        id="media-url"
+                                        type="text"
+                                        value={uploadUrl}
+                                        onChange={(e) => setUploadUrl(e.target.value)}
+                                        placeholder="https://example.com/image.jpg"
+                                    />
+                                </div>
+                            </TabsContent>
+                        </Tabs>
+
+                        {/* Ortak Alanlar */}
                         <div className="grid w-full max-w-sm items-center gap-1.5 media-tags-input-section">
                             <Label htmlFor="media-tags" className="media-tags-label">Etiketler (virgülle ayırın)</Label>
                             <Input 
