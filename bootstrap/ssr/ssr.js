@@ -5515,7 +5515,7 @@ const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: Dashboard
 }, Symbol.toStringTag, { value: "Module" }));
-const { LazyLoadImage: LazyLoadImage$1 } = LazyLoadImagePkg;
+const { LazyLoadImage } = LazyLoadImagePkg;
 function DestinationDetail({ seo }) {
   var _a;
   const { destination } = usePage().props;
@@ -5637,7 +5637,7 @@ function DestinationDetail({ seo }) {
             return /* @__PURE__ */ jsxs(Card, { className: "overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group tours-card flex flex-col", children: [
               /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), className: "block", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden tours-card-image-wrapper h-48", children: [
                 /* @__PURE__ */ jsx(
-                  LazyLoadImage$1,
+                  LazyLoadImage,
                   {
                     src: ((_a2 = tour.image) == null ? void 0 : _a2.thumbnail_url) || "https://via.placeholder.com/400x200?text=Görsel+Bulunamadı",
                     alt: tour.title,
@@ -5699,7 +5699,7 @@ function DestinationDetail({ seo }) {
             var _a2;
             return /* @__PURE__ */ jsxs(Card, { className: "blog-post-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group h-full flex flex-col", children: [
               /* @__PURE__ */ jsx(Link, { href: route("contents.show", content.slug), className: "block", children: /* @__PURE__ */ jsx("div", { className: "relative w-full h-48 overflow-hidden", children: /* @__PURE__ */ jsx(
-                LazyLoadImage$1,
+                LazyLoadImage,
                 {
                   src: ((_a2 = content.image) == null ? void 0 : _a2.thumbnail_url) || "https://placehold.co/600x400?text=Görsel+Bulunamadı",
                   alt: content.title,
@@ -5758,7 +5758,7 @@ function DestinationDetail({ seo }) {
           ] }) }),
           " ",
           /* @__PURE__ */ jsx(CardContent, { children: destination.gallery_images.length > 0 ? /* @__PURE__ */ jsx("div", { className: "columns-2 md:columns-3 lg:columns-4 gap-4", children: destination.gallery_images.map((image) => /* @__PURE__ */ jsx("div", { className: "mb-4 break-inside-avoid relative group rounded-lg overflow-hidden border border-border shadow-sm hover:shadow-md transition-all duration-200", children: /* @__PURE__ */ jsx(
-            LazyLoadImage$1,
+            LazyLoadImage,
             {
               src: image.thumbnail_url || "/placeholder.svg",
               alt: image.file_name,
@@ -5776,26 +5776,18 @@ const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: DestinationDetail
 }, Symbol.toStringTag, { value: "Module" }));
 const ImagePlaceholder = ({ wrapperClassName }) => /* @__PURE__ */ jsx("div", { className: wrapperClassName, children: /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 rounded-md animate-pulse" }) });
-let LazyLoadImage;
-if (typeof window !== "undefined") {
-  LazyLoadImage = React__default.lazy(
-    () => import("react-lazy-load-image-component").then((module) => ({ default: module.LazyLoadImage }))
-  );
-}
-const LazyImage = ({ src, alt, className, wrapperClassName, effect = "blur" }) => {
-  if (!LazyLoadImage) {
-    return /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName });
+const LazyLoadedImageComponent = lazy(
+  () => import("react-lazy-load-image-component").then((module) => ({ default: module.LazyLoadImage }))
+);
+const LazyImage = (props) => {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  if (!isMounted) {
+    return /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName: props.wrapperClassName });
   }
-  return /* @__PURE__ */ jsx(Suspense, { fallback: /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName }), children: /* @__PURE__ */ jsx(
-    LazyLoadImage,
-    {
-      src,
-      alt,
-      className,
-      wrapperClassName,
-      effect
-    }
-  ) });
+  return /* @__PURE__ */ jsx(Suspense, { fallback: /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName: props.wrapperClassName }), children: /* @__PURE__ */ jsx(LazyLoadedImageComponent, { ...props }) });
 };
 function Destinations({ seo }) {
   var _a, _b;
