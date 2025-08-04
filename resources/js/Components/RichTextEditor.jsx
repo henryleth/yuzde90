@@ -1,7 +1,7 @@
 // resources/js/Components/RichTextEditor.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button'; // ShadCN Button bileşenini import ediyoruz
+import { Button } from '@/Components/ui/button'; // ShadCN Button bileşenini import ediyoruz
 import { Code } from 'lucide-react'; // İkon import ediyoruz
 
 /**

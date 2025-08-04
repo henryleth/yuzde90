@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/Components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Calendar, Star, Sun } from 'lucide-react';
 
 // Tasarım 2: Premium ve İçerik Odaklı

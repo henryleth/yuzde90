@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/Components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
 import { useTheme } from '@/Context/ThemeContext';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useState, useEffect } from 'react';

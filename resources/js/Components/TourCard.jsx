@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '@/Components/ui/button';
+import { Card } from '@/Components/ui/card';
 import { Star, Users } from 'lucide-react';
 // SSR (Sunucu Tarafı Oluşturma) hatasını çözmek için içe aktarma yöntemi güncellendi.
 import LazyLoadImagePkg from 'react-lazy-load-image-component';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/Components/ui/button';
+import { Card, CardContent, CardFooter } from '@/Components/ui/card';
 import { Zap } from 'lucide-react';
 
 // Tasarım 2: Minimalist ve Şık

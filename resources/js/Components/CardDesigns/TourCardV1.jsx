@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/Components/ui/card';
 import { Clock, Star, MapPin, Award } from 'lucide-react';
 
 // Tasarım 1: Modern ve Minimalist (Güncellenmiş)
