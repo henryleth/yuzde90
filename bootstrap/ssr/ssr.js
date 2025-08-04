@@ -5908,7 +5908,7 @@ function FeaturedBadgeCorner() {
 }
 function Home({ tours, popularDestinations, seo }) {
   const { darkMode, toggleDarkMode, currentFont, changeFont, fonts } = useTheme();
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const [iframeTop, setIframeTop] = useState("-20%");
   useEffect(() => {
     const handleResize = () => {
@@ -5920,42 +5920,74 @@ function Home({ tours, popularDestinations, seo }) {
     };
     handleResize();
     window.addEventListener("resize", handleResize);
-    const timer = setTimeout(() => {
-      setVideoLoaded(true);
-    }, 500);
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const handlePlayVideo = () => {
+    setVideoPlaying(true);
+  };
   return /* @__PURE__ */ jsxs(Guest, { seo, children: [
     /* @__PURE__ */ jsxs("section", { className: "relative h-[calc(100vh-64px)] flex items-center justify-center text-center overflow-hidden", children: [
-      videoLoaded && /* @__PURE__ */ jsx(
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 w-full h-full", children: !videoPlaying ? /* @__PURE__ */ jsx(
+        "img",
+        {
+          src: "https://img.youtube.com/vi/oe_kmwcO1ag/maxresdefault.jpg",
+          alt: "Video Thumbnail",
+          className: "w-full h-full object-cover"
+        }
+      ) : /* @__PURE__ */ jsx(
         "iframe",
         {
           className: "absolute",
           style: {
             width: "355.55%",
-            // 16:9 en boy oranını korurken konteyner genişliğine göre ayarlandı
             height: "200%",
-            // Konteynerin iki katı yükseklik, %50 içerik görünürlüğünü sağlar
             left: "-127.77%",
-            // Genişletilmiş iframe'i yatayda ortala
             top: iframeTop
-            // Dikeyde %10 üstten kesme sağlamak için konumlandır
           },
           src: "https://www.youtube.com/embed/oe_kmwcO1ag?autoplay=1&mute=1&loop=1&playlist=oe_kmwcO1ag&controls=0&modestbranding=1&rel=0",
           frameBorder: "0",
           allow: "autoplay; encrypted-media",
           allowFullScreen: true
         }
-      ),
+      ) }),
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/55" }),
+      !videoPlaying && /* @__PURE__ */ jsx(
+        "div",
+        {
+          className: "absolute inset-0 flex items-center justify-center cursor-pointer z-[5]",
+          onClick: handlePlayVideo,
+          children: /* @__PURE__ */ jsx(
+            "svg",
+            {
+              className: "w-20 h-20 text-white opacity-80 hover:opacity-100 transition-opacity",
+              fill: "currentColor",
+              viewBox: "0 0 20 20",
+              xmlns: "http://www.w3.org/2000/svg",
+              children: /* @__PURE__ */ jsx(
+                "path",
+                {
+                  fillRule: "evenodd",
+                  d: "M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z",
+                  clipRule: "evenodd"
+                }
+              )
+            }
+          )
+        }
+      ),
       /* @__PURE__ */ jsxs("div", { className: "relative z-10 text-white p-4 max-w-6xl mx-auto", children: [
-        " ",
         /* @__PURE__ */ jsx("h1", { className: "text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-up font-playfair", children: "Türkiye'nin Keşfedilmeyi Bekleyen Cennetleri" }),
         /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl mb-8 opacity-0 animate-fade-in-up animation-delay-300", children: "Unutulmaz turlar ve eşsiz deneyimlerle Türkiye'nin büyülü güzelliklerini keşfedin." }),
-        /* @__PURE__ */ jsx(Button, { asChild: true, className: "bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 opacity-0 animate-fade-in-up animation-delay-600", children: /* @__PURE__ */ jsx(Link, { href: "/tours", children: "Tüm Turlarımızı Keşfedin" }) })
+        /* @__PURE__ */ jsx(
+          Button,
+          {
+            asChild: true,
+            className: "bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 opacity-0 animate-fade-in-up animation-delay-600",
+            children: /* @__PURE__ */ jsx(Link, { href: "/tours", children: "Tüm Turlarımızı Keşfedin" })
+          }
+        )
       ] })
     ] }),
     /* @__PURE__ */ jsx("section", { className: "marketing-and-trust-section py-16 bg-muted/40", children: /* @__PURE__ */ jsx("div", { className: "max-w-6xl mx-auto px-4", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-12 items-center", children: [

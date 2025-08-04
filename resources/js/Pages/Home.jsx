@@ -1,81 +1,80 @@
 import { Link, router } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
-import { useTheme } from '@/Context/ThemeContext';
+import { Card } from '@/Components/ui/card';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useState, useEffect } from 'react';
 
 // Merkezi Kart Bileşenlerini ve Etiketi İçe Aktarma
 import TourCard from '@/Components/TourCard';
-// import DestinationCard from '@/Components/CardDesigns/DestinationCardV1'; // Bu hala ayrı, isteğe göre birleştirilebilir - Kaldırıldı
 import FeaturedBadge from '@/Components/Badges/FeaturedBadgeCorner';
 
 export default function Home({ tours, popularDestinations, seo }) {
-  // console.log("Home bileşenine gelen popularDestinations prop'u:", popularDestinations); // popularDestinations prop'unu konsola yazdım - kaldırıldı
-  const { darkMode, toggleDarkMode, currentFont, changeFont, fonts } = useTheme();
-
-  // Video yükleme durumunu takip etmek için state ekledik
-  const [videoLoaded, setVideoLoaded] = useState(false);
-
-  // Iframe'in dikey konumunu ayarlamak için state ekledik
+  // Video hazır olma durumunu ve iframe dikey konumunu yöneten state'ler
+  const [isVideoReady, setIsVideoReady] = useState(false);
   const [iframeTop, setIframeTop] = useState('-20%'); // Varsayılan masaüstü değeri
 
-  // Bileşen yüklendikten sonra videoyu yüklemek ve konumu ayarlamak için useEffect kullandık
+  // Ekran boyutuna göre iframe konumunu ayarlar
   useEffect(() => {
       const handleResize = () => {
-          if (window.innerWidth < 768) { // Tailwind'in md breakpoint'ini mobil için varsaydık
+          if (window.innerWidth < 768) { // Mobil için
               setIframeTop('-50%');
-          } else {
+          } else { // Masaüstü için
               setIframeTop('-20%');
           }
       };
 
-      // İlk değeri ayarla
-      handleResize();
-
-      // Boyut değiştiğinde konumu güncelle
+      handleResize(); // İlk yüklemede çalıştır
       window.addEventListener('resize', handleResize);
 
-      // Sayfa yüklendikten sonra videoyu yüklemek için kısa bir gecikme ekledik
-      const timer = setTimeout(() => {
-          setVideoLoaded(true);
-      }, 500); // 500ms gecikme ile videoyu yükle
-
-      return () => {
-          clearTimeout(timer);
-          window.removeEventListener('resize', handleResize);
-      };
+      return () => window.removeEventListener('resize', handleResize);
   }, []);
 
      return (
          <GuestLayout seo={seo}>
             {/* Hero Section */}
             <section className="relative h-[calc(100vh-64px)] flex items-center justify-center text-center overflow-hidden">
-                {videoLoaded && (
+                {/* Arka Plan: Video veya Resim */}
+                <div className="absolute inset-0 w-full h-full">
+                    {/* Video hazır olana kadar kapak görseli gösterilir */}
+                    {!isVideoReady && (
+                        <img
+                            src="https://img.youtube.com/vi/oe_kmwcO1ag/maxresdefault.jpg"
+                            alt="Video Thumbnail"
+                            className="w-full h-full object-cover"
+                        />
+                    )}
+                    {/* Video iframe'i her zaman DOM'da bulunur ancak sadece hazır olduğunda görünür olur */}
                     <iframe
-                        className="absolute"
+                        className={`absolute transition-opacity duration-1000 ${isVideoReady ? 'opacity-100' : 'opacity-0'}`}
                         style={{
-                            width: '355.55%', // 16:9 en boy oranını korurken konteyner genişliğine göre ayarlandı
-                            height: '200%',   // Konteynerin iki katı yükseklik, %50 içerik görünürlüğünü sağlar
-                            left: '-127.77%', // Genişletilmiş iframe'i yatayda ortala
-                            top: iframeTop       // Dikeyde %10 üstten kesme sağlamak için konumlandır
+                            width: '355.55%',
+                            height: '200%',
+                            left: '-127.77%',
+                            top: iframeTop,
                         }}
                         src="https://www.youtube.com/embed/oe_kmwcO1ag?autoplay=1&mute=1&loop=1&playlist=oe_kmwcO1ag&controls=0&modestbranding=1&rel=0"
                         frameBorder="0"
                         allow="autoplay; encrypted-media"
                         allowFullScreen
-                    >
-                    </iframe>
-                )}
+                        onLoad={() => setIsVideoReady(true)} // Video yüklendiğinde durumu güncelle
+                    ></iframe>
+                </div>
+
+                {/* Karartma Katmanı */}
                 <div className="absolute inset-0 bg-black/55"></div>
-                <div className="relative z-10 text-white p-4 max-w-6xl mx-auto"> {/* max-w-4xl -> max-w-7xl */}
+
+                {/* Metin İçeriği Katmanı */}
+                <div className="relative z-10 text-white p-4 max-w-6xl mx-auto">
                     <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-up font-playfair">
                         Türkiye'nin Keşfedilmeyi Bekleyen Cennetleri
                     </h1>
                     <p className="text-lg md:text-xl mb-8 opacity-0 animate-fade-in-up animation-delay-300">
                         Unutulmaz turlar ve eşsiz deneyimlerle Türkiye'nin büyülü güzelliklerini keşfedin.
                     </p>
-                    <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 opacity-0 animate-fade-in-up animation-delay-600">
+                    <Button
+                        asChild
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 opacity-0 animate-fade-in-up animation-delay-600"
+                    >
                         <Link href="/tours">Tüm Turlarımızı Keşfedin</Link>
                     </Button>
                 </div>
