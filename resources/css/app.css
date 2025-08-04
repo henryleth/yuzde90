@@ -1,0 +1,363 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+/* React Quill Stilleri */
+@import 'react-quill/dist/quill.snow.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+@layer base {
+  :root {
+    --background: 31 42% 81% / 0.1;
+    --foreground: 222.2 84% 4.9%;
+
+    --site-font-family: 'Inter', sans-serif; /* Varsayılan site font ailesi */
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 0 87% 44%; /* #d00f0f */
+    --primary-foreground: 210 20% 98%;
+
+    --secondary: 210 20% 98%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 90%; /* Light Gray Accent */
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 0 85% 50%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 0 0% 43% / 0.42; /* #6d6d6d6b olarak güncellendi */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 210 40% 20%; /* Dark Gray Accent for dark mode */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;  
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--site-font-family);
+  }
+}
+
+/* Inertia.js Page Transition Effect */
+body.inertia-transitioning {
+    opacity: 0.2; /* Sayfa geçişi sırasında opaklığı düşür */
+    transition: opacity 0.3s ease-in-out; /* Yumuşak geçiş efekti */
+    pointer-events: none; /* Geçiş sırasında kullanıcı etkileşimini engelle */
+}
+
+/* Fix for sticky header scroll offset */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 180px; /* Mobile: Header (64px) + Navigation tabs with wrapping (~116px) */
+}
+
+/* Desktop version with single line navigation */
+@media (min-width: 768px) {
+    html {
+        scroll-padding-top: 128px; /* Desktop: Header (64px) + Navigation tabs (yaklaşık 96px) - Ayarlandı */
+    }
+}
+
+/* Reservation form sticky positioning */
+.reservation-sticky {
+    position: sticky;
+    top: 180px; /* Mobile: More space from header + nav tabs */
+}
+
+@media (min-width: 768px) {
+    .reservation-sticky {
+        top: 145px; /* Desktop: Adjusted spacing */
+    }
+}
+
+/* Font aileleri */
+.font-inter {
+    font-family: 'Inter', sans-serif;
+}
+
+.font-poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+.font-outfit {
+    font-family: 'Outfit', sans-serif;
+}
+
+.font-space-grotesk {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-playfair {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animation-delay-300 {
+    animation-delay: 0.3s;
+}
+
+.animation-delay-600 {
+    animation-delay: 0.6s;
+}
+
+/* Custom Scrollbar Styles (Optional - can be adjusted or removed) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Hover durumunda destinasyon kart başlığı, açıklaması ve butonu için stil */
+.group:hover .destinasyon-baslik {
+  color: #fff; /* Başlık rengi */
+}
+
+.group:hover .destinasyon-aciklama {
+  color: #ccc; /* Açıklama rengi */
+}
+
+.group:hover .destinasyon-butonu {
+  opacity: 1; /* Buton opaklığı */
+}
+
+/* Quill Editor Custom Styles (Moved from RichTextEditor.jsx) */
+.ql-toolbar {
+  border-bottom: 1px solid var(--border) !important;
+  border-top-left-radius: 0.375rem !important;
+  border-top-right-radius: 0.375rem !important;
+}
+.ql-container {
+  border-bottom-left-radius: 0.375rem !important;
+  border-bottom-right-radius: 0.375rem !important;
+}
+.ql-editor {
+    min-height: 150px; /* Textarea'nın min-height'ını korur */
+}
+.ql-editor.ql-blank::before {
+    color: hsl(var(--muted-foreground)) !important;
+    font-style: normal !important;
+}
+.ql-snow .ql-stroke {
+    stroke: hsl(var(--foreground)) !important;
+}
+.ql-snow .ql-fill {
+    fill: hsl(var(--foreground)) !important;
+}
+.ql-snow .ql-picker-label {
+    color: hsl(var(--foreground)) !important;
+}
+.ql-snow .ql-tooltip {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+}
+.ql-snow .ql-tooltip a.ql-action {
+  color: hsl(var(--primary));
+}
+.ql-snow .ql-tooltip input[type=text] {
+  background-color: hsl(var(--input));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+/* Ensure the overall admin panel stays light regardless of global dark mode */
+.light {
+    --background: 0 0% 100%; /* white */
+    --foreground: 222.2 84% 4.9%; /* black */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 222.2 84% 4.9%; /* black */
+    --popover: 0 0% 100%; /* white */
+    --popover-foreground: 222.2 84% 4.9%; /* black */
+    --primary: 222.2 47.4% 11.2%; /* dark blue */
+    --primary-foreground: 210 40% 98%; /* light gray for primary text */
+    --secondary: 210 40% 96.1%; /* very light gray */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* dark blue for secondary text */
+    --muted: 210 40% 96.1%; /* very light gray */
+    --muted-foreground: 215.4 16.3% 46.9%; /* gray */
+    --accent: 210 40% 96.1%; /* very light gray */
+    --accent-foreground: 222.2 47.4% 11.2%; /* dark blue for accent text */
+    --destructive: 0 84.2% 60.2%; /* red */
+    --destructive-foreground: 210 40% 98%; /* light gray for destructive text */
+    --border: 214.3 31.6% 91.4%; /* light gray border */
+    --input: 214.3 31.6% 91.4%; /* light gray input border */
+    --ring: 215 20.2% 65.1%; /* light gray ring */
+}
+
+/* RichTextEditor'ın dark mode'dan etkilenmemesi için özel stiller */
+.editor-light-mode {
+    background-color: #ffffff !important; /* Editörün arka planını sabit beyaz yap */
+    color: #1f2937 !important; /* Editördeki metin rengini sabit koyu gri yap */
+    border-color: #d1d5db !important; /* Kenarlık rengini sabit gri yap */
+}
+
+.editor-light-mode .ProseMirror {
+    background-color: #ffffff !important; /* ProseMirror içeriğinin arka planını sabit beyaz yap */
+    color: #1f2937 !important; /* ProseMirror içeriğinin metin rengini sabit koyu gri yap */
+}
+
+.editor-light-mode .ProseMirror:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 2px #3b82f6 !important; /* Focus halkasını mavi yap */
+}
+
+.editor-light-mode .ProseMirror p, .editor-light-mode .ProseMirror h1, .editor-light-mode .ProseMirror h2, .editor-light-mode .ProseMirror h3, .editor-light-mode .ProseMirror h4, .editor-light-mode .ProseMirror h5, .editor-light-mode .ProseMirror h6, .editor-light-mode .ProseMirror ul, .editor-light-mode .ProseMirror ol, .editor-light-mode .ProseMirror li, .editor-light-mode .ProseMirror blockquote, .editor-light-mode .ProseMirror code, .editor-light-mode .ProseMirror pre {
+    color: #1f2937 !important; /* Tüm metin elemanlarının rengini sabit koyu gri yap */
+}
+
+/* RichTextEditor'ın toolbbar butonları için renkleri sabitleme */
+.editor-light-mode .ProseMirror-menubar .is-active {
+    background-color: #e0e7ff !important; /* Aktif buton arka planı */
+    color: #1d4ed8 !important; /* Aktif buton metin rengi */
+}
+
+.editor-light-mode .ProseMirror-menubar button {
+    background-color: #f9fafb !important; /* Buton arka planı */
+    color: #4b5563 !important; /* Buton metin rengi */
+}
+
+.editor-light-mode .ProseMirror-menubar button:hover {
+    background-color: #e5e7eb !important; /* Buton hover arka planı */
+}
+
+/* Scrollbar'ı gizlemek için yardımcı sınıf */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Webkit (Chrome, Safari, etc) */
+}
+
+/* Carousel Arrow Visibility */
+.carousel-previous,
+.carousel-next {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    color: white !important;
+    border: 1px solid white !important;
+}
+
+.carousel-previous:hover,
+.carousel-next:hover {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.carousel-previous svg,
+.carousel-next svg {
+    color: white !important;
+}
+
+/* TourDetail.jsx içindeki 'prose' ile stillendirilen listelerin madde işaretlerini zorla göster (daha küçük ve varsayılan stile yakın) */
+.prose ul > li::before {
+    content: "";
+    position: absolute;
+    background-color: currentColor;
+    border-radius: 50%;
+    width: 0.25em;  /* Madde işareti genişliği küçültüldü */
+    height: 0.25em; /* Madde işareti yüksekliği küçültüldü */
+    top: 0.65em;    /* Dikey hizalama ayarlandı */
+    left: 0.25em;
+}
+
+.prose ul > li {
+    position: relative;
+    padding-left: 1em;
+}

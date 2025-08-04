@@ -1,0 +1,7 @@
+* her zaman türkçe cevap ver.
+* npm run ve artisan komutlarını bana öner, çalıştırma işlemini ben yapacağım.
+* her zaman yazdığın kodları yorumla. daha sonradan anlayabileyim ne olduğunu. frontend de class isimlerinide ilgili alanla adlandır.
+* sorduğum soruyla ilgili yorumunu kısa tut, düşüncelerinin tamamını paylaşma sadece özet geç.
+* migrate yaparken veya veritabanı yapısının değiştiği her zaman database.md dosyasını güncelle.
+* sqlde ve model'de değişiklik yaptığında, her zaman backend.md dosyasını güncelle. 
+* media sistemi için media-system.md dosyasını referans al ve media yapımızda değişiklik olduğunda dosyayı da güncelle..
