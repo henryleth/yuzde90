@@ -38,7 +38,6 @@
     34 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
     35 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
     36 => 'App\\Providers\\AppServiceProvider',
-    37 => 'App\\Providers\\SchemaServiceProvider',
   ),
   'eager' => 
   array (
@@ -63,7 +62,6 @@
     18 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
     19 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
     20 => 'App\\Providers\\AppServiceProvider',
-    21 => 'App\\Providers\\SchemaServiceProvider',
   ),
   'deferred' => 
   array (
