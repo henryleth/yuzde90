@@ -1,13 +1,13 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import * as React from "react";
-import React__default, { createContext, useState, useEffect, useContext, useRef, lazy, Suspense, forwardRef, useImperativeHandle } from "react";
+import React__default, { createContext, useState, useEffect, useContext, useRef, lazy, Suspense, useCallback, forwardRef, useImperativeHandle } from "react";
 import { usePage, Link, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { X, CaseSensitive, ChevronDown, Sun, Moon, MenuIcon, Facebook, Twitter, Instagram, Linkedin, Send, Heart, Compass, Users, Check, Leaf, Camera, ChevronRight, Dot, Package, Menu, Code, Trash2, ChevronUp, XCircle, Upload, Search, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, ImageIcon, PlusCircle, Edit as Edit$5, CheckCircle, Clock, MoreHorizontal, ExternalLink, Image, Lightbulb, Phone, Mail, MapPin, Calendar as Calendar$1, Tag, Star, Globe, Wallet, ArrowLeft, ArrowRight, Languages, Snowflake, DollarSign } from "lucide-react";
+import { X, Sun, Moon, MenuIcon, Facebook, Twitter, Instagram, Linkedin, Send, Heart, Compass, Users, Check, Leaf, Camera, ChevronRight, Dot, Package, Menu, Code, Trash2, ChevronDown, ChevronUp, XCircle, Upload, Search, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, ImageIcon, PlusCircle, Edit as Edit$5, CheckCircle, Clock, MoreHorizontal, ExternalLink, Image, RefreshCw, Lightbulb, Phone, Mail, MapPin, Calendar as Calendar$1, Tag, Star, Globe, Wallet, ArrowLeft, ArrowRight, Languages, Snowflake, DollarSign } from "lucide-react";
 import * as LazyLoadImagePkg from "react-lazy-load-image-component";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
@@ -22,8 +22,8 @@ import { format } from "date-fns";
 import { getDefaultClassNames, DayPicker } from "react-day-picker";
 import axios from "axios";
 import * as SwitchPrimitives from "@radix-ui/react-switch";
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import moment from "moment";
 import "moment/locale/tr.js";
@@ -79,22 +79,12 @@ const ThemeContext = createContext();
 const useTheme = () => useContext(ThemeContext);
 const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);
-  const [currentFont, setCurrentFont] = useState("inter");
-  const [showFontMenu, setShowFontMenu] = useState(false);
   const [isHeaderShrunk, setHeaderShrunk] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const fonts = {
-    inter: { name: "Inter", class: "font-inter" },
-    poppins: { name: "Poppins", class: "font-poppins" },
-    outfit: { name: "Outfit", class: "font-outfit" },
-    spaceGrotesk: { name: "Space Grotesk", class: "font-space-grotesk" }
-  };
   useEffect(() => {
     setIsMounted(true);
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
-    const savedFont = localStorage.getItem("currentFont") || "inter";
-    setCurrentFont(savedFont);
   }, []);
   useEffect(() => {
     if (!isMounted) return;
@@ -105,30 +95,12 @@ const ThemeProvider = ({ children }) => {
     }
     localStorage.setItem("darkMode", darkMode.toString());
   }, [darkMode, isMounted]);
-  useEffect(() => {
-    if (!isMounted) return;
-    Object.values(fonts).forEach((font) => {
-      document.documentElement.classList.remove(font.class);
-    });
-    document.documentElement.classList.add(fonts[currentFont].class);
-    localStorage.setItem("currentFont", currentFont);
-    document.documentElement.style.setProperty("--site-font-family", fonts[currentFont].name + ", sans-serif");
-  }, [currentFont, isMounted]);
   const toggleDarkMode = () => {
     setDarkMode((prevMode) => !prevMode);
-  };
-  const changeFont = (fontKey) => {
-    setCurrentFont(fontKey);
-    setShowFontMenu(false);
   };
   const value = {
     darkMode,
     toggleDarkMode,
-    currentFont,
-    changeFont,
-    fonts,
-    showFontMenu,
-    setShowFontMenu,
     isHeaderShrunk,
     setHeaderShrunk
   };
@@ -250,7 +222,7 @@ const getPathname = (href) => {
   return href;
 };
 function Header() {
-  const { darkMode, toggleDarkMode, currentFont, changeFont, fonts, showFontMenu, setShowFontMenu, isHeaderShrunk } = useTheme();
+  const { darkMode, toggleDarkMode, isHeaderShrunk } = useTheme();
   const { url } = usePage();
   const navLinks = [
     { href: route("home"), label: "Ana Sayfa" },
@@ -288,34 +260,6 @@ function Header() {
       );
     }) }),
     /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-2 flex-shrink-0", children: [
-      /* @__PURE__ */ jsxs("div", { className: "relative hidden md:block", children: [
-        /* @__PURE__ */ jsxs(
-          Button,
-          {
-            onClick: () => setShowFontMenu(!showFontMenu),
-            variant: "ghost",
-            className: "flex items-center space-x-1",
-            children: [
-              /* @__PURE__ */ jsx(CaseSensitive, { className: "h-4 w-4" }),
-              /* @__PURE__ */ jsx("span", { className: "hidden sm:inline text-sm font-semibold", children: fonts[currentFont].name }),
-              /* @__PURE__ */ jsx(ChevronDown, { className: "ml-1 h-4 w-4 shrink-0 opacity-50" })
-            ]
-          }
-        ),
-        showFontMenu && /* @__PURE__ */ jsx("div", { className: "absolute right-0 mt-2 w-40 bg-background border border-border rounded-md shadow-lg z-50", children: /* @__PURE__ */ jsx("div", { className: "py-1", children: Object.entries(fonts).map(([key, font]) => /* @__PURE__ */ jsx(
-          "button",
-          {
-            onClick: () => {
-              changeFont(key);
-              setShowFontMenu(false);
-            },
-            className: `w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors ${currentFont === key ? "bg-muted font-bold" : ""}`,
-            style: { fontFamily: font.name },
-            children: font.name
-          },
-          key
-        )) }) })
-      ] }),
       /* @__PURE__ */ jsx(
         Button,
         {
@@ -353,48 +297,18 @@ function Header() {
               link.href
             );
           }) }),
-          /* @__PURE__ */ jsxs("div", { className: "mt-auto pt-8 space-y-4", children: [
-            /* @__PURE__ */ jsxs("div", { className: "relative w-full text-center", children: [
-              /* @__PURE__ */ jsxs(
-                Button,
-                {
-                  onClick: () => setShowFontMenu(!showFontMenu),
-                  variant: "outline",
-                  className: "w-full flex items-center justify-center space-x-2",
-                  children: [
-                    /* @__PURE__ */ jsx(CaseSensitive, { className: "h-4 w-4" }),
-                    /* @__PURE__ */ jsx("span", { children: fonts[currentFont].name }),
-                    /* @__PURE__ */ jsx(ChevronDown, { className: "ml-2 h-4 w-4 shrink-0 opacity-50" })
-                  ]
-                }
-              ),
-              showFontMenu && /* @__PURE__ */ jsx("div", { className: "absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-background border border-border rounded-md shadow-lg z-50", children: /* @__PURE__ */ jsx("div", { className: "py-1", children: Object.entries(fonts).map(([key, font]) => /* @__PURE__ */ jsx(
-                "button",
-                {
-                  onClick: () => {
-                    changeFont(key);
-                    setShowFontMenu(false);
-                  },
-                  className: `w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors ${currentFont === key ? "bg-muted font-bold" : ""}`,
-                  style: { fontFamily: font.name },
-                  children: font.name
-                },
-                key
-              )) }) })
-            ] }),
-            /* @__PURE__ */ jsxs(
-              Button,
-              {
-                onClick: toggleDarkMode,
-                variant: "outline",
-                className: "w-full flex items-center justify-center space-x-2",
-                children: [
-                  darkMode ? /* @__PURE__ */ jsx(Sun, { className: "h-5 w-5" }) : /* @__PURE__ */ jsx(Moon, { className: "h-5 w-5" }),
-                  /* @__PURE__ */ jsx("span", { children: darkMode ? "Aydınlık Mod" : "Karanlık Mod" })
-                ]
-              }
-            )
-          ] })
+          /* @__PURE__ */ jsx("div", { className: "mt-auto pt-8 space-y-4", children: /* @__PURE__ */ jsxs(
+            Button,
+            {
+              onClick: toggleDarkMode,
+              variant: "outline",
+              className: "w-full flex items-center justify-center space-x-2",
+              children: [
+                darkMode ? /* @__PURE__ */ jsx(Sun, { className: "h-5 w-5" }) : /* @__PURE__ */ jsx(Moon, { className: "h-5 w-5" }),
+                /* @__PURE__ */ jsx("span", { children: darkMode ? "Aydınlık Mod" : "Karanlık Mod" })
+              ]
+            }
+          ) })
         ] })
       ] })
     ] })
@@ -1073,7 +987,6 @@ function AuthenticatedLayout({ header, children, actionButton }) {
     { name: "Turlar", href: route("admin.tours.index"), activeCheck: "admin.tours." },
     { name: "İçerikler", href: route("admin.contents.index"), activeCheck: "admin.contents." },
     { name: "Destinasyonlar", href: route("admin.destinations.index"), activeCheck: "admin.destinations." },
-    { name: "Opsiyonel Aktiviteler", href: route("admin.optional-activities.index"), activeCheck: "admin.optional-activities." },
     { name: "Ayarlar", href: route("admin.settings.seo.index"), activeCheck: "admin.settings." }
   ];
   const NavLinksContent = ({ isMobile = false }) => {
@@ -1100,7 +1013,7 @@ function AuthenticatedLayout({ header, children, actionButton }) {
   };
   return /* @__PURE__ */ jsxs("div", { className: "admin-panel min-h-screen w-full bg-muted/40", children: [
     /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto sm:px-6 lg:px-8", children: [
-      /* @__PURE__ */ jsxs("header", { className: "sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background px-4 sm:px-0", children: [
+      /* @__PURE__ */ jsxs("header", { className: "z-30 flex h-16 items-center justify-between gap-4 border-b bg-background px-4 sm:px-0", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-6", children: [
           /* @__PURE__ */ jsxs(Link, { href: route("admin.dashboard"), className: "flex items-center gap-2 font-bold", children: [
             /* @__PURE__ */ jsx(Package, { className: "h-6 w-6" }),
@@ -2494,7 +2407,7 @@ const __vite_glob_0_4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
   __proto__: null,
   default: ContentForm
 }, Symbol.toStringTag, { value: "Module" }));
-function Create$2({ auth, contentCategories, destinations, media_files }) {
+function Create$3({ auth, contentCategories, destinations, media_files }) {
   const { toast: toast2 } = useToast();
   const handleFormError = (errors) => {
     let errorMessages = [];
@@ -2539,7 +2452,7 @@ function Create$2({ auth, contentCategories, destinations, media_files }) {
 }
 const __vite_glob_0_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: Create$2
+  default: Create$3
 }, Symbol.toStringTag, { value: "Module" }));
 function Edit$4({ auth, content, contentCategories, destinations }) {
   const { toast: toast2 } = useToast();
@@ -2957,6 +2870,198 @@ const __vite_glob_0_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
   __proto__: null,
   default: Index$3
 }, Symbol.toStringTag, { value: "Module" }));
+function Create$2({ auth, media_files }) {
+  const { toast: toast2 } = useToast();
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
+  const { data, setData, post, processing, errors } = useForm({
+    name: "",
+    slug: "",
+    summary: "",
+    description: "",
+    is_popular: false,
+    image_id: null
+  });
+  const generateSlug = (text) => {
+    const a = "àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;";
+    const b = "aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------";
+    const p = new RegExp(a.split("").join("|"), "g");
+    return text.toString().toLowerCase().replace(/\s+/g, "-").replace(p, (c) => b.charAt(a.indexOf(c))).replace(/&/g, "-and-").replace(/[^\w\-]+/g, "").replace(/\-\-+/g, "-").replace(/^-+/, "").replace(/-+$/, "");
+  };
+  const handleImageSelect = (media) => {
+    if (media) {
+      setSelectedImage(media);
+      setData("image_id", media.id);
+    } else {
+      setSelectedImage(null);
+      setData("image_id", null);
+    }
+  };
+  const submit = (e2) => {
+    e2.preventDefault();
+    post(route("admin.destinations.store"), {
+      onSuccess: () => {
+        toast2({
+          title: "Başarılı",
+          description: "Destinasyon başarıyla oluşturuldu."
+        });
+      },
+      onError: (errors2) => {
+        const errorMessages = Object.values(errors2).flat();
+        toast2({
+          title: "Hata",
+          description: errorMessages.join("\n") || "Bilinmeyen bir hata oluştu.",
+          variant: "destructive"
+        });
+      }
+    });
+  };
+  return /* @__PURE__ */ jsxs(
+    AuthenticatedLayout,
+    {
+      user: auth.user,
+      header: "Yeni Destinasyon Ekle",
+      children: [
+        /* @__PURE__ */ jsx(Head, { title: "Yeni Destinasyon Ekle" }),
+        /* @__PURE__ */ jsxs(Card, { children: [
+          /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsx(CardTitle, { children: "Destinasyon Bilgileri" }) }),
+          /* @__PURE__ */ jsx(CardContent, { children: /* @__PURE__ */ jsxs("form", { onSubmit: submit, className: "space-y-6", children: [
+            /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
+              /* @__PURE__ */ jsxs("div", { children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "name", children: "Destinasyon Adı" }),
+                /* @__PURE__ */ jsx(
+                  Input,
+                  {
+                    id: "name",
+                    type: "text",
+                    name: "name",
+                    value: data.name,
+                    className: "mt-1 block w-full",
+                    onChange: (e2) => {
+                      const newName = e2.target.value;
+                      setData("name", newName);
+                      if (!isSlugManuallyEdited) {
+                        setData("slug", generateSlug(newName));
+                      }
+                    },
+                    required: true
+                  }
+                ),
+                /* @__PURE__ */ jsx(InputError, { className: "mt-2", message: errors.name })
+              ] }),
+              /* @__PURE__ */ jsxs("div", { children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "slug", children: "Slug (URL)" }),
+                /* @__PURE__ */ jsx(
+                  Input,
+                  {
+                    id: "slug",
+                    type: "text",
+                    name: "slug",
+                    value: data.slug,
+                    className: "mt-1 block w-full",
+                    onChange: (e2) => {
+                      setData("slug", e2.target.value);
+                      setIsSlugManuallyEdited(true);
+                    },
+                    required: true
+                  }
+                ),
+                /* @__PURE__ */ jsx(InputError, { className: "mt-2", message: errors.slug })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "summary", children: "Özet" }),
+              /* @__PURE__ */ jsx(
+                Textarea,
+                {
+                  id: "summary",
+                  name: "summary",
+                  value: data.summary,
+                  className: "mt-1 block w-full",
+                  onChange: (e2) => setData("summary", e2.target.value)
+                }
+              ),
+              /* @__PURE__ */ jsx(InputError, { className: "mt-2", message: errors.summary })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "description", children: "Açıklama" }),
+              /* @__PURE__ */ jsx(
+                Textarea,
+                {
+                  id: "description",
+                  name: "description",
+                  value: data.description,
+                  className: "mt-1 block w-full",
+                  onChange: (e2) => setData("description", e2.target.value),
+                  rows: "5"
+                }
+              ),
+              /* @__PURE__ */ jsx(InputError, { className: "mt-2", message: errors.description })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { children: [
+              /* @__PURE__ */ jsx(Label, { children: "Görsel" }),
+              /* @__PURE__ */ jsxs("div", { className: "mt-2 border rounded-md p-4 flex flex-col items-center justify-center space-y-4", children: [
+                selectedImage ? /* @__PURE__ */ jsx(
+                  "img",
+                  {
+                    src: selectedImage.original_url,
+                    alt: selectedImage.name || selectedImage.file_name,
+                    className: "max-w-full h-48 object-contain rounded-md"
+                  }
+                ) : /* @__PURE__ */ jsxs("div", { className: "text-gray-500 flex flex-col items-center", children: [
+                  /* @__PURE__ */ jsx(ImageIcon, { className: "h-12 w-12 text-gray-400" }),
+                  /* @__PURE__ */ jsx("span", { className: "mt-2", children: "Henüz bir görsel seçilmedi." })
+                ] }),
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-2", children: [
+                  /* @__PURE__ */ jsxs(Button, { type: "button", variant: "outline", onClick: () => setIsImageModalOpen(true), children: [
+                    /* @__PURE__ */ jsx(PlusCircle, { className: "mr-2 h-4 w-4" }),
+                    selectedImage ? "Görseli Değiştir" : "Görsel Seç"
+                  ] }),
+                  selectedImage && /* @__PURE__ */ jsxs(Button, { type: "button", variant: "destructive", onClick: () => handleImageSelect(null), children: [
+                    /* @__PURE__ */ jsx(Trash2, { className: "mr-2 h-4 w-4" }),
+                    " Kaldır"
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsx(
+                  MediaManagerModal,
+                  {
+                    isOpen: isImageModalOpen,
+                    onClose: () => setIsImageModalOpen(false),
+                    onMediaSelect: (media) => {
+                      handleImageSelect(media);
+                      setIsImageModalOpen(false);
+                    },
+                    initialSelectedMedia: selectedImage,
+                    isMultiSelect: false,
+                    media: media_files
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsx(InputError, { className: "mt-2", message: errors.image_id })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-2", children: [
+              /* @__PURE__ */ jsx(
+                Checkbox,
+                {
+                  id: "is_popular",
+                  checked: data.is_popular,
+                  onCheckedChange: (checked) => setData("is_popular", checked)
+                }
+              ),
+              /* @__PURE__ */ jsx(Label, { htmlFor: "is_popular", children: "Popüler Destinasyon" })
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "flex justify-start mt-6", children: /* @__PURE__ */ jsx(Button, { type: "submit", disabled: processing, children: "Destinasyonu Kaydet" }) })
+          ] }) })
+        ] })
+      ]
+    }
+  );
+}
+const __vite_glob_0_5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: Create$2
+}, Symbol.toStringTag, { value: "Module" }));
 const RichTextEditor$1 = lazy(() => Promise.resolve().then(() => RichTextEditor$3));
 const isBrowser$1 = typeof window !== "undefined";
 function Edit$3({ auth, destination }) {
@@ -3137,7 +3242,7 @@ function Edit$3({ auth, destination }) {
     }
   );
 }
-const __vite_glob_0_5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Edit$3
 }, Symbol.toStringTag, { value: "Module" }));
@@ -3214,7 +3319,7 @@ function Index$2({ auth, destinations: initialDestinations }) {
     }
   );
 }
-const __vite_glob_0_6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index$2
 }, Symbol.toStringTag, { value: "Module" }));
@@ -3316,7 +3421,7 @@ function OptionalActivityForm({ data, setData, errors, media_files }) {
     ] })
   ] });
 }
-const __vite_glob_0_10 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_11 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: OptionalActivityForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -3353,7 +3458,7 @@ function Create$1({ auth, media_files }) {
     }
   );
 }
-const __vite_glob_0_7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Create$1
 }, Symbol.toStringTag, { value: "Module" }));
@@ -3392,7 +3497,7 @@ function Edit$2({ auth, activity, media_files }) {
     }
   );
 }
-const __vite_glob_0_8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_9 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Edit$2
 }, Symbol.toStringTag, { value: "Module" }));
@@ -3443,7 +3548,7 @@ function Index$1({ auth, activities }) {
     }
   );
 }
-const __vite_glob_0_9 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_10 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index$1
 }, Symbol.toStringTag, { value: "Module" }));
@@ -3467,6 +3572,40 @@ const Switch = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ *
   }
 ));
 Switch.displayName = SwitchPrimitives.Root.displayName;
+const Accordion = AccordionPrimitive.Root;
+const AccordionItem = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(AccordionPrimitive.Item, { ref, className: cn("border-b", className), ...props }));
+AccordionItem.displayName = "AccordionItem";
+const AccordionTrigger = React.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(AccordionPrimitive.Header, { className: "flex", children: /* @__PURE__ */ jsxs(
+  AccordionPrimitive.Trigger,
+  {
+    ref,
+    className: cn(
+      "flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline text-left [&[data-state=open]>svg]:rotate-180",
+      className
+    ),
+    ...props,
+    children: [
+      children,
+      /* @__PURE__ */ jsx(
+        ChevronDown,
+        {
+          className: "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200"
+        }
+      )
+    ]
+  }
+) }));
+AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
+const AccordionContent = React.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(
+  AccordionPrimitive.Content,
+  {
+    ref,
+    className: "overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
+    ...props,
+    children: /* @__PURE__ */ jsx("div", { className: cn("pb-4 pt-0", className), children })
+  }
+));
+AccordionContent.displayName = AccordionPrimitive.Content.displayName;
 function Seo({ auth, settings }) {
   const { data, setData, post, processing, errors } = useForm({
     settings: {
@@ -3489,6 +3628,29 @@ function Seo({ auth, settings }) {
     }
   });
   const { toast: toast2 } = useToast();
+  const [cachedPages, setCachedPages] = useState([]);
+  const [isLoadingCache, setIsLoadingCache] = useState(false);
+  const fetchCachedPages = useCallback(async () => {
+    setIsLoadingCache(true);
+    try {
+      const response = await fetch(route("admin.settings.cache.list"));
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data2 = await response.json();
+      setCachedPages(data2);
+    } catch (error) {
+      console.error("Failed to fetch cached pages:", error);
+      toast2({
+        title: "Hata!",
+        description: "Önbelleğe alınmış sayfalar getirilirken bir hata oluştu.",
+        variant: "destructive"
+      });
+      setCachedPages([]);
+    } finally {
+      setIsLoadingCache(false);
+    }
+  }, [toast2]);
   const submit = (e2) => {
     e2.preventDefault();
     post(route("admin.settings.seo.store"), {
@@ -3564,29 +3726,78 @@ function Seo({ auth, settings }) {
       actionButton: /* @__PURE__ */ jsx(Button, { onClick: submit, disabled: processing, children: "Ayarları Kaydet" }),
       children: [
         /* @__PURE__ */ jsx(Head, { title: "Genel Ayarlar" }),
-        /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-          /* @__PURE__ */ jsxs(Card, { className: "cache-management-card", children: [
-            /* @__PURE__ */ jsxs(CardHeader, { children: [
-              /* @__PURE__ */ jsx(CardTitle, { children: "Manuel Önbellek Yönetimi" }),
-              /* @__PURE__ */ jsx(CardDescription, { children: "Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin." })
-            ] }),
-            /* @__PURE__ */ jsx(CardContent, { children: /* @__PURE__ */ jsx(
-              Button,
-              {
-                onClick: handleClearCache,
-                variant: "destructive",
-                disabled: processing,
-                className: "clear-cache-button",
-                children: "Tüm Site Önbelleğini Temizle"
-              }
-            ) })
+        /* @__PURE__ */ jsx("form", { onSubmit: submit, children: /* @__PURE__ */ jsxs(Tabs, { defaultValue: "seo", className: "w-full", children: [
+          /* @__PURE__ */ jsxs(TabsList, { className: "grid w-full grid-cols-2", children: [
+            /* @__PURE__ */ jsx(TabsTrigger, { value: "seo", children: "SEO Ayarları" }),
+            /* @__PURE__ */ jsx(TabsTrigger, { value: "cache", children: "Önbellek Ayarları" })
           ] }),
-          /* @__PURE__ */ jsxs("form", { onSubmit: submit, className: "space-y-8", children: [
-            /* @__PURE__ */ jsxs(Card, { children: [
-              /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsx(CardTitle, { children: "Önbellek Ayarları" }) }),
-              /* @__PURE__ */ jsx(CardContent, { children: /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-                /* @__PURE__ */ jsx(Label, { htmlFor: "cache-enabled", className: "text-base", children: "Site Geneli Önbellekleme" }),
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-3", children: [
+          /* @__PURE__ */ jsx(TabsContent, { value: "seo", children: /* @__PURE__ */ jsxs(Card, { className: "mt-4", children: [
+            /* @__PURE__ */ jsxs(CardHeader, { children: [
+              /* @__PURE__ */ jsx(CardTitle, { children: "SEO Ayarları" }),
+              /* @__PURE__ */ jsx(CardDescription, { children: "Arama motoru optimizasyonu için varsayılan ve sayfaya özel başlık ve açıklama ayarları." })
+            ] }),
+            /* @__PURE__ */ jsxs(CardContent, { className: "space-y-6 pt-4", children: [
+              /* @__PURE__ */ jsxs("div", { className: "space-y-4 rounded-md border p-4 shadow-sm", children: [
+                /* @__PURE__ */ jsx("h3", { className: "text-md font-medium", children: "Genel SEO Ayarları" }),
+                renderSettingInput("seo.defaults.title", "Site Başlığı"),
+                renderSettingInput("seo.defaults.description", "Site Açıklaması", true)
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "space-y-4 rounded-md border p-4 shadow-sm", children: [
+                /* @__PURE__ */ jsx("h3", { className: "text-md font-medium", children: "Tur Sayfaları" }),
+                /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground", children: [
+                  "Değişkenler: ",
+                  `{site_title}`,
+                  ", ",
+                  `{tour_title}`,
+                  ", ",
+                  `{tour_summary}`
+                ] }),
+                renderSettingInput("seo.tours.index.title", "Tur Listeleme Sayfası Başlığı"),
+                renderSettingInput("seo.tours.index.description", "Tur Listeleme Sayfası Açıklaması", true),
+                renderSettingInput("seo.tour.show.title", "Tur Detay Sayfası Başlığı"),
+                renderSettingInput("seo.tour.show.description", "Tur Detay Sayfası Açıklaması", true)
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "space-y-4 rounded-md border p-4 shadow-sm", children: [
+                /* @__PURE__ */ jsx("h3", { className: "text-md font-medium", children: "İçerik Sayfaları" }),
+                /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground", children: [
+                  "Değişkenler: ",
+                  `{site_title}`,
+                  ", ",
+                  `{content_title}`,
+                  ", ",
+                  `{content_summary}`
+                ] }),
+                renderSettingInput("seo.contents.index.title", "İçerik Listeleme Sayfası Başlığı"),
+                renderSettingInput("seo.contents.index.description", "İçerik Listeleme Sayfası Açıklaması", true),
+                renderSettingInput("seo.content.show.title", "İçerik Detay Sayfası Başlığı"),
+                renderSettingInput("seo.content.show.description", "İçerik Detay Sayfası Açıklaması", true)
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "space-y-4 rounded-md border p-4 shadow-sm", children: [
+                /* @__PURE__ */ jsx("h3", { className: "text-md font-medium", children: "Destinasyon Sayfaları" }),
+                /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground", children: [
+                  "Değişkenler: ",
+                  `{site_title}`,
+                  ", ",
+                  `{destination_name}`,
+                  ", ",
+                  `{destination_description}`
+                ] }),
+                renderSettingInput("seo.destinations.index.title", "Destinasyon Listeleme Sayfası Başlığı"),
+                renderSettingInput("seo.destinations.index.description", "Destinasyon Listeleme Sayfası Açıklaması", true),
+                renderSettingInput("seo.destination.show.title", "Destinasyon Detay Sayfası Başlığı"),
+                renderSettingInput("seo.destination.show.description", "Destinasyon Detay Sayfası Açıklaması", true)
+              ] })
+            ] })
+          ] }) }),
+          /* @__PURE__ */ jsx(TabsContent, { value: "cache", children: /* @__PURE__ */ jsxs(Card, { className: "mt-4", children: [
+            /* @__PURE__ */ jsxs(CardHeader, { children: [
+              /* @__PURE__ */ jsx(CardTitle, { children: "Önbellek Ayarları" }),
+              /* @__PURE__ */ jsx(CardDescription, { children: "Sitenin performansını yönetmek için önbellek ayarlarını yapılandırın ve yönetin." })
+            ] }),
+            /* @__PURE__ */ jsxs(CardContent, { className: "space-y-6 pt-4", children: [
+              /* @__PURE__ */ jsxs("div", { className: "space-y-4 rounded-md border p-4 shadow-sm", children: [
+                /* @__PURE__ */ jsx("h3", { className: "text-md font-medium", children: "Otomatik Önbellekleme" }),
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-3 pt-2", children: [
                   /* @__PURE__ */ jsx(
                     Switch,
                     {
@@ -3595,84 +3806,66 @@ function Seo({ auth, settings }) {
                       onCheckedChange: handleSwitchChange
                     }
                   ),
-                  /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "Aktif olduğunda, sitenin sayfaları performansı artırmak için 24 saat boyunca önbelleğe alınır." })
-                ] })
-              ] }) })
-            ] }),
-            /* @__PURE__ */ jsxs(Card, { children: [
-              /* @__PURE__ */ jsxs(CardHeader, { children: [
-                /* @__PURE__ */ jsx(CardTitle, { children: "Genel SEO Ayarları" }),
-                /* @__PURE__ */ jsx(CardDescription, { children: "Sitenin varsayılan başlık ve açıklama ayarları." })
-              ] }),
-              /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-                renderSettingInput("seo.defaults.title", "Site Başlığı"),
-                renderSettingInput("seo.defaults.description", "Site Açıklaması", true)
-              ] })
-            ] }),
-            /* @__PURE__ */ jsxs(Card, { children: [
-              /* @__PURE__ */ jsxs(CardHeader, { children: [
-                /* @__PURE__ */ jsx(CardTitle, { children: "Tur Sayfaları" }),
-                /* @__PURE__ */ jsxs(CardDescription, { children: [
-                  "Değişkenler: ",
-                  `{site_title}`,
-                  ", ",
-                  `{tour_title}`,
-                  ", ",
-                  `{tour_summary}`
+                  /* @__PURE__ */ jsxs("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ jsx(Label, { htmlFor: "cache-enabled", className: "text-base", children: "Site Geneli Önbellekleme" }),
+                    /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "Aktif olduğunda, sitenin sayfaları performansı artırmak için 24 saat boyunca önbelleğe alınır." })
+                  ] })
                 ] })
               ] }),
-              /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-                renderSettingInput("seo.tours.index.title", "Tur Listeleme Sayfası Başlığı"),
-                renderSettingInput("seo.tours.index.description", "Tur Listeleme Sayfası Açıklaması", true),
-                renderSettingInput("seo.tour.show.title", "Tur Detay Sayfası Başlığı"),
-                renderSettingInput("seo.tour.show.description", "Tur Detay Sayfası Açıklaması", true)
-              ] })
-            ] }),
-            /* @__PURE__ */ jsxs(Card, { children: [
-              /* @__PURE__ */ jsxs(CardHeader, { children: [
-                /* @__PURE__ */ jsx(CardTitle, { children: "İçerik Sayfaları" }),
-                /* @__PURE__ */ jsxs(CardDescription, { children: [
-                  "Değişkenler: ",
-                  `{site_title}`,
-                  ", ",
-                  `{content_title}`,
-                  ", ",
-                  `{content_summary}`
-                ] })
-              ] }),
-              /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-                renderSettingInput("seo.contents.index.title", "İçerik Listeleme Sayfası Başlığı"),
-                renderSettingInput("seo.contents.index.description", "İçerik Listeleme Sayfası Açıklaması", true),
-                renderSettingInput("seo.content.show.title", "İçerik Detay Sayfası Başlığı"),
-                renderSettingInput("seo.content.show.description", "İçerik Detay Sayfası Açıklaması", true)
-              ] })
-            ] }),
-            /* @__PURE__ */ jsxs(Card, { children: [
-              /* @__PURE__ */ jsxs(CardHeader, { children: [
-                /* @__PURE__ */ jsx(CardTitle, { children: "Destinasyon Sayfaları" }),
-                /* @__PURE__ */ jsxs(CardDescription, { children: [
-                  "Değişkenler: ",
-                  `{site_title}`,
-                  ", ",
-                  `{destination_name}`,
-                  ", ",
-                  `{destination_description}`
-                ] })
-              ] }),
-              /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-                renderSettingInput("seo.destinations.index.title", "Destinasyon Listeleme Sayfası Başlığı"),
-                renderSettingInput("seo.destinations.index.description", "Destinasyon Listeleme Sayfası Açıklaması", true),
-                renderSettingInput("seo.destination.show.title", "Destinasyon Detay Sayfası Başlığı"),
-                renderSettingInput("seo.destination.show.description", "Destinasyon Detay Sayfası Açıklaması", true)
+              /* @__PURE__ */ jsxs("div", { className: "space-y-4 rounded-md border p-4 shadow-sm", children: [
+                /* @__PURE__ */ jsx("h3", { className: "text-md font-medium", children: "Manuel Önbellek Yönetimi" }),
+                /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin." }),
+                /* @__PURE__ */ jsx(
+                  Button,
+                  {
+                    type: "button",
+                    onClick: handleClearCache,
+                    variant: "destructive",
+                    disabled: processing,
+                    className: "clear-cache-button mt-2",
+                    children: "Tüm Site Önbelleğini Temizle"
+                  }
+                ),
+                /* @__PURE__ */ jsx(Accordion, { type: "single", collapsible: true, className: "w-full mt-4", children: /* @__PURE__ */ jsxs(AccordionItem, { value: "item-1", children: [
+                  /* @__PURE__ */ jsx(AccordionTrigger, { onClick: () => !cachedPages.length && fetchCachedPages(), children: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+                    "Önbelleğe Alınmış Sayfaları Görüntüle (",
+                    cachedPages.length,
+                    ")",
+                    /* @__PURE__ */ jsx(
+                      Button,
+                      {
+                        type: "button",
+                        variant: "ghost",
+                        size: "icon",
+                        onClick: (e2) => {
+                          e2.stopPropagation();
+                          fetchCachedPages();
+                        },
+                        disabled: isLoadingCache,
+                        className: "h-6 w-6",
+                        children: /* @__PURE__ */ jsx(RefreshCw, { className: `h-4 w-4 ${isLoadingCache ? "animate-spin" : ""}` })
+                      }
+                    )
+                  ] }) }),
+                  /* @__PURE__ */ jsx(AccordionContent, { children: isLoadingCache ? /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground p-4", children: "Yükleniyor..." }) : cachedPages.length > 0 ? /* @__PURE__ */ jsx("div", { className: "max-h-60 overflow-y-auto", children: /* @__PURE__ */ jsx("ul", { className: "space-y-2 p-2", children: cachedPages.map((page, index) => /* @__PURE__ */ jsxs("li", { className: "text-sm p-2 rounded-md bg-muted/50", children: [
+                    /* @__PURE__ */ jsx("p", { className: "font-mono text-xs break-all", children: page.url }),
+                    /* @__PURE__ */ jsxs("p", { className: "text-xs text-muted-foreground mt-1", children: [
+                      "Son Değişiklik: ",
+                      page.modified_at,
+                      " | Boyut: ",
+                      page.size
+                    ] })
+                  ] }, index)) }) }) : /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground p-4", children: "Görüntülenecek önbelleğe alınmış sayfa bulunamadı." }) })
+                ] }) })
               ] })
             ] })
-          ] })
-        ] })
+          ] }) })
+        ] }) })
       ]
     }
   );
 }
-const __vite_glob_0_11 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Seo
 }, Symbol.toStringTag, { value: "Module" }));
@@ -3698,40 +3891,6 @@ const Separator = React.forwardRef(
   )
 );
 Separator.displayName = SeparatorPrimitive.Root.displayName;
-const Accordion = AccordionPrimitive.Root;
-const AccordionItem = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(AccordionPrimitive.Item, { ref, className: cn("border-b", className), ...props }));
-AccordionItem.displayName = "AccordionItem";
-const AccordionTrigger = React.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(AccordionPrimitive.Header, { className: "flex", children: /* @__PURE__ */ jsxs(
-  AccordionPrimitive.Trigger,
-  {
-    ref,
-    className: cn(
-      "flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline text-left [&[data-state=open]>svg]:rotate-180",
-      className
-    ),
-    ...props,
-    children: [
-      children,
-      /* @__PURE__ */ jsx(
-        ChevronDown,
-        {
-          className: "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200"
-        }
-      )
-    ]
-  }
-) }));
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
-const AccordionContent = React.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ jsx(
-  AccordionPrimitive.Content,
-  {
-    ref,
-    className: "overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
-    ...props,
-    children: /* @__PURE__ */ jsx("div", { className: cn("pb-4 pt-0", className), children })
-  }
-));
-AccordionContent.displayName = AccordionPrimitive.Content.displayName;
 const initializePricingTiers$1 = (seasons, categories) => {
   let tiers = [];
   seasons.forEach((season) => {
@@ -4460,7 +4619,7 @@ function Create({ auth, destinations, optionalActivities, media_files, config_se
     }
   );
 }
-const __vite_glob_0_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Create
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5057,7 +5216,7 @@ function Edit$1({ auth, tour, destinations, optionalActivities, media_files, con
     }
   );
 }
-const __vite_glob_0_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_14 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Edit$1
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5072,7 +5231,10 @@ function Index({ auth, tours }) {
     {
       user: auth.user,
       header: "Turlar",
-      actionButton: /* @__PURE__ */ jsx(Button, { asChild: true, children: /* @__PURE__ */ jsx(Link, { href: route("admin.tours.create"), children: "Yeni Tur Ekle" }) }),
+      actionButton: /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsx(Button, { asChild: true, variant: "outline", children: /* @__PURE__ */ jsx(Link, { href: route("admin.optional-activities.index"), children: "Opsiyonel Aktiviteler" }) }),
+        /* @__PURE__ */ jsx(Button, { asChild: true, children: /* @__PURE__ */ jsx(Link, { href: route("admin.tours.create"), children: "Yeni Tur Ekle" }) })
+      ] }),
       children: [
         /* @__PURE__ */ jsx(Head, { title: "Turlar" }),
         /* @__PURE__ */ jsx(Card, { children: /* @__PURE__ */ jsxs(CardContent, { className: "p-4", children: [
@@ -5107,7 +5269,7 @@ function Index({ auth, tours }) {
     }
   );
 }
-const __vite_glob_0_14 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5213,7 +5375,7 @@ function ContactUs() {
     ] }) })
   ] });
 }
-const __vite_glob_0_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: ContactUs
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5296,15 +5458,14 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
 function ContentDetail({ seo }) {
   var _a;
   const { post, relatedPosts, allCategories, allDestinations, relatedTours, recentContents } = usePage().props;
-  const { fonts, currentFont } = useTheme();
   if (!post) {
-    return /* @__PURE__ */ jsx(Guest, { children: /* @__PURE__ */ jsx("div", { className: `bg-background text-foreground min-h-screen ${fonts[currentFont].class} flex items-center justify-center`, children: /* @__PURE__ */ jsxs("div", { className: "text-center", children: [
+    return /* @__PURE__ */ jsx(Guest, { children: /* @__PURE__ */ jsx("div", { className: `bg-background text-foreground min-h-screen flex items-center justify-center`, children: /* @__PURE__ */ jsxs("div", { className: "text-center", children: [
       /* @__PURE__ */ jsx("h1", { className: "text-4xl font-bold mb-4", children: "İçerik Bulunamadı" }),
       /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Aradığınız içerik mevcut değil veya silinmiş olabilir." }),
       /* @__PURE__ */ jsx(Link, { href: route("home"), className: "mt-6 inline-block bg-primary text-primary-foreground px-6 py-2 rounded-md hover:bg-primary/80 transition-colors", children: "Ana Sayfaya Dön" })
     ] }) }) });
   }
-  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `content-detail-page bg-background text-foreground ${fonts[currentFont].class}`, children: [
+  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `content-detail-page bg-background text-foreground`, children: [
     /* @__PURE__ */ jsxs(
       "section",
       {
@@ -5352,14 +5513,13 @@ function ContentDetail({ seo }) {
     ] }) })
   ] }) });
 }
-const __vite_glob_0_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: ContentDetail
 }, Symbol.toStringTag, { value: "Module" }));
 function Contents({ seo }) {
   var _a, _b;
   const { posts: backendPosts, categories: backendCategories, destinations: backendDestinations, filters } = usePage().props;
-  const { darkMode, toggleDarkMode, currentFont, changeFont, fonts } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState(filters.category || "all");
   const [selectedDestination, setSelectedDestination] = useState(filters.destination || "all");
   const [searchQuery, setSearchQuery] = useState(filters.search || "");
@@ -5388,7 +5548,7 @@ function Contents({ seo }) {
       applyFilters();
     }
   };
-  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `blog-page bg-background text-foreground min-h-screen ${fonts[currentFont].class}`, children: [
+  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `blog-page bg-background text-foreground min-h-screen`, children: [
     /* @__PURE__ */ jsxs("section", { className: "blog-hero-section relative h-[40vh] md:h-[50vh] flex items-center justify-center text-center bg-cover bg-center", style: { backgroundImage: `url(${((_b = (_a = posts[0]) == null ? void 0 : _a.image) == null ? void 0 : _b.original_url) || "https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"})` }, children: [
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/60 blog-hero-overlay" }),
       /* @__PURE__ */ jsxs("div", { className: "relative z-10 text-white p-4 max-w-4xl mx-auto blog-hero-content", children: [
@@ -5608,7 +5768,7 @@ function Contents({ seo }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Contents
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5624,14 +5784,14 @@ function Dashboard() {
     }
   );
 }
-const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Dashboard
 }, Symbol.toStringTag, { value: "Module" }));
 function DestinationDetail({ seo }) {
   var _a;
   const { destination } = usePage().props;
-  const { fonts, currentFont, darkMode } = useTheme();
+  const { darkMode } = useTheme();
   const [activeSection, setActiveSection] = useState("about");
   const [lightboxIndex, setLightboxIndex] = useState(-1);
   const toursCarouselRef = useRef(null);
@@ -5654,7 +5814,7 @@ function DestinationDetail({ seo }) {
     };
   }, [destination.tours, destination.contents]);
   if (!destination) {
-    return /* @__PURE__ */ jsx(Guest, { children: /* @__PURE__ */ jsx("div", { className: `bg-background text-foreground min-h-screen ${fonts[currentFont].class}`, children: /* @__PURE__ */ jsxs("main", { className: "max-w-6xl mx-auto px-4 py-8", children: [
+    return /* @__PURE__ */ jsx(Guest, { children: /* @__PURE__ */ jsx("div", { className: `bg-background text-foreground min-h-screen`, children: /* @__PURE__ */ jsxs("main", { className: "max-w-6xl mx-auto px-4 py-8", children: [
       /* @__PURE__ */ jsx("h1", { className: "text-4xl font-bold mb-6", children: "Destinasyon Bulunamadı" }),
       /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Aradığınız destinasyon mevcut değil veya silinmiş olabilir." })
     ] }) }) });
@@ -5681,7 +5841,7 @@ function DestinationDetail({ seo }) {
       window.removeEventListener("resize", checkActiveSection);
     };
   }, []);
-  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `destination-detail-page bg-background text-foreground min-h-screen ${fonts[currentFont].class}`, children: [
+  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `destination-detail-page bg-background text-foreground min-h-screen`, children: [
     /* @__PURE__ */ jsxs("section", { className: "hero-section relative h-[50vh] flex items-center justify-center text-center bg-cover bg-center", style: { backgroundImage: `url(${((_a = destination.image) == null ? void 0 : _a.original_url) || "https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"})` }, children: [
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/60 hero-overlay" }),
       /* @__PURE__ */ jsxs("div", { className: "relative z-10 text-white p-4 max-w-4xl mx-auto hero-content", children: [
@@ -5736,7 +5896,7 @@ function DestinationDetail({ seo }) {
       )
     ] }) }) }),
     /* @__PURE__ */ jsx("div", { className: "max-w-6xl mx-auto px-4 py-8", children: /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 gap-8", children: /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-      /* @__PURE__ */ jsx("section", { id: "tours", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
+      /* @__PURE__ */ jsx("section", { id: "tours", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border shadow-sm", children: [
         /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-2xl font-bold", children: [
           destination.name,
           " Turları"
@@ -5791,11 +5951,11 @@ function DestinationDetail({ seo }) {
           ] }, tour.id);
         }) }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için henüz tur bulunmamaktadır." }) })
       ] }) }),
-      /* @__PURE__ */ jsx("section", { id: "about", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
+      /* @__PURE__ */ jsx("section", { id: "about", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border shadow-sm", children: [
         /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsx(CardTitle, { children: "Destinasyon Hakkında" }) }),
         /* @__PURE__ */ jsx(CardContent, { children: destination.description ? /* @__PURE__ */ jsx("div", { className: "prose prose-slate dark:prose-invert max-w-none text-foreground", dangerouslySetInnerHTML: { __html: destination.description } }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için detaylı bir açıklama bulunmamaktadır." }) })
       ] }) }),
-      /* @__PURE__ */ jsx("section", { id: "contents", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
+      /* @__PURE__ */ jsx("section", { id: "contents", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border shadow-sm", children: [
         /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-2xl font-bold", children: [
           destination.name,
           " İçerikleri"
@@ -5841,7 +6001,7 @@ function DestinationDetail({ seo }) {
           ] }, content.id);
         }) }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için henüz içerik bulunmamaktadır." }) })
       ] }) }),
-      /* @__PURE__ */ jsx("section", { id: "gallery", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
+      /* @__PURE__ */ jsx("section", { id: "gallery", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border shadow-sm", children: [
         /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-2xl font-bold", children: [
           destination.name,
           " Galerisi"
@@ -5877,15 +6037,14 @@ function DestinationDetail({ seo }) {
     ] }) }) })
   ] }) });
 }
-const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: DestinationDetail
 }, Symbol.toStringTag, { value: "Module" }));
 function Destinations({ seo }) {
   var _a, _b;
   const { destinations } = usePage().props;
-  const { fonts, currentFont } = useTheme();
-  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `destinations-page bg-background text-foreground min-h-screen ${fonts[currentFont].class}`, children: [
+  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `destinations-page bg-background text-foreground min-h-screen`, children: [
     /* @__PURE__ */ jsxs("section", { className: "hero-section relative h-[40vh] md:h-[50vh] flex items-center justify-center text-center bg-cover bg-center", style: { backgroundImage: `url(${((_b = (_a = destinations[0]) == null ? void 0 : _a.image) == null ? void 0 : _b.original_url) || "/images/hero-destinations.jpg"})` }, children: [
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/60 hero-overlay" }),
       /* @__PURE__ */ jsxs("div", { className: "relative z-10 text-white p-4 max-w-4xl mx-auto hero-content", children: [
@@ -5921,7 +6080,7 @@ function Destinations({ seo }) {
     ] })
   ] }) });
 }
-const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Destinations
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6149,7 +6308,7 @@ function Home({ tours, popularDestinations, seo }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Home
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6164,7 +6323,7 @@ const Tours$1 = () => {
   }, [selectedDestinations, selectedDurations, selectedPrices, sortBy]);
   return /* @__PURE__ */ jsx("div", {});
 };
-const __vite_glob_0_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Tours$1
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6381,7 +6540,7 @@ function DeleteUserForm({ className = "" }) {
     ] }) })
   ] });
 }
-const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: DeleteUserForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6528,7 +6687,7 @@ function UpdatePasswordForm({ className = "" }) {
     ] })
   ] });
 }
-const __vite_glob_0_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdatePasswordForm
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6617,7 +6776,7 @@ function UpdateProfileInformation({
     ] })
   ] });
 }
-const __vite_glob_0_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: UpdateProfileInformation
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6644,7 +6803,7 @@ function Edit({ mustVerifyEmail, status }) {
     }
   );
 }
-const __vite_glob_0_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Edit
 }, Symbol.toStringTag, { value: "Module" }));
@@ -6819,7 +6978,7 @@ function TourDetail({ tour, config, seo }) {
   const [lightboxIndex, setLightboxIndex] = useState(-1);
   const [isNavSticky, setNavSticky] = useState(false);
   const [navTop, setNavTop] = useState(64);
-  const { darkMode, fonts, currentFont, setHeaderShrunk } = useTheme();
+  const { darkMode, setHeaderShrunk } = useTheme();
   const tourNavRef = useRef(null);
   const bookingFormRef = useRef(null);
   const heroRef = useRef(null);
@@ -6939,7 +7098,7 @@ function TourDetail({ tour, config, seo }) {
       setHeaderShrunk(false);
     };
   }, [setHeaderShrunk]);
-  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `bg-background text-foreground min-h-screen ${fonts[currentFont].class}`, children: [
+  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsxs("div", { className: `bg-background text-foreground min-h-screen`, children: [
     /* @__PURE__ */ jsxs("div", { ref: heroRef, className: "relative h-[60vh] md:h-[70vh] bg-cover bg-center", style: { backgroundImage: `url(${featuredImageUrl || "/images/placeholder.png"})` }, children: [
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/45" }),
       /* @__PURE__ */ jsxs("div", { className: "relative max-w-6xl mx-auto px-4 h-full flex flex-col justify-center text-white", children: [
@@ -7079,7 +7238,7 @@ function TourDetail({ tour, config, seo }) {
           /* @__PURE__ */ jsx("h2", { className: "text-2xl font-bold mb-4", children: "Günlük Program" }),
           /* @__PURE__ */ jsx(Accordion, { type: "multiple", defaultValue: itineraryData.map((item) => `item-${item.day_number}`), className: "w-full", children: itineraryData.map((item) => /* @__PURE__ */ jsxs(AccordionItem, { value: `item-${item.day_number}`, className: "border border-gray-300 border-l-8 border-l-primary rounded-tr-lg rounded-br-lg mb-4 shadow-sm accordion-item-custom", children: [
             /* @__PURE__ */ jsx(AccordionTrigger, { className: "px-2 lg:px-6 py-4 hover:no-underline", children: /* @__PURE__ */ jsx("div", { className: "flex flex-col items-start text-left", children: /* @__PURE__ */ jsx("h3", { className: "font-bold lg:text-xl text-lg text-foreground mb-1", children: item.title }) }) }),
-            /* @__PURE__ */ jsx(AccordionContent, { className: "px-6 pb-4 pt-0", children: (item.activities || []).map((activity, activityIndex) => /* @__PURE__ */ jsx("div", { className: `mb-2 ${activity.is_highlight ? "bg-blue-50 p-3 rounded-md" : ""}`, children: /* @__PURE__ */ jsx("div", { className: "prose prose-slate dark:prose-invert max-w-none prose-sm", dangerouslySetInnerHTML: { __html: activity.description } }) }, `activity-${item.day_number}-${activityIndex}`)) })
+            /* @__PURE__ */ jsx(AccordionContent, { className: "px-6 pb-4 pt-0", children: (item.activities || []).map((activity, activityIndex) => /* @__PURE__ */ jsx("div", { className: `mb-2 ${activity.is_highlight ? "bg-orange-100 dark:bg-orange-900/50 p-3 rounded-md" : ""}`, children: /* @__PURE__ */ jsx("div", { className: "prose prose-slate dark:prose-invert max-w-none prose-sm", dangerouslySetInnerHTML: { __html: activity.description } }) }, `activity-${item.day_number}-${activityIndex}`)) })
           ] }, item.day_number)) })
         ] }) }),
         /* @__PURE__ */ jsx("section", { id: "pricing", className: "space-y-1 lg:space-y-0", children: /* @__PURE__ */ jsxs("div", { className: "bg-card rounded-lg border border-border p-4 lg:p-6", children: [
@@ -7219,12 +7378,12 @@ function TourDetail({ tour, config, seo }) {
     ] }) })
   ] }) });
 }
-const __vite_glob_0_27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: TourDetail
 }, Symbol.toStringTag, { value: "Module" }));
 function Tours({ tours: backendTours, allDestinations, filters, seo }) {
-  const { fonts, currentFont, setHeaderShrunk } = useTheme();
+  const { setHeaderShrunk } = useTheme();
   const [isFilterBarSticky, setFilterBarSticky] = useState(false);
   const [filterBarTop, setFilterBarTop] = useState(64);
   const filterBarRef = useRef(null);
@@ -7315,7 +7474,7 @@ function Tours({ tours: backendTours, allDestinations, filters, seo }) {
       setHeaderShrunk(false);
     };
   }, [setHeaderShrunk]);
-  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsx("div", { className: `tours-page bg-background text-foreground min-h-screen ${fonts[currentFont].class}`, children: /* @__PURE__ */ jsxs("div", { className: "max-w-6xl mx-auto px-4", children: [
+  return /* @__PURE__ */ jsx(Guest, { seo, children: /* @__PURE__ */ jsx("div", { className: `tours-page bg-background text-foreground min-h-screen`, children: /* @__PURE__ */ jsxs("div", { className: "max-w-6xl mx-auto px-4", children: [
     /* @__PURE__ */ jsx("div", { className: "py-6", children: /* @__PURE__ */ jsxs(
       "section",
       {
@@ -7485,7 +7644,7 @@ function Tours({ tours: backendTours, allDestinations, filters, seo }) {
     ] }) }) })
   ] }) }) });
 }
-const __vite_glob_0_28 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_29 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Tours
 }, Symbol.toStringTag, { value: "Module" }));
@@ -7881,7 +8040,7 @@ function Welcome({ auth, laravelVersion, phpVersion }) {
     ] })
   ] });
 }
-const __vite_glob_0_29 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_30 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Welcome
 }, Symbol.toStringTag, { value: "Module" }));
@@ -8102,7 +8261,7 @@ function s(t, r, e2, i2) {
   return t ? s2.toString() : s2;
 }
 const resolve = (name) => {
-  const pages = /* @__PURE__ */ Object.assign({ "./Pages/AboutUs.jsx": __vite_glob_0_0, "./Pages/Admin/Contents/Create.jsx": __vite_glob_0_1, "./Pages/Admin/Contents/Edit.jsx": __vite_glob_0_2, "./Pages/Admin/Contents/Index.jsx": __vite_glob_0_3, "./Pages/Admin/Contents/Partials/ContentForm.jsx": __vite_glob_0_4, "./Pages/Admin/Destinations/Edit.jsx": __vite_glob_0_5, "./Pages/Admin/Destinations/Index.jsx": __vite_glob_0_6, "./Pages/Admin/OptionalActivities/Create.jsx": __vite_glob_0_7, "./Pages/Admin/OptionalActivities/Edit.jsx": __vite_glob_0_8, "./Pages/Admin/OptionalActivities/Index.jsx": __vite_glob_0_9, "./Pages/Admin/OptionalActivities/Partials/OptionalActivityForm.jsx": __vite_glob_0_10, "./Pages/Admin/Settings/Seo.jsx": __vite_glob_0_11, "./Pages/Admin/Tours/Create.jsx": __vite_glob_0_12, "./Pages/Admin/Tours/Edit.jsx": __vite_glob_0_13, "./Pages/Admin/Tours/Index.jsx": __vite_glob_0_14, "./Pages/ContactUs.jsx": __vite_glob_0_15, "./Pages/ContentDetail.jsx": __vite_glob_0_16, "./Pages/Contents.jsx": __vite_glob_0_17, "./Pages/Dashboard.jsx": __vite_glob_0_18, "./Pages/DestinationDetail.jsx": __vite_glob_0_19, "./Pages/Destinations.jsx": __vite_glob_0_20, "./Pages/Home.jsx": __vite_glob_0_21, "./Pages/Pages/Tours.jsx": __vite_glob_0_22, "./Pages/Profile/Edit.jsx": __vite_glob_0_23, "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_24, "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_25, "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_26, "./Pages/TourDetail.jsx": __vite_glob_0_27, "./Pages/Tours.jsx": __vite_glob_0_28, "./Pages/Welcome.jsx": __vite_glob_0_29 });
+  const pages = /* @__PURE__ */ Object.assign({ "./Pages/AboutUs.jsx": __vite_glob_0_0, "./Pages/Admin/Contents/Create.jsx": __vite_glob_0_1, "./Pages/Admin/Contents/Edit.jsx": __vite_glob_0_2, "./Pages/Admin/Contents/Index.jsx": __vite_glob_0_3, "./Pages/Admin/Contents/Partials/ContentForm.jsx": __vite_glob_0_4, "./Pages/Admin/Destinations/Create.jsx": __vite_glob_0_5, "./Pages/Admin/Destinations/Edit.jsx": __vite_glob_0_6, "./Pages/Admin/Destinations/Index.jsx": __vite_glob_0_7, "./Pages/Admin/OptionalActivities/Create.jsx": __vite_glob_0_8, "./Pages/Admin/OptionalActivities/Edit.jsx": __vite_glob_0_9, "./Pages/Admin/OptionalActivities/Index.jsx": __vite_glob_0_10, "./Pages/Admin/OptionalActivities/Partials/OptionalActivityForm.jsx": __vite_glob_0_11, "./Pages/Admin/Settings/Seo.jsx": __vite_glob_0_12, "./Pages/Admin/Tours/Create.jsx": __vite_glob_0_13, "./Pages/Admin/Tours/Edit.jsx": __vite_glob_0_14, "./Pages/Admin/Tours/Index.jsx": __vite_glob_0_15, "./Pages/ContactUs.jsx": __vite_glob_0_16, "./Pages/ContentDetail.jsx": __vite_glob_0_17, "./Pages/Contents.jsx": __vite_glob_0_18, "./Pages/Dashboard.jsx": __vite_glob_0_19, "./Pages/DestinationDetail.jsx": __vite_glob_0_20, "./Pages/Destinations.jsx": __vite_glob_0_21, "./Pages/Home.jsx": __vite_glob_0_22, "./Pages/Pages/Tours.jsx": __vite_glob_0_23, "./Pages/Profile/Edit.jsx": __vite_glob_0_24, "./Pages/Profile/Partials/DeleteUserForm.jsx": __vite_glob_0_25, "./Pages/Profile/Partials/UpdatePasswordForm.jsx": __vite_glob_0_26, "./Pages/Profile/Partials/UpdateProfileInformationForm.jsx": __vite_glob_0_27, "./Pages/TourDetail.jsx": __vite_glob_0_28, "./Pages/Tours.jsx": __vite_glob_0_29, "./Pages/Welcome.jsx": __vite_glob_0_30 });
   let page = pages[`./Pages/${name}.jsx`];
   if (!page) {
     return null;
