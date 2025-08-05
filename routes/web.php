@@ -66,4 +66,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('settings/seo', [AdminSettingsController::class, 'index'])->name('settings.seo.index');
     Route::post('settings/seo', [AdminSettingsController::class, 'store'])->name('settings.seo.store');
     Route::post('settings/cache/clear', [AdminSettingsController::class, 'clearCache'])->name('settings.cache.clear');
+    Route::get('settings/cache/list', [AdminSettingsController::class, 'listCachedPages'])->name('settings.cache.list');
 });

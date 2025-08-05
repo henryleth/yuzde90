@@ -75,13 +75,22 @@ class HandleInertiaRequests extends Middleware
             $cacheKey = 'ssr_page_' . md5($request->fullUrl());
 
             if (Cache::has($cacheKey)) {
-                return response(Cache::get($cacheKey));
+                $cachedData = Cache::get($cacheKey);
+                // Geriye dönük uyumluluk için kontrol: Eğer veri bir dizi ve 'content' anahtarı varsa, yeni format.
+                // Değilse, eski format (sadece string içerik).
+                $content = is_array($cachedData) && isset($cachedData['content']) ? $cachedData['content'] : $cachedData;
+                return response($content);
             }
 
             $response = parent::handle($request, $next);
 
             if ($response->isSuccessful()) {
-                Cache::put($cacheKey, $response->getContent(), 86400); // 24 saat
+                // URL'yi ve içeriği birlikte bir dizi olarak önbelleğe al.
+                $cacheValue = [
+                    'url' => $request->fullUrl(),
+                    'content' => $response->getContent(),
+                ];
+                Cache::put($cacheKey, $cacheValue, 86400); // 24 saat
             }
 
             return $response;

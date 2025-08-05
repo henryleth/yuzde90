@@ -7,11 +7,10 @@ import LazyImage from '@/Components/LazyImage'; // Merkezi LazyImage bileşenini
 
 export default function Destinations({ seo }) {
   const { destinations } = usePage().props; // Backend'den gelen destinasyon verisi
-  const { fonts, currentFont } = useTheme();
 
   return (
     <GuestLayout seo={seo}>
-      <div className={`destinations-page bg-background text-foreground min-h-screen ${fonts[currentFont].class}`}>
+      <div className={`destinations-page bg-background text-foreground min-h-screen`}>
         {/* Hero Section - Genel bir destinasyon başlığı */}
         <section className="hero-section relative h-[40vh] md:h-[50vh] flex items-center justify-center text-center bg-cover bg-center" style={{ backgroundImage: `url(${destinations[0]?.image?.original_url || '/images/hero-destinations.jpg'})` }}>
           <div className="absolute inset-0 bg-black/60 hero-overlay"></div>

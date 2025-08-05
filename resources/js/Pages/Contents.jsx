@@ -14,7 +14,6 @@ import { Tag, MapPin } from 'lucide-react';
 
 export default function Contents({ seo }) {
   const { posts: backendPosts, categories: backendCategories, destinations: backendDestinations, filters } = usePage().props;
-  const { darkMode, toggleDarkMode, currentFont, changeFont, fonts } = useTheme();
 
   const [selectedCategory, setSelectedCategory] = useState(filters.category || 'all');
   const [selectedDestination, setSelectedDestination] = useState(filters.destination || 'all');
@@ -52,7 +51,7 @@ export default function Contents({ seo }) {
 
   return (
     <GuestLayout seo={seo}>
-      <div className={`blog-page bg-background text-foreground min-h-screen ${fonts[currentFont].class}`}> 
+      <div className={`blog-page bg-background text-foreground min-h-screen`}> 
         {/* Blog Hero Section */}
         <section className="blog-hero-section relative h-[40vh] md:h-[50vh] flex items-center justify-center text-center bg-cover bg-center" style={{ backgroundImage: `url(${posts[0]?.image?.original_url || 'https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'})` }}>
             <div className="absolute inset-0 bg-black/60 blog-hero-overlay"></div>

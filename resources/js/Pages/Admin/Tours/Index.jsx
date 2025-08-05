@@ -22,9 +22,14 @@ export default function Index({ auth, tours }) {
             user={auth.user}
             header="Turlar"
             actionButton={
-                <Button asChild>
-                    <Link href={route('admin.tours.create')}>Yeni Tur Ekle</Link>
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button asChild variant="outline">
+                        <Link href={route('admin.optional-activities.index')}>Opsiyonel Aktiviteler</Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href={route('admin.tours.create')}>Yeni Tur Ekle</Link>
+                    </Button>
+                </div>
             }
         >
             <Head title="Turlar" />

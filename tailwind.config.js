@@ -56,24 +56,15 @@ export default {
     			},
     		},
     		fontFamily: {
-    			sans: ['var(--site-font-family)', ...defaultTheme.fontFamily.sans],
+    			sans: [
+    				'Inter',
+    				...defaultTheme.fontFamily.sans
+    			],
     			inter: [
     				'Inter',
     				'sans-serif'
     			],
-    			poppins: [
-    				'Poppins',
-    				'sans-serif'
-    			],
-    			outfit: [
-    				'Outfit',
-    				'sans-serif'
-    			],
-    			'space-grotesk': [
-    				'Space Grotesk',
-    				'sans-serif'
-    			],
-    			playfair: ['Playfair Display', 'serif', ...defaultTheme.fontFamily.sans],
+    			playfair: ['Playfair Display', 'serif'],
     		},
     		keyframes: {
     			'accordion-down': {

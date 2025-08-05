@@ -32,7 +32,7 @@ const getPathname = (href) => {
 };
 
 export default function Header() {
-  const { darkMode, toggleDarkMode, currentFont, changeFont, fonts, showFontMenu, setShowFontMenu, isHeaderShrunk } = useTheme();
+  const { darkMode, toggleDarkMode, isHeaderShrunk } = useTheme();
   const { url } = usePage(); // Aktif URL'yi almak için usePaghte hook'u kullanılıyor
 
   // Navigasyon linklerini bir dizi olarak tanımlıyoruz. Bu, kodu daha temiz ve yönetilebilir hale getirir.
@@ -85,37 +85,6 @@ export default function Header() {
 
         {/* Sağ Taraf: Ayarlar ve Mobil Menü Butonu */}
         <div className="flex items-center space-x-2 flex-shrink-0">
-          {/* Font Seçimi */}
-          <div className="relative hidden md:block">
-            <Button 
-              onClick={() => setShowFontMenu(!showFontMenu)}
-              variant="ghost"
-              className="flex items-center space-x-1"
-            >
-              <CaseSensitive className="h-4 w-4" />
-              <span className="hidden sm:inline text-sm font-semibold">{fonts[currentFont].name}</span>
-              <ChevronDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-            {showFontMenu && (
-              <div className="absolute right-0 mt-2 w-40 bg-background border border-border rounded-md shadow-lg z-50">
-                <div className="py-1">
-                  {Object.entries(fonts).map(([key, font]) => (
-                    <button 
-                      key={key}
-                      onClick={() => { changeFont(key); setShowFontMenu(false); }}
-                      className={`w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors ${
-                        currentFont === key ? 'bg-muted font-bold' : ''
-                      }`}
-                      style={{ fontFamily: font.name }}
-                    >
-                      {font.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
           {/* Dark Mode Butonu */}
           <Button 
             onClick={toggleDarkMode} 
@@ -164,37 +133,6 @@ export default function Header() {
                 })}
               </nav>
               <div className="mt-auto pt-8 space-y-4">
-                {/* Mobil Font Seçimi */}
-                <div className="relative w-full text-center">
-                  <Button 
-                    onClick={() => setShowFontMenu(!showFontMenu)}
-                    variant="outline"
-                    className="w-full flex items-center justify-center space-x-2"
-                  >
-                    <CaseSensitive className="h-4 w-4" />
-                    <span>{fonts[currentFont].name}</span>
-                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                  {showFontMenu && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-background border border-border rounded-md shadow-lg z-50">
-                      <div className="py-1">
-                        {Object.entries(fonts).map(([key, font]) => (
-                          <button 
-                            key={key}
-                            onClick={() => { changeFont(key); setShowFontMenu(false); }}
-                            className={`w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors ${
-                              currentFont === key ? 'bg-muted font-bold' : ''
-                            }`}
-                            style={{ fontFamily: font.name }}
-                          >
-                            {font.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
                 {/* Mobil Dark Mode Butonu */}
                 <Button 
                   onClick={toggleDarkMode} 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
@@ -8,6 +8,15 @@ import { Textarea } from '@/Components/ui/textarea';
 import { Button } from '@/Components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from "@/Components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/Components/ui/accordion"
+import { RefreshCw } from 'lucide-react';
+
 
 export default function Seo({ auth, settings }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -31,6 +40,31 @@ export default function Seo({ auth, settings }) {
     });
 
     const { toast } = useToast();
+    const [cachedPages, setCachedPages] = useState([]);
+    const [isLoadingCache, setIsLoadingCache] = useState(false);
+
+    const fetchCachedPages = useCallback(async () => {
+        setIsLoadingCache(true);
+        try {
+            const response = await fetch(route('admin.settings.cache.list'));
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setCachedPages(data);
+        } catch (error) {
+            console.error("Failed to fetch cached pages:", error);
+            toast({
+                title: "Hata!",
+                description: "Önbelleğe alınmış sayfalar getirilirken bir hata oluştu.",
+                variant: "destructive",
+            });
+            setCachedPages([]); // Hata durumunda listeyi temizle
+        } finally {
+            setIsLoadingCache(false);
+        }
+    }, [toast]);
+
 
     const submit = (e) => {
         e.preventDefault();
@@ -77,7 +111,6 @@ export default function Seo({ auth, settings }) {
         setData('settings', { ...data.settings, [key]: value });
     };
 
-    // Switch komponenti için özel bir handler. Gelen değeri direkt state'e yazar.
     const handleSwitchChange = (checked) => {
         setData('settings', { ...data.settings, 'cache.enabled': checked });
     };
@@ -113,100 +146,157 @@ export default function Seo({ auth, settings }) {
         >
             <Head title="Genel Ayarlar" />
 
-            <div className="space-y-8">
-                <Card className="cache-management-card">
-                    <CardHeader>
-                        <CardTitle>Manuel Önbellek Yönetimi</CardTitle>
-                        <CardDescription>
-                            Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button
-                            onClick={handleClearCache}
-                            variant="destructive"
-                            disabled={processing}
-                            className="clear-cache-button"
-                        >
-                            Tüm Site Önbelleğini Temizle
-                        </Button>
-                    </CardContent>
-                </Card>
+            <form onSubmit={submit}>
+                <Tabs defaultValue="seo" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="seo">SEO Ayarları</TabsTrigger>
+                        <TabsTrigger value="cache">Önbellek Ayarları</TabsTrigger>
+                    </TabsList>
 
-                <form onSubmit={submit} className="space-y-8">
-                    {/* Önbellek Ayarları Kartı */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Önbellek Ayarları</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-2">
-                                <Label htmlFor="cache-enabled" className="text-base">Site Geneli Önbellekleme</Label>
-                                <div className="flex items-center space-x-3">
-                                    <Switch
-                                        id="cache-enabled"
-                                        checked={data.settings['cache.enabled']}
-                                        onCheckedChange={handleSwitchChange}
-                                    />
-                                    <p className="text-sm text-muted-foreground">
-                                        Aktif olduğunda, sitenin sayfaları performansı artırmak için 24 saat boyunca önbelleğe alınır.
-                                    </p>
+                    {/* SEO Ayarları Sekmesi */}
+                    <TabsContent value="seo">
+                        <Card className="mt-4">
+                            <CardHeader>
+                                <CardTitle>SEO Ayarları</CardTitle>
+                                <CardDescription>
+                                    Arama motoru optimizasyonu için varsayılan ve sayfaya özel başlık ve açıklama ayarları.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6 pt-4">
+                                {/* Genel SEO Ayarları */}
+                                <div className="space-y-4 rounded-md border p-4 shadow-sm">
+                                    <h3 className="text-md font-medium">Genel SEO Ayarları</h3>
+                                    {renderSettingInput('seo.defaults.title', 'Site Başlığı')}
+                                    {renderSettingInput('seo.defaults.description', 'Site Açıklaması', true)}
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Genel SEO Ayarları</CardTitle>
-                            <CardDescription>Sitenin varsayılan başlık ve açıklama ayarları.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {renderSettingInput('seo.defaults.title', 'Site Başlığı')}
-                            {renderSettingInput('seo.defaults.description', 'Site Açıklaması', true)}
-                        </CardContent>
-                    </Card>
+                                {/* Tur Sayfaları */}
+                                <div className="space-y-4 rounded-md border p-4 shadow-sm">
+                                    <h3 className="text-md font-medium">Tur Sayfaları</h3>
+                                    <p className="text-sm text-muted-foreground">Değişkenler: {`{site_title}`}, {`{tour_title}`}, {`{tour_summary}`}</p>
+                                    {renderSettingInput('seo.tours.index.title', 'Tur Listeleme Sayfası Başlığı')}
+                                    {renderSettingInput('seo.tours.index.description', 'Tur Listeleme Sayfası Açıklaması', true)}
+                                    {renderSettingInput('seo.tour.show.title', 'Tur Detay Sayfası Başlığı')}
+                                    {renderSettingInput('seo.tour.show.description', 'Tur Detay Sayfası Açıklaması', true)}
+                                </div>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Tur Sayfaları</CardTitle>
-                            <CardDescription>Değişkenler: {`{site_title}`}, {`{tour_title}`}, {`{tour_summary}`}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {renderSettingInput('seo.tours.index.title', 'Tur Listeleme Sayfası Başlığı')}
-                            {renderSettingInput('seo.tours.index.description', 'Tur Listeleme Sayfası Açıklaması', true)}
-                            {renderSettingInput('seo.tour.show.title', 'Tur Detay Sayfası Başlığı')}
-                            {renderSettingInput('seo.tour.show.description', 'Tur Detay Sayfası Açıklaması', true)}
-                        </CardContent>
-                    </Card>
+                                {/* İçerik Sayfaları */}
+                                <div className="space-y-4 rounded-md border p-4 shadow-sm">
+                                    <h3 className="text-md font-medium">İçerik Sayfaları</h3>
+                                    <p className="text-sm text-muted-foreground">Değişkenler: {`{site_title}`}, {`{content_title}`}, {`{content_summary}`}</p>
+                                    {renderSettingInput('seo.contents.index.title', 'İçerik Listeleme Sayfası Başlığı')}
+                                    {renderSettingInput('seo.contents.index.description', 'İçerik Listeleme Sayfası Açıklaması', true)}
+                                    {renderSettingInput('seo.content.show.title', 'İçerik Detay Sayfası Başlığı')}
+                                    {renderSettingInput('seo.content.show.description', 'İçerik Detay Sayfası Açıklaması', true)}
+                                </div>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>İçerik Sayfaları</CardTitle>
-                            <CardDescription>Değişkenler: {`{site_title}`}, {`{content_title}`}, {`{content_summary}`}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {renderSettingInput('seo.contents.index.title', 'İçerik Listeleme Sayfası Başlığı')}
-                            {renderSettingInput('seo.contents.index.description', 'İçerik Listeleme Sayfası Açıklaması', true)}
-                            {renderSettingInput('seo.content.show.title', 'İçerik Detay Sayfası Başlığı')}
-                            {renderSettingInput('seo.content.show.description', 'İçerik Detay Sayfası Açıklaması', true)}
-                        </CardContent>
-                    </Card>
+                                {/* Destinasyon Sayfaları */}
+                                <div className="space-y-4 rounded-md border p-4 shadow-sm">
+                                    <h3 className="text-md font-medium">Destinasyon Sayfaları</h3>
+                                    <p className="text-sm text-muted-foreground">Değişkenler: {`{site_title}`}, {`{destination_name}`}, {`{destination_description}`}</p>
+                                    {renderSettingInput('seo.destinations.index.title', 'Destinasyon Listeleme Sayfası Başlığı')}
+                                    {renderSettingInput('seo.destinations.index.description', 'Destinasyon Listeleme Sayfası Açıklaması', true)}
+                                    {renderSettingInput('seo.destination.show.title', 'Destinasyon Detay Sayfası Başlığı')}
+                                    {renderSettingInput('seo.destination.show.description', 'Destinasyon Detay Sayfası Açıklaması', true)}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Destinasyon Sayfaları</CardTitle>
-                            <CardDescription>Değişkenler: {`{site_title}`}, {`{destination_name}`}, {`{destination_description}`}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {renderSettingInput('seo.destinations.index.title', 'Destinasyon Listeleme Sayfası Başlığı')}
-                            {renderSettingInput('seo.destinations.index.description', 'Destinasyon Listeleme Sayfası Açıklaması', true)}
-                            {renderSettingInput('seo.destination.show.title', 'Destinasyon Detay Sayfası Başlığı')}
-                            {renderSettingInput('seo.destination.show.description', 'Destinasyon Detay Sayfası Açıklaması', true)}
-                        </CardContent>
-                    </Card>
-                </form>
-            </div>
+                    {/* Önbellek Ayarları Sekmesi */}
+                    <TabsContent value="cache">
+                        <Card className="mt-4">
+                            <CardHeader>
+                                <CardTitle>Önbellek Ayarları</CardTitle>
+                                <CardDescription>
+                                    Sitenin performansını yönetmek için önbellek ayarlarını yapılandırın ve yönetin.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6 pt-4">
+                                {/* Otomatik Önbellek Ayarları */}
+                                <div className="space-y-4 rounded-md border p-4 shadow-sm">
+                                    <h3 className="text-md font-medium">Otomatik Önbellekleme</h3>
+                                    <div className="flex items-center space-x-3 pt-2">
+                                        <Switch
+                                            id="cache-enabled"
+                                            checked={data.settings['cache.enabled']}
+                                            onCheckedChange={handleSwitchChange}
+                                        />
+                                        <div className="space-y-1">
+                                            <Label htmlFor="cache-enabled" className="text-base">Site Geneli Önbellekleme</Label>
+                                            <p className="text-sm text-muted-foreground">
+                                                Aktif olduğunda, sitenin sayfaları performansı artırmak için 24 saat boyunca önbelleğe alınır.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Manuel Önbellek Yönetimi */}
+                                <div className="space-y-4 rounded-md border p-4 shadow-sm">
+                                    <h3 className="text-md font-medium">Manuel Önbellek Yönetimi</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin.
+                                    </p>
+                                    <Button
+                                        type="button"
+                                        onClick={handleClearCache}
+                                        variant="destructive"
+                                        disabled={processing}
+                                        className="clear-cache-button mt-2"
+                                    >
+                                        Tüm Site Önbelleğini Temizle
+                                    </Button>
+
+                                    <Accordion type="single" collapsible className="w-full mt-4">
+                                        <AccordionItem value="item-1">
+                                            <AccordionTrigger onClick={() => !cachedPages.length && fetchCachedPages()}>
+                                                <div className="flex items-center gap-2">
+                                                    Önbelleğe Alınmış Sayfaları Görüntüle ({cachedPages.length})
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Akordiyonun açılıp/kapanmasını engelle
+                                                            fetchCachedPages();
+                                                        }}
+                                                        disabled={isLoadingCache}
+                                                        className="h-6 w-6"
+                                                    >
+                                                        <RefreshCw className={`h-4 w-4 ${isLoadingCache ? 'animate-spin' : ''}`} />
+                                                    </Button>
+                                                </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent>
+                                                {isLoadingCache ? (
+                                                    <p className="text-sm text-muted-foreground p-4">Yükleniyor...</p>
+                                                ) : cachedPages.length > 0 ? (
+                                                    <div className="max-h-60 overflow-y-auto">
+                                                        <ul className="space-y-2 p-2">
+                                                            {cachedPages.map((page, index) => (
+                                                                <li key={index} className="text-sm p-2 rounded-md bg-muted/50">
+                                                                    <p className="font-mono text-xs break-all">{page.url}</p>
+                                                                    <p className="text-xs text-muted-foreground mt-1">
+                                                                        Son Değişiklik: {page.modified_at} | Boyut: {page.size}
+                                                                    </p>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-sm text-muted-foreground p-4">
+                                                        Görüntülenecek önbelleğe alınmış sayfa bulunamadı.
+                                                    </p>
+                                                )}
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    </Accordion>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
+            </form>
         </AuthenticatedLayout>
     );
 }

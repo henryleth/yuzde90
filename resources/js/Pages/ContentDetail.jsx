@@ -123,13 +123,12 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
 export default function ContentDetail({ seo }) {
   // Gerekli propları usePage'den alıyoruz.
   const { post, relatedPosts, allCategories, allDestinations, relatedTours, recentContents } = usePage().props;
-  const { fonts, currentFont } = useTheme();
 
   // Eğer post verisi yoksa, kullanıcıya bir bilgilendirme mesajı gösteriyoruz.
   if (!post) {
     return (
       <GuestLayout>
-        <div className={`bg-background text-foreground min-h-screen ${fonts[currentFont].class} flex items-center justify-center`}>
+        <div className={`bg-background text-foreground min-h-screen flex items-center justify-center`}>
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">İçerik Bulunamadı</h1>
             <p className="text-muted-foreground">Aradığınız içerik mevcut değil veya silinmiş olabilir.</p>
@@ -144,7 +143,7 @@ export default function ContentDetail({ seo }) {
 
   return (
     <GuestLayout seo={seo}>
-      <div className={`content-detail-page bg-background text-foreground ${fonts[currentFont].class}`}>
+      <div className={`content-detail-page bg-background text-foreground`}>
         
         {/* Hero Section: İçeriğin başlığını ve öne çıkan görselini gösterir. */}
         <section 

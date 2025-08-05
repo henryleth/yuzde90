@@ -31,7 +31,7 @@ export default function TourDetail({ tour, config, seo }) {
   const [lightboxIndex, setLightboxIndex] = useState(-1);
   const [isNavSticky, setNavSticky] = useState(false);
   const [navTop, setNavTop] = useState(64); // Alt menünün 'top' pozisyonu için state
-  const { darkMode, fonts, currentFont, setHeaderShrunk } = useTheme();
+  const { darkMode, setHeaderShrunk } = useTheme();
   const tourNavRef = useRef(null);
   const bookingFormRef = useRef(null);
   const heroRef = useRef(null);
@@ -190,7 +190,7 @@ export default function TourDetail({ tour, config, seo }) {
 
   return (
     <GuestLayout seo={seo}>
-      <div className={`bg-background text-foreground min-h-screen ${fonts[currentFont].class}`}>
+      <div className={`bg-background text-foreground min-h-screen`}>
         {/* Hero Section */}
         <div ref={heroRef} className="relative h-[60vh] md:h-[70vh] bg-cover bg-center" style={{ backgroundImage: `url(${featuredImageUrl || '/images/placeholder.png'})` }}>
           <div className="absolute inset-0 bg-black/45"></div>
@@ -302,10 +302,13 @@ export default function TourDetail({ tour, config, seo }) {
                         </AccordionTrigger>
                         <AccordionContent className="px-6 pb-4 pt-0">
                           {(item.activities || []).map((activity, activityIndex) => (
-                            <div key={`activity-${item.day_number}-${activityIndex}`} className={`mb-2 ${activity.is_highlight ? 'bg-blue-50 p-3 rounded-md' : ''}`}> 
-                              {/* Aktivite açıklaması. Vurgulanan (is_highlight) aktiviteler ve normal aktiviteler için 
-                                  HTML'nin doğru bir şekilde render edilmesi için dangerouslySetInnerHTML kullanılır. 
-                                  'prose' sınıfı, bu HTML içeriğine (örn. ul, li etiketleri) varsayılan stilin uygulanmasını sağlar. */}
+                            <div key={`activity-${item.day_number}-${activityIndex}`} className={`mb-2 ${activity.is_highlight ? 'bg-orange-100 dark:bg-orange-900/50 p-3 rounded-md' : ''}`}>
+                              {/* 
+                                Aktivite açıklaması. Vurgulanan (is_highlight) aktiviteler için açık turuncu bir arkaplan rengi kullanılıyor.
+                                Bu renk, hem açık hem de koyu tema ile uyumlu olacak şekilde ayarlandı.
+                                HTML'nin doğru bir şekilde render edilmesi için dangerouslySetInnerHTML kullanılır. 
+                                'prose' sınıfı, bu HTML içeriğine (örn. ul, li etiketleri) varsayılan stilin uygulanmasını sağlar. 
+                              */}
                               <div className="prose prose-slate dark:prose-invert max-w-none prose-sm" dangerouslySetInnerHTML={{ __html: activity.description }} />
                             </div>
                           ))}

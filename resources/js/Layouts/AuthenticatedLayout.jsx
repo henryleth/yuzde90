@@ -43,7 +43,6 @@ export default function AuthenticatedLayout({ header, children, actionButton }) 
         { name: 'Turlar', href: route('admin.tours.index'), activeCheck: 'admin.tours.' },
         { name: 'İçerikler', href: route('admin.contents.index'), activeCheck: 'admin.contents.' },
         { name: 'Destinasyonlar', href: route('admin.destinations.index'), activeCheck: 'admin.destinations.' },
-        { name: 'Opsiyonel Aktiviteler', href: route('admin.optional-activities.index'), activeCheck: 'admin.optional-activities.' },
         { name: 'Ayarlar', href: route('admin.settings.seo.index'), activeCheck: 'admin.settings.' },
     ];
 
@@ -83,7 +82,7 @@ export default function AuthenticatedLayout({ header, children, actionButton }) 
     return (
         <div className="admin-panel min-h-screen w-full bg-muted/40">
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background px-4 sm:px-0">
+                <header className="z-30 flex h-16 items-center justify-between gap-4 border-b bg-background px-4 sm:px-0">
                     <div className="flex items-center gap-6">
                         <Link href={route('admin.dashboard')} className="flex items-center gap-2 font-bold">
                             <Package className="h-6 w-6" />

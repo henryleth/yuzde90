@@ -12,7 +12,7 @@ import LazyImage from '@/Components/LazyImage';
 
 export default function DestinationDetail({ seo }) {
   const { destination } = usePage().props;
-  const { fonts, currentFont, darkMode } = useTheme();
+  const { darkMode } = useTheme();
   const [activeSection, setActiveSection] = useState('about');
   const [lightboxIndex, setLightboxIndex] = useState(-1);
 
@@ -49,7 +49,7 @@ export default function DestinationDetail({ seo }) {
   if (!destination) {
     return (
       <GuestLayout>
-        <div className={`bg-background text-foreground min-h-screen ${fonts[currentFont].class}`}>
+        <div className={`bg-background text-foreground min-h-screen`}>
           <main className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-4xl font-bold mb-6">Destinasyon Bulunamadı</h1>
             <p className="text-muted-foreground">Aradığınız destinasyon mevcut değil veya silinmiş olabilir.</p>
@@ -87,7 +87,7 @@ export default function DestinationDetail({ seo }) {
 
   return (
     <GuestLayout seo={seo}>
-      <div className={`destination-detail-page bg-background text-foreground min-h-screen ${fonts[currentFont].class}`}>
+      <div className={`destination-detail-page bg-background text-foreground min-h-screen`}>
         {/* Hero Section */}
         <section className="hero-section relative h-[50vh] flex items-center justify-center text-center bg-cover bg-center" style={{ backgroundImage: `url(${destination.image?.original_url || 'https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'})` }}>
           <div className="absolute inset-0 bg-black/60 hero-overlay"></div>

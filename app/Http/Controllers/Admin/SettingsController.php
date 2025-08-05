@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Setting;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Facades\File;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 class SettingsController extends Controller
 {
     public function index()
@@ -79,5 +81,47 @@ class SettingsController extends Controller
         \Artisan::call('view:clear');
 
         return redirect()->back()->with('success', 'Tüm uygulama önbelleği başarıyla temizlendi.');
+    }
+
+    /**
+     * Önbelleğe alınmış SSR sayfalarının listesini döndürür.
+     * HandleInertiaRequests middleware'ine göre, önbellek anahtarı 'ssr_page_' ön ekiyle oluşturulur
+     * ve varsayılan önbellek sürücüsüne (bu projede 'database') kaydedilir.
+     */
+    public function listCachedPages(): JsonResponse
+    {
+        try {
+            $prefix = config('cache.prefix');
+            $searchKey = $prefix . 'ssr_page_%';
+
+            $ssrItems = DB::table(config('cache.stores.database.table'))
+                         ->where('key', 'like', $searchKey)
+                         ->get();
+
+            $cachedPages = $ssrItems->map(function ($item) {
+                $cacheData = unserialize($item->value);
+
+                // Yeni format ('url' ve 'content' içeren dizi) kontrolü
+                if (is_array($cacheData) && isset($cacheData['url']) && isset($cacheData['content'])) {
+                    $url = $cacheData['url'];
+                    $size = round(strlen($cacheData['content']) / 1024, 2) . ' KB';
+                } else {
+                    // Eski format (sadece içerik string'i) için geriye dönük uyumluluk
+                    $url = 'URL bilgisi yok (eski önbellek)';
+                    $size = round(strlen($cacheData) / 1024, 2) . ' KB';
+                }
+
+                return [
+                    'url' => $url,
+                    'modified_at' => date('Y-m-d H:i:s', $item->expiration - 86400), // Yaklaşık oluşturma zamanı
+                    'size' => $size,
+                ];
+            })->sortByDesc('modified_at')->values();
+
+            return response()->json($cachedPages);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Önbellek verileri okunurken bir hata oluştu: ' . $e->getMessage()], 500);
+        }
     }
 }

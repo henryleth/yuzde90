@@ -16,7 +16,7 @@ import FeaturedBadge from '@/Components/Badges/FeaturedBadgeCorner'; // Öne ç�
 
 export default function Tours({ tours: backendTours, allDestinations, filters, seo }) {
   // Tema ve başlık küçültme durumu için useTheme context'ini kullanıyoruz.
-  const { fonts, currentFont, setHeaderShrunk } = useTheme();
+  const { setHeaderShrunk } = useTheme();
 
   // Filtre çubuğunun yapışkan davranışını ve konumunu yönetmek için state'ler.
   const [isFilterBarSticky, setFilterBarSticky] = useState(false);
@@ -152,7 +152,7 @@ export default function Tours({ tours: backendTours, allDestinations, filters, s
 
   return (
     <GuestLayout seo={seo}>
-      <div className={`tours-page bg-background text-foreground min-h-screen ${fonts[currentFont].class}`}>
+      <div className={`tours-page bg-background text-foreground min-h-screen`}>
         <div className="max-w-6xl mx-auto px-4">
           <div className="py-6">
             {/* Yatay Filtreleme Çubuğu */}
