@@ -8,6 +8,7 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { X, ChevronDown, MenuIcon, Facebook, Twitter, Instagram, Linkedin, Send, Heart, Compass, Users, Check, Leaf, Camera, ChevronRight, Dot, Package, Menu, Code, Trash2, ChevronUp, XCircle, Upload, Search, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, ImageIcon, PlusCircle, Edit as Edit$5, CheckCircle, Clock, MoreHorizontal, ExternalLink, Image, Lightbulb, Phone, Mail, MapPin, Star, ArrowLeft, ArrowRight } from "lucide-react";
+import LazyLoadImagePkg from "react-lazy-load-image-component";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import * as ToastPrimitives from "@radix-ui/react-toast";
@@ -25,7 +26,6 @@ import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import moment from "moment";
 import "moment/locale/tr.js";
-import LazyLoadImagePkg from "react-lazy-load-image-component";
 import { Transition, Dialog as Dialog$1, TransitionChild, DialogPanel } from "@headlessui/react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -575,6 +575,18 @@ const CardFooter = React.forwardRef(({
   }
 ));
 CardFooter.displayName = "CardFooter";
+const LazyLoadImage$1 = LazyLoadImagePkg.LazyLoadImage || LazyLoadImagePkg;
+const ImagePlaceholder = ({ wrapperClassName }) => /* @__PURE__ */ jsx("div", { className: wrapperClassName, children: /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 rounded-md animate-pulse" }) });
+const LazyImage = (props) => {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  if (!isMounted) {
+    return /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName: props.wrapperClassName });
+  }
+  return /* @__PURE__ */ jsx(LazyLoadImage$1, { ...props });
+};
 function AboutUs() {
   return /* @__PURE__ */ jsxs(Guest, { children: [
     /* @__PURE__ */ jsx(Head, { title: "Hakkımızda" }),
@@ -593,7 +605,7 @@ function AboutUs() {
           /* @__PURE__ */ jsx("p", { className: "text-lg leading-relaxed", children: "Amacımız, size sadece yerleri göstermek değil, o yerlerin ruhunu hissettirmek. Bir Ege kasabasında sabah kahvesinin tadını, Kapadokya'da gün doğumunun büyüsünü, Karadeniz yaylalarında bulutların üzerinde yürümenin özgürlüğünü... İşte biz bu anları sizin için ölümsüzleştiriyoruz." })
         ] })
       ] }) }),
-      /* @__PURE__ */ jsx("div", { className: "order-1 md:order-2", children: /* @__PURE__ */ jsx("img", { src: "https://images.pexels.com/photos/2440024/pexels-photo-2440024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", alt: "Bizim Hikayemiz", className: "rounded-lg shadow-2xl object-cover w-full h-auto transform hover:scale-105 transition-transform duration-500" }) })
+      /* @__PURE__ */ jsx("div", { className: "order-1 md:order-2", children: /* @__PURE__ */ jsx(LazyImage, { src: "https://images.pexels.com/photos/2440024/pexels-photo-2440024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", alt: "Bizim Hikayemiz", className: "rounded-lg shadow-2xl object-cover w-full h-auto transform hover:scale-105 transition-transform duration-500", wrapperClassName: "w-full", effect: "blur" }) })
     ] }) }) }),
     /* @__PURE__ */ jsx("section", { className: "py-16 bg-background text-foreground", children: /* @__PURE__ */ jsxs("div", { className: "container max-w-6xl mx-auto px-4 md:px-8 text-center", children: [
       /* @__PURE__ */ jsx("h2", { className: "text-4xl font-bold mb-12 text-primary font-playfair", children: "Bizi Biz Yapan Değerler" }),
@@ -5116,11 +5128,13 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
     /* @__PURE__ */ jsx("h3", { className: "sidebar-widget-title text-xl font-bold mb-4 text-foreground", children: "İlgili Yazılar" }),
     /* @__PURE__ */ jsx("ul", { className: "sidebar-post-list space-y-4", children: relatedPosts.map((post) => /* @__PURE__ */ jsx("li", { className: "sidebar-post-item flex items-center", children: /* @__PURE__ */ jsxs(Link, { href: route("contents.show", post.slug), className: "flex items-center group", children: [
       /* @__PURE__ */ jsx(
-        "img",
+        LazyImage,
         {
           src: post.image_thumbnail_url || "https://via.placeholder.com/80",
           alt: post.title,
-          className: "w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
+          className: "w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity",
+          wrapperClassName: "w-16 h-16",
+          effect: "blur"
         }
       ),
       /* @__PURE__ */ jsx("span", { className: "font-semibold text-muted-foreground group-hover:text-primary transition-colors", children: post.title })
@@ -5130,11 +5144,13 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
     /* @__PURE__ */ jsx("h3", { className: "sidebar-widget-title text-xl font-bold mb-4 text-foreground", children: "İlgili Turlar" }),
     /* @__PURE__ */ jsx("ul", { className: "sidebar-post-list space-y-4", children: relatedTours.map((tour) => /* @__PURE__ */ jsx("li", { className: "sidebar-post-item flex items-center", children: /* @__PURE__ */ jsxs(Link, { href: route("tour.show", tour.slug), className: "flex items-center group", children: [
       /* @__PURE__ */ jsx(
-        "img",
+        LazyImage,
         {
           src: tour.image_thumbnail || "https://via.placeholder.com/80",
           alt: tour.title,
-          className: "w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
+          className: "w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity",
+          wrapperClassName: "w-16 h-16",
+          effect: "blur"
         }
       ),
       /* @__PURE__ */ jsx("span", { className: "font-semibold text-muted-foreground group-hover:text-primary transition-colors", children: tour.title })
@@ -5144,11 +5160,13 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
     /* @__PURE__ */ jsx("h3", { className: "sidebar-widget-title text-xl font-bold mb-4 text-foreground", children: "Son İçerikler" }),
     /* @__PURE__ */ jsx("ul", { className: "sidebar-post-list space-y-4", children: recentContents.map((content) => /* @__PURE__ */ jsx("li", { className: "sidebar-post-item flex items-center", children: /* @__PURE__ */ jsxs(Link, { href: route("contents.show", content.slug), className: "flex items-center group", children: [
       /* @__PURE__ */ jsx(
-        "img",
+        LazyImage,
         {
           src: content.image_thumbnail || "https://via.placeholder.com/80",
           alt: content.title,
-          className: "w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
+          className: "w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity",
+          wrapperClassName: "w-16 h-16",
+          effect: "blur"
         }
       ),
       /* @__PURE__ */ jsx("span", { className: "font-semibold text-muted-foreground group-hover:text-primary transition-colors", children: content.title })
@@ -5446,12 +5464,13 @@ function Contents({ seo }) {
           var _a2;
           return /* @__PURE__ */ jsxs("div", { className: "blog-post-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group", children: [
             /* @__PURE__ */ jsx(Link, { href: route("contents.show", post.slug), className: "blog-post-image-link block relative w-full h-48 overflow-hidden", children: /* @__PURE__ */ jsx(
-              "img",
+              LazyImage,
               {
                 src: ((_a2 = post.image) == null ? void 0 : _a2.thumbnail_url) || "https://placehold.co/600x400?text=Görsel+Bulunamadı",
                 alt: post.title,
                 className: "blog-post-image w-full h-full object-cover group-hover:scale-110 transition-transform duration-300",
-                loading: "lazy"
+                wrapperClassName: "w-full h-48",
+                effect: "blur"
               }
             ) }),
             /* @__PURE__ */ jsxs("div", { className: "blog-post-content p-4", children: [
@@ -5775,20 +5794,6 @@ const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: DestinationDetail
 }, Symbol.toStringTag, { value: "Module" }));
-const ImagePlaceholder = ({ wrapperClassName }) => /* @__PURE__ */ jsx("div", { className: wrapperClassName, children: /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 rounded-md animate-pulse" }) });
-const LazyLoadedImageComponent = lazy(
-  () => import("react-lazy-load-image-component").then((module) => ({ default: module.LazyLoadImage }))
-);
-const LazyImage = (props) => {
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  if (!isMounted) {
-    return /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName: props.wrapperClassName });
-  }
-  return /* @__PURE__ */ jsx(Suspense, { fallback: /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName: props.wrapperClassName }), children: /* @__PURE__ */ jsx(LazyLoadedImageComponent, { ...props }) });
-};
 function Destinations({ seo }) {
   var _a, _b;
   const { destinations } = usePage().props;
@@ -5834,10 +5839,20 @@ const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Destinations
 }, Symbol.toStringTag, { value: "Module" }));
 function TourCard({ tour, featuredBadge: FeaturedBadge }) {
+  var _a;
   return /* @__PURE__ */ jsxs(Card, { className: "w-full h-full flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative", children: [
     tour.is_featured && FeaturedBadge && /* @__PURE__ */ jsx(FeaturedBadge, {}),
     /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), className: "block", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden h-48", children: [
-      /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-300" }),
+      /* @__PURE__ */ jsx(
+        LazyImage,
+        {
+          src: ((_a = tour.image) == null ? void 0 : _a.thumbnail_url) || "https://via.placeholder.com/400x200?text=Görsel+Bulunamadı",
+          alt: tour.title,
+          className: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300",
+          wrapperClassName: "w-full h-full",
+          effect: "blur"
+        }
+      ),
       /* @__PURE__ */ jsx("div", { className: "absolute top-4 right-4", children: /* @__PURE__ */ jsx("div", { className: "inline-flex items-center rounded-full bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm", children: /* @__PURE__ */ jsxs("span", { children: [
         tour.duration_days,
         " Gün"
@@ -5914,11 +5929,13 @@ function Home({ tours, popularDestinations, seo }) {
     /* @__PURE__ */ jsxs("section", { className: "relative h-[calc(100vh-64px)] flex items-center justify-center text-center overflow-hidden", children: [
       /* @__PURE__ */ jsxs("div", { className: "absolute inset-0 w-full h-full", children: [
         !isVideoReady && /* @__PURE__ */ jsx(
-          "img",
+          LazyImage,
           {
             src: "https://img.youtube.com/vi/oe_kmwcO1ag/maxresdefault.jpg",
             alt: "Video Thumbnail",
-            className: "w-full h-full object-cover"
+            className: "w-full h-full object-cover",
+            wrapperClassName: "w-full h-full",
+            effect: "blur"
           }
         ),
         /* @__PURE__ */ jsx(
@@ -5965,7 +5982,7 @@ function Home({ tours, popularDestinations, seo }) {
         /* @__PURE__ */ jsx("p", { className: "text-muted-foreground text-lg", children: "Uluslararası uçuşlarınız hariç tüm detayları biz düşünüyoruz. Size sadece Türkiye'nin tadını çıkarmak kalıyor. Konforlu konaklama, yerel lezzetler ve kusursuz bir seyahat planı ile yolculuğunuzun her anı keyif dolu geçecek." })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center space-y-6", children: [
-        /* @__PURE__ */ jsx("a", { href: "https://www.tripadvisor.es/Attraction_Review-g293974-d13153444-Reviews-Pride_Travel-Istanbul.html", target: "_blank", rel: "noopener noreferrer", className: "transition-transform hover:scale-110", children: /* @__PURE__ */ jsx("img", { src: "https://logodix.com/logo/464050.png", alt: "TripAdvisor", className: "h-48" }) }),
+        /* @__PURE__ */ jsx("a", { href: "https://www.tripadvisor.es/Attraction_Review-g293974-d13153444-Reviews-Pride_Travel-Istanbul.html", target: "_blank", rel: "noopener noreferrer", className: "transition-transform hover:scale-110", children: /* @__PURE__ */ jsx(LazyImage, { src: "https://logodix.com/logo/464050.png", alt: "TripAdvisor", className: "h-48", wrapperClassName: "h-48", effect: "blur" }) }),
         /* @__PURE__ */ jsx("div", { className: "border p-4 rounded-lg text-center bg-card shadow-lg w-full", children: /* @__PURE__ */ jsxs("a", { href: "https://www.tursab.org.tr/tr/dd-acente-sorgulama", target: "_blank", rel: "noopener noreferrer", className: "group", children: [
           /* @__PURE__ */ jsx("p", { className: "font-extrabold text-xl text-red-600 group-hover:text-red-700 transition-colors", children: "TÜRSAB" }),
           /* @__PURE__ */ jsx("p", { className: "text-sm font-semibold text-muted-foreground", children: "Resmi Acente Doğrulama" }),
@@ -5994,12 +6011,13 @@ function Home({ tours, popularDestinations, seo }) {
             return /* @__PURE__ */ jsx(Link, { href: route("destinations.show", destination.slug), className: "block", children: /* @__PURE__ */ jsx(Card, { className: "overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 relative group", children: /* @__PURE__ */ jsxs("div", { className: "relative w-full h-64", children: [
               " ",
               /* @__PURE__ */ jsx(
-                "img",
+                LazyImage,
                 {
                   src: ((_a = destination.image) == null ? void 0 : _a.thumbnail_url) || "https://via.placeholder.com/400x200?text=Görsel+Bulunamadı",
                   alt: destination.name,
                   className: "w-full h-full object-cover",
-                  loading: "lazy"
+                  wrapperClassName: "w-full h-full",
+                  effect: "blur"
                 }
               ),
               /* @__PURE__ */ jsxs("div", { className: "absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-4 transition-opacity duration-300 group-hover:from-black/50", children: [
@@ -7395,11 +7413,13 @@ function Welcome({ auth, laravelVersion, phpVersion }) {
     /* @__PURE__ */ jsx(Head, { title: "Welcome" }),
     /* @__PURE__ */ jsxs("div", { className: "bg-gray-50 text-black/50 dark:bg-black dark:text-white/50", children: [
       /* @__PURE__ */ jsx(
-        "img",
+        LazyImage,
         {
           id: "background",
           className: "absolute -left-20 top-0 max-w-[877px]",
-          src: "https://laravel.com/assets/img/welcome/background.svg"
+          src: "https://laravel.com/assets/img/welcome/background.svg",
+          alt: "background",
+          effect: "blur"
         }
       ),
       /* @__PURE__ */ jsx("div", { className: "relative flex min-h-screen flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white", children: /* @__PURE__ */ jsxs("div", { className: "relative w-full max-w-2xl px-6 lg:max-w-7xl", children: [
@@ -7461,20 +7481,24 @@ function Welcome({ auth, laravelVersion, phpVersion }) {
                     className: "relative flex w-full flex-1 items-stretch",
                     children: [
                       /* @__PURE__ */ jsx(
-                        "img",
+                        LazyImage,
                         {
                           src: "https://laravel.com/assets/img/welcome/docs-light.svg",
                           alt: "Laravel documentation screenshot",
                           className: "aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden",
-                          onError: handleImageError
+                          onError: handleImageError,
+                          effect: "blur",
+                          wrapperClassName: "w-full h-full"
                         }
                       ),
                       /* @__PURE__ */ jsx(
-                        "img",
+                        LazyImage,
                         {
                           src: "https://laravel.com/assets/img/welcome/docs-dark.svg",
                           alt: "Laravel documentation screenshot",
-                          className: "hidden aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
+                          className: "hidden aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block",
+                          effect: "blur",
+                          wrapperClassName: "w-full h-full"
                         }
                       ),
                       /* @__PURE__ */ jsx("div", { className: "absolute -bottom-16 -left-16 h-40 w-[calc(100%+8rem)] bg-gradient-to-b from-transparent via-white to-white dark:via-zinc-900 dark:to-zinc-900" })
