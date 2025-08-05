@@ -5834,19 +5834,10 @@ const __vite_glob_0_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   default: Destinations
 }, Symbol.toStringTag, { value: "Module" }));
 function TourCard({ tour, featuredBadge: FeaturedBadge }) {
-  var _a;
   return /* @__PURE__ */ jsxs(Card, { className: "w-full h-full flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative", children: [
     tour.is_featured && FeaturedBadge && /* @__PURE__ */ jsx(FeaturedBadge, {}),
     /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), className: "block", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden h-48", children: [
-      /* @__PURE__ */ jsx(
-        LazyImage,
-        {
-          src: ((_a = tour.image) == null ? void 0 : _a.thumbnail_url) || "https://via.placeholder.com/400x200?text=Görsel+Bulunamadı",
-          alt: tour.title,
-          className: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300",
-          wrapperClassName: "w-full h-full"
-        }
-      ),
+      /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-300" }),
       /* @__PURE__ */ jsx("div", { className: "absolute top-4 right-4", children: /* @__PURE__ */ jsx("div", { className: "inline-flex items-center rounded-full bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm", children: /* @__PURE__ */ jsxs("span", { children: [
         tour.duration_days,
         " Gün"

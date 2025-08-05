@@ -34,7 +34,7 @@ const getPathname = (href) => {
 
 export default function Header() {
   const { darkMode, toggleDarkMode, currentFont, changeFont, fonts, showFontMenu, setShowFontMenu, isHeaderShrunk } = useTheme();
-  const { url } = usePage(); // Aktif URL'yi almak için usePage hook'u kullanılıyor
+  const { url } = usePage(); // Aktif URL'yi almak için usePaghte hook'u kullanılıyor
 
   // Navigasyon linklerini bir dizi olarak tanımlıyoruz. Bu, kodu daha temiz ve yönetilebilir hale getirir.
   const navLinks = [

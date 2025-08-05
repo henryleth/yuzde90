@@ -4,6 +4,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { useTheme } from '@/Context/ThemeContext';
 import moment from 'moment';
 import 'moment/locale/tr';
+import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
 
 // Kenar çubuğu için bir bileşen
 const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, recentContents }) => (
@@ -16,10 +17,12 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
           {relatedPosts.map(post => (
             <li key={post.id} className="sidebar-post-item flex items-center">
               <Link href={route('contents.show', post.slug)} className="flex items-center group">
-                <img 
+                <LazyImage 
                   src={post.image_thumbnail_url || 'https://via.placeholder.com/80'} 
                   alt={post.title} 
                   className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
+                  wrapperClassName="w-16 h-16"
+                  effect="blur"
                 />
                 <span className="font-semibold text-muted-foreground group-hover:text-primary transition-colors">{post.title}</span>
               </Link>
@@ -37,10 +40,12 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
           {relatedTours.map(tour => (
             <li key={tour.id} className="sidebar-post-item flex items-center">
               <Link href={route('tour.show', tour.slug)} className="flex items-center group">
-                <img 
+                <LazyImage 
                   src={tour.image_thumbnail || 'https://via.placeholder.com/80'} 
                   alt={tour.title} 
                   className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
+                  wrapperClassName="w-16 h-16"
+                  effect="blur"
                 />
                 <span className="font-semibold text-muted-foreground group-hover:text-primary transition-colors">{tour.title}</span>
               </Link>
@@ -58,10 +63,12 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
           {recentContents.map(content => (
             <li key={content.id} className="sidebar-post-item flex items-center">
               <Link href={route('contents.show', content.slug)} className="flex items-center group">
-                <img 
+                <LazyImage 
                   src={content.image_thumbnail || 'https://via.placeholder.com/80'} 
                   alt={content.title} 
                   className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
+                  wrapperClassName="w-16 h-16"
+                  effect="blur"
                 />
                 <span className="font-semibold text-muted-foreground group-hover:text-primary transition-colors">{content.title}</span>
               </Link>

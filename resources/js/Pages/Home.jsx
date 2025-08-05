@@ -3,6 +3,7 @@ import { Button } from '@/Components/ui/button';
 import { Card } from '@/Components/ui/card';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useState, useEffect } from 'react';
+import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
 
 // Merkezi Kart Bileşenlerini ve Etiketi İçe Aktarma
 import TourCard from '@/Components/TourCard';
@@ -37,10 +38,12 @@ export default function Home({ tours, popularDestinations, seo }) {
                 <div className="absolute inset-0 w-full h-full">
                     {/* Video hazır olana kadar kapak görseli gösterilir */}
                     {!isVideoReady && (
-                        <img
+                        <LazyImage
                             src="https://img.youtube.com/vi/oe_kmwcO1ag/maxresdefault.jpg"
                             alt="Video Thumbnail"
                             className="w-full h-full object-cover"
+                            wrapperClassName="w-full h-full"
+                            effect="blur"
                         />
                     )}
                     {/* Video iframe'i her zaman DOM'da bulunur ancak sadece hazır olduğunda görünür olur */}
@@ -103,7 +106,7 @@ export default function Home({ tours, popularDestinations, seo }) {
                         {/* Sağ Taraf: Sosyal Kanıt ve Güven Simgeleri */}
                         <div className="flex flex-col items-center space-y-6">
                             <a href="https://www.tripadvisor.es/Attraction_Review-g293974-d13153444-Reviews-Pride_Travel-Istanbul.html" target="_blank" rel="noopener noreferrer" className="transition-transform hover:scale-110">
-                                <img src="https://logodix.com/logo/464050.png" alt="TripAdvisor" className="h-48"/>
+                                <LazyImage src="https://logodix.com/logo/464050.png" alt="TripAdvisor" className="h-48" wrapperClassName="h-48" effect="blur"/>
                             </a>
                             <div className="border p-4 rounded-lg text-center bg-card shadow-lg w-full">
                                 <a href="https://www.tursab.org.tr/tr/dd-acente-sorgulama" target="_blank" rel="noopener noreferrer" className="group">
@@ -144,11 +147,12 @@ export default function Home({ tours, popularDestinations, seo }) {
                                 <Link key={destination.id} href={route('destinations.show', destination.slug)} className="block">
                                     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 relative group">
                                         <div className="relative w-full h-64"> {/* Görsel boyutu artırıldı */}
-                                            <img
+                                            <LazyImage
                                                 src={destination.image?.thumbnail_url || 'https://via.placeholder.com/400x200?text=Görsel+Bulunamadı'}
                                                 alt={destination.name}
                                                 className="w-full h-full object-cover"
-                                                loading="lazy"
+                                                wrapperClassName="w-full h-full"
+                                                effect="blur"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-4 transition-opacity duration-300 group-hover:from-black/50">
                                                 <div className="text-white">

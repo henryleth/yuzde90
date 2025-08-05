@@ -9,6 +9,7 @@ import { Link, usePage, router } from '@inertiajs/react';
 import moment from 'moment';
 import 'moment/locale/tr';
 import GuestLayout from '@/Layouts/GuestLayout';
+import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
 
 export default function Contents({ seo }) {
   const { posts: backendPosts, categories: backendCategories, destinations: backendDestinations, filters } = usePage().props;
@@ -224,11 +225,12 @@ export default function Contents({ seo }) {
                         <div key={post.id} className="blog-post-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group">
                             {/* Blog Kart Görseli (Tıklanabilir) */}
                             <Link href={route('contents.show', post.slug)} className="blog-post-image-link block relative w-full h-48 overflow-hidden">
-                                <img
+                                <LazyImage
                                     src={post.image?.thumbnail_url || 'https://placehold.co/600x400?text=Görsel+Bulunamadı'}
                                     alt={post.title}
                                     className="blog-post-image w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                    loading="lazy"
+                                    wrapperClassName="w-full h-48"
+                                    effect="blur"
                                 />
                             </Link>
 

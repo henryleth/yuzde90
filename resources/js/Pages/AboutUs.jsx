@@ -4,6 +4,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
 import { Check, Users, Globe, Award, Leaf, Heart, Compass, Camera } from 'lucide-react'; // Yeni ikonlar ekledim
+import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
 
 export default function AboutUs() {
     return (
@@ -39,7 +40,7 @@ export default function AboutUs() {
                             </Card>
                         </div>
                         <div className="order-1 md:order-2">
-                            <img src="https://images.pexels.com/photos/2440024/pexels-photo-2440024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Bizim Hikayemiz" className="rounded-lg shadow-2xl object-cover w-full h-auto transform hover:scale-105 transition-transform duration-500" />
+                            <LazyImage src="https://images.pexels.com/photos/2440024/pexels-photo-2440024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Bizim Hikayemiz" className="rounded-lg shadow-2xl object-cover w-full h-auto transform hover:scale-105 transition-transform duration-500" wrapperClassName="w-full" effect="blur" />
                         </div>
                     </div>
                 </div>

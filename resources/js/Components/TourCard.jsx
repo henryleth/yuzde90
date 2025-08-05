@@ -21,6 +21,7 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
             alt={tour.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             wrapperClassName="w-full h-full"
+            effect="blur" // Resim yüklenirken bulanıklaştırma efekti uygula
           />
           <div className="absolute top-4 right-4">
             <div className="inline-flex items-center rounded-full bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
