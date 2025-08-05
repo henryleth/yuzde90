@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 // CommonJS modülü olduğu için ve SSR sırasında sorun çıkardığı için,
 // paketi varsayılan olarak içe aktarıp, ardından bileşeni içinden alıyoruz.
 // Bu, 'Named export 'LazyLoadImage' not found' hatasını çözer.
-import LazyLoadImagePkg from 'react-lazy-load-image-component';
+// Vite'ın geliştirme sunucusunda CommonJS modüllerini işlemesiyle ilgili sorunları
+// çözmek için namespace importu (* as) kullanıyoruz.
+import * as LazyLoadImagePkg from 'react-lazy-load-image-component';
 
-// Paketin yapısına göre LazyLoadImage'i alıyoruz. Bazen doğrudan default export olabilir.
-const LazyLoadImage = LazyLoadImagePkg.LazyLoadImage || LazyLoadImagePkg;
+// Paketin yapısına göre LazyLoadImage'i alıyoruz.
+// Geliştirme (dev) ve üretim (build) ortamlarındaki farklılıkları ele almak için
+// birden fazla olası yapıyı kontrol ediyoruz.
+const LazyLoadImage = LazyLoadImagePkg.LazyLoadImage || LazyLoadImagePkg.default || LazyLoadImagePkg;
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
 // Resim yüklenirken veya sunucu tarafında gösterilecek yer tutucu.

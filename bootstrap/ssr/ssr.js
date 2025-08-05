@@ -1,14 +1,14 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import * as React from "react";
 import React__default, { createContext, useState, useEffect, useContext, useRef, lazy, Suspense, forwardRef, useImperativeHandle } from "react";
-import { usePage, Link, Head, useForm, router as router$1, createInertiaApp } from "@inertiajs/react";
+import { usePage, Link, Head, useForm, router, createInertiaApp } from "@inertiajs/react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { X, CaseSensitive, ChevronDown, Sun, Moon, MenuIcon, Facebook, Twitter, Instagram, Linkedin, Send, Heart, Compass, Users, Check, Leaf, Camera, ChevronRight, Dot, Package, Menu, Code, Trash2, ChevronUp, XCircle, Upload, Search, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, ImageIcon, PlusCircle, Edit as Edit$5, CheckCircle, Clock, MoreHorizontal, ExternalLink, Image, Lightbulb, Phone, Mail, MapPin, Calendar as Calendar$1, Tag, Star, Globe, Wallet, ArrowLeft, ArrowRight, Languages, Snowflake, DollarSign } from "lucide-react";
-import LazyLoadImagePkg from "react-lazy-load-image-component";
+import * as LazyLoadImagePkg from "react-lazy-load-image-component";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import * as ToastPrimitives from "@radix-ui/react-toast";
@@ -21,15 +21,16 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { format } from "date-fns";
 import { getDefaultClassNames, DayPicker } from "react-day-picker";
 import axios from "axios";
+import * as SwitchPrimitives from "@radix-ui/react-switch";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import moment from "moment";
 import "moment/locale/tr.js";
+import Lightbox from "yet-another-react-lightbox";
 import { Transition, Dialog as Dialog$1, TransitionChild, DialogPanel } from "@headlessui/react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import Lightbox from "yet-another-react-lightbox";
 import ReactDOMServer from "react-dom/server";
 import require$$0 from "process";
 import require$$1 from "http";
@@ -575,7 +576,7 @@ const CardFooter = React.forwardRef(({
   }
 ));
 CardFooter.displayName = "CardFooter";
-const LazyLoadImage$1 = LazyLoadImagePkg.LazyLoadImage || LazyLoadImagePkg;
+const LazyLoadImage = LazyLoadImagePkg.LazyLoadImage || LazyLoadImagePkg.default || LazyLoadImagePkg;
 const ImagePlaceholder = ({ wrapperClassName }) => /* @__PURE__ */ jsx("div", { className: wrapperClassName, children: /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gray-200 rounded-md animate-pulse" }) });
 const LazyImage = (props) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -585,7 +586,7 @@ const LazyImage = (props) => {
   if (!isMounted) {
     return /* @__PURE__ */ jsx(ImagePlaceholder, { wrapperClassName: props.wrapperClassName });
   }
-  return /* @__PURE__ */ jsx(LazyLoadImage$1, { ...props });
+  return /* @__PURE__ */ jsx(LazyLoadImage, { ...props });
 };
 function AboutUs() {
   return /* @__PURE__ */ jsxs(Guest, { children: [
@@ -593,8 +594,8 @@ function AboutUs() {
     /* @__PURE__ */ jsxs("section", { className: "relative h-[50vh] md:h-[60vh] bg-cover bg-center text-white flex items-center justify-center", style: { backgroundImage: `url('https://images.pexels.com/photos/3278215/pexels-photo-3278215.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')` }, children: [
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-black/70 to-transparent about-us-hero-overlay" }),
       /* @__PURE__ */ jsxs("div", { className: "relative z-10 text-center px-4", children: [
-        /* @__PURE__ */ jsx("h1", { className: "text-5xl md:text-7xl font-bold mb-4 font-playfair", children: "Keşfetmenin Ruhu" }),
-        /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl max-w-3xl mx-auto", children: "Biz sadece bir seyahat acentesi değiliz; bizler, Türkiye'nin kalbine yolculuk düzenleyen hikaye anlatıcılarıyız." })
+        /* @__PURE__ */ jsx("h1", { className: "text-5xl md:text-7xl font-bold mb-4 font-playfair animate-fade-in-up", children: "Keşfetmenin Ruhu" }),
+        /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl max-w-3xl mx-auto opacity-0 animate-fade-in-up animation-delay-300", children: "Biz sadece bir seyahat acentesi değiliz; bizler, Türkiye'nin kalbine yolculuk düzenleyen hikaye anlatıcılarıyız." })
       ] })
     ] }),
     /* @__PURE__ */ jsx("section", { className: "py-16 bg-background text-foreground", children: /* @__PURE__ */ jsx("div", { className: "container max-w-6xl mx-auto px-4 md:px-8", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-16 items-center", children: [
@@ -1075,15 +1076,28 @@ function AuthenticatedLayout({ header, children, actionButton }) {
     { name: "Opsiyonel Aktiviteler", href: route("admin.optional-activities.index"), activeCheck: "admin.optional-activities." },
     { name: "Ayarlar", href: route("admin.settings.seo.index"), activeCheck: "admin.settings." }
   ];
-  const NavLinksContent = ({ isMobile = false }) => navLinks.map((link) => /* @__PURE__ */ jsx(
-    Link,
-    {
-      href: link.href,
-      className: `transition-colors hover:text-foreground ${route().current().startsWith(link.activeCheck) ? "text-foreground" : "text-muted-foreground"} ${isMobile ? "text-lg" : "text-sm font-medium"}`,
-      children: link.name
-    },
-    link.name
-  ));
+  const NavLinksContent = ({ isMobile = false }) => {
+    const { url } = usePage();
+    const currentPath = url.split("?")[0];
+    return navLinks.map((link) => {
+      let isActive = false;
+      try {
+        const linkUrl = new URL(link.href);
+        const linkPath = linkUrl.pathname;
+        isActive = currentPath.startsWith(linkPath);
+      } catch (e2) {
+      }
+      return /* @__PURE__ */ jsx(
+        Link,
+        {
+          href: link.href,
+          className: `transition-colors hover:text-foreground ${isActive ? "text-foreground" : "text-muted-foreground"} ${isMobile ? "text-lg" : "text-sm font-medium"}`,
+          children: link.name
+        },
+        link.name
+      );
+    });
+  };
   return /* @__PURE__ */ jsxs("div", { className: "admin-panel min-h-screen w-full bg-muted/40", children: [
     /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto sm:px-6 lg:px-8", children: [
       /* @__PURE__ */ jsxs("header", { className: "sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background px-4 sm:px-0", children: [
@@ -2768,7 +2782,7 @@ function CategoryManagerModal({ isOpen, onClose }) {
   };
   const handleDelete = (id) => {
     if (confirm("Bu kategoriyi silmek istediğinize emin misiniz?")) {
-      router$1.delete(route("admin.content-categories.destroy", id), {
+      router.delete(route("admin.content-categories.destroy", id), {
         onSuccess: () => {
           toast({
             title: "Başarılı",
@@ -3385,7 +3399,7 @@ const __vite_glob_0_8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
 function Index$1({ auth, activities }) {
   const handleDelete = (id) => {
     if (confirm("Bu aktiviteyi silmek istediğinize emin misiniz?")) {
-      router$1.delete(route("admin.optional-activities.destroy", id));
+      router.delete(route("admin.optional-activities.destroy", id));
     }
   };
   return /* @__PURE__ */ jsxs(
@@ -3433,9 +3447,31 @@ const __vite_glob_0_9 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.def
   __proto__: null,
   default: Index$1
 }, Symbol.toStringTag, { value: "Module" }));
+const Switch = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  SwitchPrimitives.Root,
+  {
+    className: cn(
+      "peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
+      className
+    ),
+    ...props,
+    ref,
+    children: /* @__PURE__ */ jsx(
+      SwitchPrimitives.Thumb,
+      {
+        className: cn(
+          "pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        )
+      }
+    )
+  }
+));
+Switch.displayName = SwitchPrimitives.Root.displayName;
 function Seo({ auth, settings }) {
   const { data, setData, post, processing, errors } = useForm({
     settings: {
+      "cache.enabled": settings["cache.enabled"] === "1",
+      // String '1'/'0' değerini boolean'a çevir.
       "seo.defaults.title": settings["seo.defaults.title"] || "",
       "seo.defaults.description": settings["seo.defaults.description"] || "",
       "seo.tours.index.title": settings["seo.tours.index.title"] || "",
@@ -3459,7 +3495,7 @@ function Seo({ auth, settings }) {
       onSuccess: () => {
         toast2({
           title: "Başarılı!",
-          description: "SEO ayarları başarıyla kaydedildi.",
+          description: "Ayarlar başarıyla kaydedildi.",
           className: "bg-green-600 text-white border-green-600"
         });
       },
@@ -3473,9 +3509,8 @@ function Seo({ auth, settings }) {
     });
   };
   const handleClearCache = () => {
-    router$1.post(route("admin.settings.cache.clear"), {}, {
+    router.post(route("admin.settings.cache.clear"), {}, {
       preserveState: true,
-      // Form state'ini koru
       onSuccess: () => {
         toast2({
           title: "Başarılı!",
@@ -3495,6 +3530,9 @@ function Seo({ auth, settings }) {
   };
   const handleInputChange = (key, value) => {
     setData("settings", { ...data.settings, [key]: value });
+  };
+  const handleSwitchChange = (checked) => {
+    setData("settings", { ...data.settings, "cache.enabled": checked });
   };
   const renderSettingInput = (key, label, isTextarea = false) => /* @__PURE__ */ jsxs("div", { children: [
     /* @__PURE__ */ jsx(Label, { htmlFor: key, children: label }),
@@ -3529,8 +3567,8 @@ function Seo({ auth, settings }) {
         /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
           /* @__PURE__ */ jsxs(Card, { className: "cache-management-card", children: [
             /* @__PURE__ */ jsxs(CardHeader, { children: [
-              /* @__PURE__ */ jsx(CardTitle, { children: "Önbellek Yönetimi" }),
-              /* @__PURE__ */ jsx(CardDescription, { children: "Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin. Bu işlem tüm SSR, veritabanı ve yapılandırma önbelleklerini sıfırlar." })
+              /* @__PURE__ */ jsx(CardTitle, { children: "Manuel Önbellek Yönetimi" }),
+              /* @__PURE__ */ jsx(CardDescription, { children: "Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin." })
             ] }),
             /* @__PURE__ */ jsx(CardContent, { children: /* @__PURE__ */ jsx(
               Button,
@@ -3544,6 +3582,23 @@ function Seo({ auth, settings }) {
             ) })
           ] }),
           /* @__PURE__ */ jsxs("form", { onSubmit: submit, className: "space-y-8", children: [
+            /* @__PURE__ */ jsxs(Card, { children: [
+              /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsx(CardTitle, { children: "Önbellek Ayarları" }) }),
+              /* @__PURE__ */ jsx(CardContent, { children: /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "cache-enabled", className: "text-base", children: "Site Geneli Önbellekleme" }),
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-3", children: [
+                  /* @__PURE__ */ jsx(
+                    Switch,
+                    {
+                      id: "cache-enabled",
+                      checked: data.settings["cache.enabled"],
+                      onCheckedChange: handleSwitchChange
+                    }
+                  ),
+                  /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "Aktif olduğunda, sitenin sayfaları performansı artırmak için 24 saat boyunca önbelleğe alınır." })
+                ] })
+              ] }) })
+            ] }),
             /* @__PURE__ */ jsxs(Card, { children: [
               /* @__PURE__ */ jsxs(CardHeader, { children: [
                 /* @__PURE__ */ jsx(CardTitle, { children: "Genel SEO Ayarları" }),
@@ -5009,7 +5064,7 @@ const __vite_glob_0_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
 function Index({ auth, tours }) {
   const handleDelete = (id) => {
     if (confirm("Bu turu silmek istediğinize emin misiniz?")) {
-      router$1.delete(route("admin.tours.destroy", id));
+      router.delete(route("admin.tours.destroy", id));
     }
   };
   return /* @__PURE__ */ jsxs(
@@ -5062,8 +5117,8 @@ function ContactUs() {
     /* @__PURE__ */ jsxs("section", { className: "relative h-[40vh] md:h-[50vh] bg-cover bg-center text-white flex items-center justify-center", style: { backgroundImage: `url('https://images.pexels.com/photos/1583339/pexels-photo-1583339.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')` }, children: [
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-black/50 contact-us-hero-overlay" }),
       /* @__PURE__ */ jsxs("div", { className: "relative z-10 text-center px-4", children: [
-        /* @__PURE__ */ jsx("h1", { className: "text-5xl md:text-6xl font-bold mb-4 font-playfair", children: "Maceraya Hazır mısınız?" }),
-        /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl max-w-2xl mx-auto", children: "Hayalinizdeki tatil bir mesaj uzağınızda. Bize ulaşın, yolculuğunuza başlayalım." })
+        /* @__PURE__ */ jsx("h1", { className: "text-5xl md:text-6xl font-bold mb-4 font-playfair animate-fade-in-up", children: "Maceraya Hazır mısınız?" }),
+        /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl max-w-2xl mx-auto opacity-0 animate-fade-in-up animation-delay-300", children: "Hayalinizdeki tatil bir mesaj uzağınızda. Bize ulaşın, yolculuğunuza başlayalım." })
       ] })
     ] }),
     /* @__PURE__ */ jsx("section", { className: "py-16 bg-background text-foreground", children: /* @__PURE__ */ jsx("div", { className: "container max-w-7xl mx-auto px-4 md:px-8", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 lg:grid-cols-3 gap-12", children: [
@@ -5323,7 +5378,7 @@ function Contents({ seo }) {
     if (searchQuery) {
       queryParams.search = searchQuery;
     }
-    router$1.get(route("contents.index"), queryParams, { preserveState: true, replace: true });
+    router.get(route("contents.index"), queryParams, { preserveState: true, replace: true });
   };
   const handleSearchChange = (e2) => {
     setSearchQuery(e2.target.value);
@@ -5573,12 +5628,12 @@ const __vite_glob_0_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   __proto__: null,
   default: Dashboard
 }, Symbol.toStringTag, { value: "Module" }));
-const { LazyLoadImage } = LazyLoadImagePkg;
 function DestinationDetail({ seo }) {
   var _a;
   const { destination } = usePage().props;
   const { fonts, currentFont, darkMode } = useTheme();
   const [activeSection, setActiveSection] = useState("about");
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
   const toursCarouselRef = useRef(null);
   const contentsCarouselRef = useRef(null);
   useEffect(() => {
@@ -5680,153 +5735,146 @@ function DestinationDetail({ seo }) {
         }
       )
     ] }) }) }),
-    /* @__PURE__ */ jsx("div", { className: "max-w-6xl mx-auto px-4 py-8", children: /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 gap-8", children: [
-      " ",
-      /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-        " ",
-        /* @__PURE__ */ jsx("section", { id: "tours", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
-          /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-xl font-semibold leading-none tracking-tight", children: [
-            destination.name,
-            " Turlar"
-          ] }) }),
-          " ",
-          /* @__PURE__ */ jsx(CardContent, { children: destination.tours.length > 0 ? /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8", children: destination.tours.slice(0, 3).map((tour) => {
-            var _a2;
-            return /* @__PURE__ */ jsxs(Card, { className: "overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group tours-card flex flex-col", children: [
-              /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), className: "block", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden tours-card-image-wrapper h-48", children: [
-                /* @__PURE__ */ jsx(
-                  LazyLoadImage,
-                  {
-                    src: ((_a2 = tour.image) == null ? void 0 : _a2.thumbnail_url) || "https://via.placeholder.com/400x200?text=Görsel+Bulunamadı",
-                    alt: tour.title,
-                    className: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 tours-card-image",
-                    effect: "blur",
-                    wrapperClassName: "w-full h-full"
-                  }
-                ),
-                tour.is_popular && /* @__PURE__ */ jsx("div", { className: "absolute top-4 left-4 tours-popular-tag-wrapper", children: /* @__PURE__ */ jsx("span", { className: "bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium tours-popular-tag", children: "En Popüler" }) }),
-                /* @__PURE__ */ jsx("div", { className: "absolute top-4 right-4 tours-duration-tag-wrapper", children: /* @__PURE__ */ jsxs("span", { className: "bg-background/90 text-foreground px-3 py-1 rounded-full text-sm font-medium tours-duration-tag", children: [
-                  tour.duration_days,
-                  " Gün"
-                ] }) })
-              ] }) }),
-              /* @__PURE__ */ jsxs("div", { className: "p-6 flex flex-col justify-between flex-grow tours-card-content", children: [
-                /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), children: /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold mb-2 tours-card-title hover:text-primary transition-colors", children: tour.title }) }),
-                /* @__PURE__ */ jsx("p", { className: "text-muted-foreground text-sm mb-4 tours-card-summary", children: tour.summary ? tour.summary.substring(0, 100) + "..." : "" }),
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-4 tours-card-meta", children: [
-                  " ",
-                  /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-4 text-sm text-muted-foreground tours-card-details", children: [
-                    /* @__PURE__ */ jsxs("span", { className: "flex items-center tours-card-participants", children: [
-                      /* @__PURE__ */ jsx(Users, { className: "h-4 w-4 mr-1" }),
-                      tour.min_participants ?? "N/A",
-                      "-",
-                      tour.max_participants ?? "N/A",
-                      " Kişi"
-                    ] }),
-                    /* @__PURE__ */ jsxs("span", { className: "flex items-center tours-card-rating", children: [
-                      /* @__PURE__ */ jsx(Star, { className: "h-4 w-4 mr-1 text-yellow-500" }),
-                      typeof tour.rating === "number" ? tour.rating.toFixed(1) : "N/A"
-                    ] })
-                  ] })
-                ] }),
-                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between tours-card-footer", children: [
-                  /* @__PURE__ */ jsxs("div", { children: [
-                    /* @__PURE__ */ jsxs("span", { className: "text-2xl font-bold text-primary tours-card-price", children: [
-                      "€",
-                      tour.price_from || "N/A"
-                    ] }),
-                    /* @__PURE__ */ jsx("span", { className: "text-sm text-muted-foreground block tours-card-price-label", children: "kişi başına" })
-                  ] }),
-                  /* @__PURE__ */ jsx(Button, { asChild: true, className: "tours-card-detail-button", children: /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), children: "Detayları Gör" }) })
-                ] })
-              ] })
-            ] }, tour.id);
-          }) }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için henüz tur bulunmamaktadır." }) })
+    /* @__PURE__ */ jsx("div", { className: "max-w-6xl mx-auto px-4 py-8", children: /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 gap-8", children: /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
+      /* @__PURE__ */ jsx("section", { id: "tours", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
+        /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-2xl font-bold", children: [
+          destination.name,
+          " Turları"
         ] }) }),
-        /* @__PURE__ */ jsx("section", { id: "about", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
-          /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsx(CardTitle, { children: "Destinasyon Hakkında" }) }),
-          /* @__PURE__ */ jsx(CardContent, { children: destination.description ? /* @__PURE__ */ jsx("div", { className: "prose prose-slate dark:prose-invert max-w-none text-foreground", dangerouslySetInnerHTML: { __html: destination.description } }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için detaylı bir açıklama bulunmamaktadır." }) })
-        ] }) }),
-        /* @__PURE__ */ jsx("section", { id: "contents", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
-          /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-xl font-semibold leading-none tracking-tight", children: [
-            destination.name,
-            " İçerikleri"
-          ] }) }),
-          " ",
-          /* @__PURE__ */ jsx(CardContent, { children: destination.contents.length > 0 ? /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 overflow-x-auto hide-scrollbar", children: destination.contents.slice(0, 4).map((content) => {
-            var _a2;
-            return /* @__PURE__ */ jsxs(Card, { className: "blog-post-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group h-full flex flex-col", children: [
-              /* @__PURE__ */ jsx(Link, { href: route("contents.show", content.slug), className: "block", children: /* @__PURE__ */ jsx("div", { className: "relative w-full h-48 overflow-hidden", children: /* @__PURE__ */ jsx(
-                LazyLoadImage,
+        /* @__PURE__ */ jsx(CardContent, { children: destination.tours.length > 0 ? /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8", children: destination.tours.slice(0, 3).map((tour) => {
+          var _a2;
+          return /* @__PURE__ */ jsxs(Card, { className: "overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group tours-card flex flex-col", children: [
+            /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), className: "block", children: /* @__PURE__ */ jsxs("div", { className: "relative overflow-hidden tours-card-image-wrapper h-48", children: [
+              /* @__PURE__ */ jsx(
+                LazyImage,
                 {
-                  src: ((_a2 = content.image) == null ? void 0 : _a2.thumbnail_url) || "https://placehold.co/600x400?text=Görsel+Bulunamadı",
-                  alt: content.title,
-                  className: "blog-post-image w-full h-full object-cover group-hover:scale-110 transition-transform duration-300",
+                  src: ((_a2 = tour.image) == null ? void 0 : _a2.thumbnail_url) || "https://via.placeholder.com/400x200?text=Görsel+Bulunamadı",
+                  alt: tour.title,
+                  className: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 tours-card-image",
                   effect: "blur",
                   wrapperClassName: "w-full h-full"
                 }
-              ) }) }),
-              /* @__PURE__ */ jsxs(CardContent, { className: "blog-post-content p-4 flex flex-col flex-grow", children: [
-                /* @__PURE__ */ jsx(Link, { href: route("contents.show", content.slug), className: "blog-post-title-link block", children: /* @__PURE__ */ jsx("h3", { className: "blog-post-title text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300", children: content.title }) }),
-                content.summary && /* @__PURE__ */ jsxs("p", { className: "blog-post-summary text-muted-foreground text-sm line-clamp-3 mb-auto", children: [
-                  " ",
-                  content.summary ? content.summary.substring(0, 150) + (content.summary.length > 150 ? "..." : "") : "Bu blog yazısı için özet bulunmamaktadır.",
-                  " "
+              ),
+              tour.is_popular && /* @__PURE__ */ jsx("div", { className: "absolute top-4 left-4 tours-popular-tag-wrapper", children: /* @__PURE__ */ jsx("span", { className: "bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium tours-popular-tag", children: "En Popüler" }) }),
+              /* @__PURE__ */ jsx("div", { className: "absolute top-4 right-4 tours-duration-tag-wrapper", children: /* @__PURE__ */ jsxs("span", { className: "bg-background/90 text-foreground px-3 py-1 rounded-full text-sm font-medium tours-duration-tag", children: [
+                tour.duration_days,
+                " Gün"
+              ] }) })
+            ] }) }),
+            /* @__PURE__ */ jsxs("div", { className: "p-6 flex flex-col justify-between flex-grow tours-card-content", children: [
+              /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), children: /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold mb-2 tours-card-title hover:text-primary transition-colors", children: tour.title }) }),
+              /* @__PURE__ */ jsx("p", { className: "text-muted-foreground text-sm mb-4 tours-card-summary", children: tour.summary ? tour.summary.substring(0, 100) + "..." : "" }),
+              /* @__PURE__ */ jsx("div", { className: "flex items-center justify-between mb-4 tours-card-meta", children: /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-4 text-sm text-muted-foreground tours-card-details", children: [
+                /* @__PURE__ */ jsxs("span", { className: "flex items-center tours-card-participants", children: [
+                  /* @__PURE__ */ jsx(Users, { className: "h-4 w-4 mr-1" }),
+                  tour.min_participants ?? "N/A",
+                  "-",
+                  tour.max_participants ?? "N/A",
+                  " Kişi"
                 ] }),
-                /* @__PURE__ */ jsxs("div", { className: "blog-post-meta flex flex-wrap gap-2 items-center text-xs text-muted-foreground mt-4", children: [
-                  " ",
-                  (content.content_categories || []).map((cat) => (
-                    // Undefined kontrolü eklendi
-                    /* @__PURE__ */ jsxs("span", { className: "blog-category-tag bg-muted rounded-full px-2 py-1 flex items-center", children: [
-                      " ",
-                      /* @__PURE__ */ jsx(Tag, { className: "h-3 w-3 mr-1 text-primary" }),
-                      cat.name
-                    ] }, cat.id)
-                  )),
-                  (content.destinations || []).map((dest) => (
-                    // Undefined kontrolü eklendi
-                    /* @__PURE__ */ jsxs("span", { className: "blog-destination-tag bg-muted rounded-full px-2 py-1 flex items-center", children: [
-                      " ",
-                      /* @__PURE__ */ jsx(MapPin, { className: "h-3 w-3 mr-1 text-secondary" }),
-                      dest.name
-                    ] }, dest.id)
-                  ))
-                ] }),
-                /* @__PURE__ */ jsxs("div", { className: "blog-post-date-readtime flex items-center justify-between text-xs text-muted-foreground mt-4 pt-4 border-t border-border", children: [
-                  " ",
-                  /* @__PURE__ */ jsx("p", { children: content.published_at ? format(new Date(content.published_at), "dd.MM.yyyy") : "-" }),
-                  " ",
-                  content.content && /* @__PURE__ */ jsxs("p", { children: [
-                    Math.ceil(content.content.split(" ").length / 200),
-                    " dk okuma"
-                  ] })
-                ] }),
-                /* @__PURE__ */ jsxs(Link, { href: route("contents.show", content.slug), className: "blog-read-more-link inline-flex items-center mt-4 text-primary hover:underline text-sm font-medium transition-colors", children: [
-                  "Devamını Oku ",
-                  /* @__PURE__ */ jsx("span", { className: "ml-1", children: "→" })
+                /* @__PURE__ */ jsxs("span", { className: "flex items-center tours-card-rating", children: [
+                  /* @__PURE__ */ jsx(Star, { className: "h-4 w-4 mr-1 text-yellow-500" }),
+                  typeof tour.rating === "number" ? tour.rating.toFixed(1) : "N/A"
                 ] })
+              ] }) }),
+              /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between tours-card-footer", children: [
+                /* @__PURE__ */ jsxs("div", { children: [
+                  /* @__PURE__ */ jsxs("span", { className: "text-2xl font-bold text-primary tours-card-price", children: [
+                    "€",
+                    tour.price_from || "N/A"
+                  ] }),
+                  /* @__PURE__ */ jsx("span", { className: "text-sm text-muted-foreground block tours-card-price-label", children: "kişi başına" })
+                ] }),
+                /* @__PURE__ */ jsx(Button, { asChild: true, className: "tours-card-detail-button", children: /* @__PURE__ */ jsx(Link, { href: route("tour.show", tour.slug), children: "Detayları Gör" }) })
               ] })
-            ] }, content.id);
-          }) }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için henüz içerik bulunmamaktadır." }) })
+            ] })
+          ] }, tour.id);
+        }) }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için henüz tur bulunmamaktadır." }) })
+      ] }) }),
+      /* @__PURE__ */ jsx("section", { id: "about", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
+        /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsx(CardTitle, { children: "Destinasyon Hakkında" }) }),
+        /* @__PURE__ */ jsx(CardContent, { children: destination.description ? /* @__PURE__ */ jsx("div", { className: "prose prose-slate dark:prose-invert max-w-none text-foreground", dangerouslySetInnerHTML: { __html: destination.description } }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için detaylı bir açıklama bulunmamaktadır." }) })
+      ] }) }),
+      /* @__PURE__ */ jsx("section", { id: "contents", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
+        /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-2xl font-bold", children: [
+          destination.name,
+          " İçerikleri"
         ] }) }),
-        /* @__PURE__ */ jsx("section", { id: "gallery", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
-          /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-xl font-semibold leading-none tracking-tight", children: [
-            destination.name,
-            " Galerisi"
-          ] }) }),
-          " ",
-          /* @__PURE__ */ jsx(CardContent, { children: destination.gallery_images.length > 0 ? /* @__PURE__ */ jsx("div", { className: "columns-2 md:columns-3 lg:columns-4 gap-4", children: destination.gallery_images.map((image) => /* @__PURE__ */ jsx("div", { className: "mb-4 break-inside-avoid relative group rounded-lg overflow-hidden border border-border shadow-sm hover:shadow-md transition-all duration-200", children: /* @__PURE__ */ jsx(
-            LazyLoadImage,
-            {
-              src: image.thumbnail_url || "/placeholder.svg",
-              alt: image.file_name,
-              className: "w-full h-auto object-cover rounded-md",
-              effect: "blur"
-            }
-          ) }, image.id)) }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için henüz galeri görseli bulunmamaktadır." }) })
-        ] }) })
-      ] })
-    ] }) })
+        /* @__PURE__ */ jsx(CardContent, { children: destination.contents.length > 0 ? /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 overflow-x-auto hide-scrollbar", children: destination.contents.slice(0, 4).map((content) => {
+          var _a2;
+          return /* @__PURE__ */ jsxs(Card, { className: "blog-post-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group h-full flex flex-col", children: [
+            /* @__PURE__ */ jsx(Link, { href: route("contents.show", content.slug), className: "block", children: /* @__PURE__ */ jsx("div", { className: "relative w-full h-48 overflow-hidden", children: /* @__PURE__ */ jsx(
+              LazyImage,
+              {
+                src: ((_a2 = content.image) == null ? void 0 : _a2.thumbnail_url) || "https://placehold.co/600x400?text=Görsel+Bulunamadı",
+                alt: content.title,
+                className: "blog-post-image w-full h-full object-cover group-hover:scale-110 transition-transform duration-300",
+                effect: "blur",
+                wrapperClassName: "w-full h-full"
+              }
+            ) }) }),
+            /* @__PURE__ */ jsxs(CardContent, { className: "blog-post-content p-4 flex flex-col flex-grow", children: [
+              /* @__PURE__ */ jsx(Link, { href: route("contents.show", content.slug), className: "blog-post-title-link block", children: /* @__PURE__ */ jsx("h3", { className: "blog-post-title text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300", children: content.title }) }),
+              content.summary && /* @__PURE__ */ jsx("p", { className: "blog-post-summary text-muted-foreground text-sm line-clamp-3 mb-auto", children: content.summary ? content.summary.substring(0, 150) + (content.summary.length > 150 ? "..." : "") : "Bu blog yazısı için özet bulunmamaktadır." }),
+              /* @__PURE__ */ jsxs("div", { className: "blog-post-meta flex flex-wrap gap-2 items-center text-xs text-muted-foreground mt-4", children: [
+                (content.content_categories || []).map((cat) => /* @__PURE__ */ jsxs("span", { className: "blog-category-tag bg-muted rounded-full px-2 py-1 flex items-center", children: [
+                  /* @__PURE__ */ jsx(Tag, { className: "h-3 w-3 mr-1 text-primary" }),
+                  cat.name
+                ] }, cat.id)),
+                (content.destinations || []).map((dest) => /* @__PURE__ */ jsxs("span", { className: "blog-destination-tag bg-muted rounded-full px-2 py-1 flex items-center", children: [
+                  /* @__PURE__ */ jsx(MapPin, { className: "h-3 w-3 mr-1 text-secondary" }),
+                  dest.name
+                ] }, dest.id))
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "blog-post-date-readtime flex items-center justify-between text-xs text-muted-foreground mt-4 pt-4 border-t border-border", children: [
+                /* @__PURE__ */ jsx("p", { children: content.published_at ? format(new Date(content.published_at), "dd.MM.yyyy") : "-" }),
+                content.content && /* @__PURE__ */ jsxs("p", { children: [
+                  Math.ceil(content.content.split(" ").length / 200),
+                  " dk okuma"
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs(Link, { href: route("contents.show", content.slug), className: "blog-read-more-link inline-flex items-center mt-4 text-primary hover:underline text-sm font-medium transition-colors", children: [
+                "Devamını Oku ",
+                /* @__PURE__ */ jsx("span", { className: "ml-1", children: "→" })
+              ] })
+            ] })
+          ] }, content.id);
+        }) }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için henüz içerik bulunmamaktadır." }) })
+      ] }) }),
+      /* @__PURE__ */ jsx("section", { id: "gallery", className: "space-y-6", children: /* @__PURE__ */ jsxs(Card, { className: "bg-card rounded-lg border border-border p-6 shadow-sm", children: [
+        /* @__PURE__ */ jsx(CardHeader, { children: /* @__PURE__ */ jsxs("h2", { className: "text-2xl font-bold", children: [
+          destination.name,
+          " Galerisi"
+        ] }) }),
+        /* @__PURE__ */ jsx(CardContent, { children: destination.gallery_images.length > 0 ? /* @__PURE__ */ jsx("div", { className: "columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4", children: destination.gallery_images.map((image, index) => /* @__PURE__ */ jsx(
+          "div",
+          {
+            className: "break-inside-avoid cursor-pointer",
+            onClick: () => setLightboxIndex(index),
+            children: /* @__PURE__ */ jsx(
+              LazyImage,
+              {
+                src: image.thumbnail_url || "/placeholder.svg",
+                alt: image.file_name,
+                className: "w-full h-auto object-cover rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300",
+                effect: "blur",
+                wrapperClassName: "w-full h-full"
+              }
+            )
+          },
+          image.id
+        )) }) : /* @__PURE__ */ jsx("p", { className: "text-muted-foreground", children: "Bu destinasyon için henüz galeri görseli bulunmamaktadır." }) })
+      ] }) }),
+      /* @__PURE__ */ jsx(
+        Lightbox,
+        {
+          open: lightboxIndex > -1,
+          close: () => setLightboxIndex(-1),
+          index: lightboxIndex,
+          slides: destination.gallery_images.map((img) => ({ src: img.original_url }))
+        }
+      )
+    ] }) }) })
   ] }) });
 }
 const __vite_glob_0_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -6064,7 +6112,7 @@ function Home({ tours, popularDestinations, seo }) {
                   /* @__PURE__ */ jsx("h3", { className: "text-2xl font-bold mb-1 destinasyon-baslik", children: destination.name }),
                   /* @__PURE__ */ jsx("p", { className: "text-sm opacity-90 mb-2 destinasyon-aciklama", children: destination.summary })
                 ] }),
-                /* @__PURE__ */ jsx("div", { className: "flex justify-end mt-4", children: /* @__PURE__ */ jsx(Button, { onClick: () => router$1.visit(route("destinations.show", destination.slug)), className: "bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 destinasyon-butonu", children: "Turları Gör" }) })
+                /* @__PURE__ */ jsx("div", { className: "flex justify-end mt-4", children: /* @__PURE__ */ jsx(Button, { onClick: () => router.visit(route("destinations.show", destination.slug)), className: "bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 destinasyon-butonu", children: "Turları Gör" }) })
               ] })
             ] }) }) }, destination.id);
           })
@@ -7227,7 +7275,7 @@ function Tours({ tours: backendTours, allDestinations, filters, seo }) {
     if (selectedPrices.length > 0 && !selectedPrices.includes("all")) {
       queryParams.price_range = selectedPrices.join(",");
     }
-    router$1.get(route("tours.index"), queryParams, {
+    router.get(route("tours.index"), queryParams, {
       preserveState: true,
       preserveScroll: true,
       replace: true
@@ -7237,7 +7285,7 @@ function Tours({ tours: backendTours, allDestinations, filters, seo }) {
     setSelectedDestinations([]);
     setSelectedDurations([]);
     setSelectedPrices([]);
-    router$1.get(route("tours.index"), {}, {
+    router.get(route("tours.index"), {}, {
       preserveState: true,
       replace: true,
       onSuccess: () => {
@@ -8062,8 +8110,15 @@ const resolve = (name) => {
   page.default.layout = page.default.layout || ((page2) => /* @__PURE__ */ jsx("div", { children: page2 }));
   return page;
 };
-createServer(
-  (page) => createInertiaApp({
+createServer((page) => {
+  if (page.url.startsWith("/admin")) {
+    return {
+      head: [],
+      // Başlık etiketleri için boş bir dizi gönderiyoruz.
+      body: `<div id="app" data-page='${JSON.stringify(page)}'></div>`
+    };
+  }
+  return createInertiaApp({
     page,
     render: ReactDOMServer.renderToString,
     resolve,
@@ -8087,5 +8142,5 @@ createServer(
       };
       return /* @__PURE__ */ jsx(ThemeProvider, { children: /* @__PURE__ */ jsx(App, { ...props }) });
     }
-  })
-);
+  });
+});

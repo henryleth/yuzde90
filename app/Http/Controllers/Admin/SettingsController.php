@@ -12,7 +12,12 @@ class SettingsController extends Controller
 {
     public function index()
     {
+        // Tüm ayarları veritabanından çek ve anahtar-değer çifti olarak düzenle.
         $settings = Setting::all()->pluck('value', 'key');
+        
+        // Önbellek ayarını da ekle. Eğer veritabanında yoksa, varsayılan olarak '1' (aktif) kabul et.
+        $settings['cache.enabled'] = $settings->get('cache.enabled', '1');
+
         return Inertia::render('Admin/Settings/Seo', [
             'settings' => $settings
         ]);
@@ -24,14 +29,32 @@ class SettingsController extends Controller
             'settings' => 'required|array'
         ]);
 
+        // Veritabanındaki eski cache durumunu al.
+        $oldCacheStatus = Setting::where('key', 'cache.enabled')->value('value');
+
         foreach ($validatedData['settings'] as $key => $value) {
+            // Gelen 'true'/'false' stringlerini veya boolean değerleri '1'/'0' olarak formatla.
+            $formattedValue = is_bool($value) ? ($value ? '1' : '0') : $value;
+
             Setting::updateOrCreate(
                 ['key' => $key],
-                ['value' => $value]
+                ['value' => $formattedValue]
             );
         }
 
-        // Ayarlar güncellendiğinde önbelleği temizle
+        // Yeni cache durumunu al.
+        $newCacheStatus = $validatedData['settings']['cache.enabled'] ?? $oldCacheStatus;
+        // Gelen değeri '1'/'0' formatına çevir.
+        $newCacheStatus = is_bool($newCacheStatus) ? ($newCacheStatus ? '1' : '0') : (string) $newCacheStatus;
+
+
+        // Eğer önbellek durumu değiştirildiyse (açıktan kapalıya veya tersi), tüm SSR önbelleğini temizle.
+        // Bu, eski durumdaki sayfaların (örneğin önbellekli veya önbelleksiz) sunulmasını engeller.
+        if ($oldCacheStatus !== $newCacheStatus) {
+            Cache::flush();
+        }
+
+        // SEO ayarları için özel önbelleği temizle.
         Cache::forget('seo_settings');
 
         return redirect()->back()->with('success', 'Ayarlar başarıyla kaydedildi.');

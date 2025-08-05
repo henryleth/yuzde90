@@ -47,19 +47,38 @@ export default function AuthenticatedLayout({ header, children, actionButton }) 
         { name: 'Ayarlar', href: route('admin.settings.seo.index'), activeCheck: 'admin.settings.' },
     ];
 
-    const NavLinksContent = ({ isMobile = false }) => (
-        navLinks.map((link) => (
-            <Link
-                key={link.name}
-                href={link.href}
-                className={`transition-colors hover:text-foreground ${
-                    route().current().startsWith(link.activeCheck) ? 'text-foreground' : 'text-muted-foreground'
-                } ${isMobile ? 'text-lg' : 'text-sm font-medium'}`}
-            >
-                {link.name}
-            </Link>
-        ))
-    );
+    const NavLinksContent = ({ isMobile = false }) => {
+        const { url } = usePage();
+        // Mevcut URL'nin tam yolunu alıyoruz, örneğin '/admin/tours'
+        const currentPath = url.split('?')[0];
+
+        return navLinks.map((link) => {
+            let isActive = false;
+            // Güvenlik kontrolü: Sadece geçerli URL'ler için işlem yap.
+            // route() fonksiyonu bazen SSR'da '#' gibi geçersiz değerler döndürebilir.
+            try {
+                const linkUrl = new URL(link.href);
+                const linkPath = linkUrl.pathname;
+                // Aktiflik kontrolü: Mevcut yol, linkin yoluyla başlıyorsa veya tam eşleşiyorsa aktif kabul edilir.
+                isActive = currentPath.startsWith(linkPath);
+            } catch (e) {
+                // Hata durumunda (geçersiz URL), linki aktif olarak işaretleme ve konsola bilgi ver.
+                // console.error(`Geçersiz URL atlandı: ${link.href}`);
+            }
+
+            return (
+                <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`transition-colors hover:text-foreground ${
+                        isActive ? 'text-foreground' : 'text-muted-foreground'
+                    } ${isMobile ? 'text-lg' : 'text-sm font-medium'}`}
+                >
+                    {link.name}
+                </Link>
+            );
+        });
+    };
 
     return (
         <div className="admin-panel min-h-screen w-full bg-muted/40">

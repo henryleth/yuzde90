@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
@@ -7,10 +7,12 @@ import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
 import { Button } from '@/Components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Switch } from "@/Components/ui/switch";
 
 export default function Seo({ auth, settings }) {
     const { data, setData, post, processing, errors } = useForm({
         settings: {
+            'cache.enabled': settings['cache.enabled'] === '1', // String '1'/'0' değerini boolean'a çevir.
             'seo.defaults.title': settings['seo.defaults.title'] || '',
             'seo.defaults.description': settings['seo.defaults.description'] || '',
             'seo.tours.index.title': settings['seo.tours.index.title'] || '',
@@ -36,7 +38,7 @@ export default function Seo({ auth, settings }) {
             onSuccess: () => {
                 toast({
                     title: "Başarılı!",
-                    description: "SEO ayarları başarıyla kaydedildi.",
+                    description: "Ayarlar başarıyla kaydedildi.",
                     className: 'bg-green-600 text-white border-green-600',
                 });
             },
@@ -50,15 +52,9 @@ export default function Seo({ auth, settings }) {
         });
     };
 
-    /**
-     * Cache'i temizlemek için backend'e istek gönderir.
-     * Bu fonksiyon, Inertia router'ını kullanarak belirtilen rotaya bir POST isteği yapar.
-     * İşlem tamamlandığında, sayfanın yeniden yüklenmesini önlemek için preserveState: true kullanılır
-     * ve kullanıcıya bir bildirim gösterilir.
-     */
     const handleClearCache = () => {
         router.post(route('admin.settings.cache.clear'), {}, {
-            preserveState: true, // Form state'ini koru
+            preserveState: true,
             onSuccess: () => {
                 toast({
                     title: "Başarılı!",
@@ -77,9 +73,13 @@ export default function Seo({ auth, settings }) {
         });
     };
 
-
     const handleInputChange = (key, value) => {
         setData('settings', { ...data.settings, [key]: value });
+    };
+
+    // Switch komponenti için özel bir handler. Gelen değeri direkt state'e yazar.
+    const handleSwitchChange = (checked) => {
+        setData('settings', { ...data.settings, 'cache.enabled': checked });
     };
 
     const renderSettingInput = (key, label, isTextarea = false) => (
@@ -114,13 +114,11 @@ export default function Seo({ auth, settings }) {
             <Head title="Genel Ayarlar" />
 
             <div className="space-y-8">
-                {/* Önbellek Yönetimi Kartı */}
                 <Card className="cache-management-card">
                     <CardHeader>
-                        <CardTitle>Önbellek Yönetimi</CardTitle>
+                        <CardTitle>Manuel Önbellek Yönetimi</CardTitle>
                         <CardDescription>
                             Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin.
-                            Bu işlem tüm SSR, veritabanı ve yapılandırma önbelleklerini sıfırlar.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -136,6 +134,28 @@ export default function Seo({ auth, settings }) {
                 </Card>
 
                 <form onSubmit={submit} className="space-y-8">
+                    {/* Önbellek Ayarları Kartı */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Önbellek Ayarları</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-2">
+                                <Label htmlFor="cache-enabled" className="text-base">Site Geneli Önbellekleme</Label>
+                                <div className="flex items-center space-x-3">
+                                    <Switch
+                                        id="cache-enabled"
+                                        checked={data.settings['cache.enabled']}
+                                        onCheckedChange={handleSwitchChange}
+                                    />
+                                    <p className="text-sm text-muted-foreground">
+                                        Aktif olduğunda, sitenin sayfaları performansı artırmak için 24 saat boyunca önbelleğe alınır.
+                                    </p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
                     <Card>
                         <CardHeader>
                             <CardTitle>Genel SEO Ayarları</CardTitle>

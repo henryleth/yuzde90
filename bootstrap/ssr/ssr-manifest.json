@@ -41,6 +41,7 @@
   "resources/js/Components/ui/select.jsx": [],
   "resources/js/Components/ui/separator.jsx": [],
   "resources/js/Components/ui/sheet.jsx": [],
+  "resources/js/Components/ui/switch.jsx": [],
   "resources/js/Components/ui/table.jsx": [],
   "resources/js/Components/ui/tabs.jsx": [],
   "resources/js/Components/ui/textarea.jsx": [],

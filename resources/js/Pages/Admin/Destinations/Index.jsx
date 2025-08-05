@@ -9,6 +9,7 @@ import { PlusCircle, MoreHorizontal, ExternalLink, Edit, Trash2 } from 'lucide-r
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/Components/ui/dropdown-menu';
 import Pagination from '@/Components/Pagination';
 import { toast } from '@/hooks/use-toast'; // Toast için import
+import { router } from '@inertiajs/react';
 
 export default function Index({ auth, destinations: initialDestinations }) {
     const [destinations, setDestinations] = useState(initialDestinations.data); // Initial veriyi state'e al

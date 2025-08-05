@@ -25,8 +25,20 @@ import { route } from 'ziggy-js'; // ziggy-js'yi named import olarak düzelt
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 // Sunucu tarafı render işlemini başlatan fonksiyon.
-createServer((page) =>
-    createInertiaApp({
+createServer((page) => {
+    // Admin paneli için SSR'ı devre dışı bırakıyoruz.
+    // Laravel'in `app.blade.php` dosyası `head` ve `body` anahtarlarını beklediği için,
+    // bu yapıyı manuel olarak oluşturuyoruz. React render'ı atlayarak `useLayoutEffect` hatasını,
+    // `data-page` attribute'unu ekleyerek de `dataset` hatasını çözüyoruz.
+    if (page.url.startsWith('/admin')) {
+        return {
+            head: [], // Başlık etiketleri için boş bir dizi gönderiyoruz.
+            body: `<div id="app" data-page='${JSON.stringify(page)}'></div>`,
+        };
+    }
+
+    // Admin dışındaki sayfalar için normal SSR işlemi devam eder.
+    return createInertiaApp({
         page,
         render: ReactDOMServer.renderToString,
         resolve,
@@ -69,5 +81,5 @@ createServer((page) =>
                 </ThemeProvider>
             );
         },
-    })
-);
+    });
+});

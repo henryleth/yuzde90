@@ -15,8 +15,8 @@ export default function AboutUs() {
             <section className="relative h-[50vh] md:h-[60vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: `url('https://images.pexels.com/photos/3278215/pexels-photo-3278215.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')` }}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent about-us-hero-overlay"></div>
                 <div className="relative z-10 text-center px-4">
-                    <h1 className="text-5xl md:text-7xl font-bold mb-4 font-playfair">Keşfetmenin Ruhu</h1>
-                    <p className="text-lg md:text-xl max-w-3xl mx-auto">Biz sadece bir seyahat acentesi değiliz; bizler, Türkiye'nin kalbine yolculuk düzenleyen hikaye anlatıcılarıyız.</p>
+                    <h1 className="text-5xl md:text-7xl font-bold mb-4 font-playfair animate-fade-in-up">Keşfetmenin Ruhu</h1>
+                    <p className="text-lg md:text-xl max-w-3xl mx-auto opacity-0 animate-fade-in-up animation-delay-300">Biz sadece bir seyahat acentesi değiliz; bizler, Türkiye'nin kalbine yolculuk düzenleyen hikaye anlatıcılarıyız.</p>
                 </div>
             </section>
 
