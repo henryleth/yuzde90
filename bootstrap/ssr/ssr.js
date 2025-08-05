@@ -7,7 +7,7 @@ import { cva } from "class-variance-authority";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { X, ChevronDown, MenuIcon, Facebook, Twitter, Instagram, Linkedin, Send, Heart, Compass, Users, Check, Leaf, Camera, ChevronRight, Dot, Package, Menu, Code, Trash2, ChevronUp, XCircle, Upload, Search, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, ImageIcon, PlusCircle, Edit as Edit$5, CheckCircle, Clock, MoreHorizontal, ExternalLink, Image, Lightbulb, Phone, Mail, MapPin, Star, ArrowLeft, ArrowRight } from "lucide-react";
+import { X, CaseSensitive, ChevronDown, Sun, Moon, MenuIcon, Facebook, Twitter, Instagram, Linkedin, Send, Heart, Compass, Users, Check, Leaf, Camera, ChevronRight, Dot, Package, Menu, Code, Trash2, ChevronUp, XCircle, Upload, Search, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, ImageIcon, PlusCircle, Edit as Edit$5, CheckCircle, Clock, MoreHorizontal, ExternalLink, Image, Lightbulb, Phone, Mail, MapPin, Calendar as Calendar$1, Tag, Star, Globe, Wallet, ArrowLeft, ArrowRight, Languages, Snowflake, DollarSign } from "lucide-react";
 import LazyLoadImagePkg from "react-lazy-load-image-component";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
@@ -295,7 +295,7 @@ function Header() {
             variant: "ghost",
             className: "flex items-center space-x-1",
             children: [
-              /* @__PURE__ */ jsx("i", { className: "fas fa-font text-base" }),
+              /* @__PURE__ */ jsx(CaseSensitive, { className: "h-4 w-4" }),
               /* @__PURE__ */ jsx("span", { className: "hidden sm:inline text-sm font-semibold", children: fonts[currentFont].name }),
               /* @__PURE__ */ jsx(ChevronDown, { className: "ml-1 h-4 w-4 shrink-0 opacity-50" })
             ]
@@ -323,7 +323,7 @@ function Header() {
           size: "icon",
           className: "hidden md:inline-flex",
           "aria-label": "Toggle dark mode",
-          children: /* @__PURE__ */ jsx("i", { className: `fas ${darkMode ? "fa-sun" : "fa-moon"} text-lg` })
+          children: darkMode ? /* @__PURE__ */ jsx(Sun, { className: "h-5 w-5" }) : /* @__PURE__ */ jsx(Moon, { className: "h-5 w-5" })
         }
       ),
       /* @__PURE__ */ jsxs(Sheet, { children: [
@@ -361,7 +361,7 @@ function Header() {
                   variant: "outline",
                   className: "w-full flex items-center justify-center space-x-2",
                   children: [
-                    /* @__PURE__ */ jsx("i", { className: "fas fa-font text-sm" }),
+                    /* @__PURE__ */ jsx(CaseSensitive, { className: "h-4 w-4" }),
                     /* @__PURE__ */ jsx("span", { children: fonts[currentFont].name }),
                     /* @__PURE__ */ jsx(ChevronDown, { className: "ml-2 h-4 w-4 shrink-0 opacity-50" })
                   ]
@@ -388,7 +388,7 @@ function Header() {
                 variant: "outline",
                 className: "w-full flex items-center justify-center space-x-2",
                 children: [
-                  /* @__PURE__ */ jsx("i", { className: `fas ${darkMode ? "fa-sun" : "fa-moon"}` }),
+                  darkMode ? /* @__PURE__ */ jsx(Sun, { className: "h-5 w-5" }) : /* @__PURE__ */ jsx(Moon, { className: "h-5 w-5" }),
                   /* @__PURE__ */ jsx("span", { children: darkMode ? "Aydınlık Mod" : "Karanlık Mod" })
                 ]
               }
@@ -3472,6 +3472,27 @@ function Seo({ auth, settings }) {
       }
     });
   };
+  const handleClearCache = () => {
+    router$1.post(route("admin.settings.cache.clear"), {}, {
+      preserveState: true,
+      // Form state'ini koru
+      onSuccess: () => {
+        toast2({
+          title: "Başarılı!",
+          description: "Tüm uygulama önbelleği başarıyla temizlendi.",
+          className: "bg-green-600 text-white border-green-600"
+        });
+      },
+      onError: (errors2) => {
+        console.error(errors2);
+        toast2({
+          title: "Hata!",
+          description: "Önbellek temizlenirken bir hata oluştu. Lütfen konsolu kontrol edin.",
+          variant: "destructive"
+        });
+      }
+    });
+  };
   const handleInputChange = (key, value) => {
     setData("settings", { ...data.settings, [key]: value });
   };
@@ -3501,79 +3522,97 @@ function Seo({ auth, settings }) {
     AuthenticatedLayout,
     {
       user: auth.user,
-      header: "SEO Ayarları",
+      header: "Genel Ayarlar",
       actionButton: /* @__PURE__ */ jsx(Button, { onClick: submit, disabled: processing, children: "Ayarları Kaydet" }),
       children: [
-        /* @__PURE__ */ jsx(Head, { title: "SEO Ayarları" }),
-        /* @__PURE__ */ jsx("form", { onSubmit: submit, children: /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-          /* @__PURE__ */ jsxs(Card, { children: [
+        /* @__PURE__ */ jsx(Head, { title: "Genel Ayarlar" }),
+        /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
+          /* @__PURE__ */ jsxs(Card, { className: "cache-management-card", children: [
             /* @__PURE__ */ jsxs(CardHeader, { children: [
-              /* @__PURE__ */ jsx(CardTitle, { children: "Genel SEO Ayarları" }),
-              /* @__PURE__ */ jsx(CardDescription, { children: "Sitenin varsayılan başlık ve açıklama ayarları." })
+              /* @__PURE__ */ jsx(CardTitle, { children: "Önbellek Yönetimi" }),
+              /* @__PURE__ */ jsx(CardDescription, { children: "Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin. Bu işlem tüm SSR, veritabanı ve yapılandırma önbelleklerini sıfırlar." })
             ] }),
-            /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-              renderSettingInput("seo.defaults.title", "Site Başlığı"),
-              renderSettingInput("seo.defaults.description", "Site Açıklaması", true)
-            ] })
+            /* @__PURE__ */ jsx(CardContent, { children: /* @__PURE__ */ jsx(
+              Button,
+              {
+                onClick: handleClearCache,
+                variant: "destructive",
+                disabled: processing,
+                className: "clear-cache-button",
+                children: "Tüm Site Önbelleğini Temizle"
+              }
+            ) })
           ] }),
-          /* @__PURE__ */ jsxs(Card, { children: [
-            /* @__PURE__ */ jsxs(CardHeader, { children: [
-              /* @__PURE__ */ jsx(CardTitle, { children: "Tur Sayfaları" }),
-              /* @__PURE__ */ jsxs(CardDescription, { children: [
-                "Değişkenler: ",
-                `{site_title}`,
-                ", ",
-                `{tour_title}`,
-                ", ",
-                `{tour_summary}`
+          /* @__PURE__ */ jsxs("form", { onSubmit: submit, className: "space-y-8", children: [
+            /* @__PURE__ */ jsxs(Card, { children: [
+              /* @__PURE__ */ jsxs(CardHeader, { children: [
+                /* @__PURE__ */ jsx(CardTitle, { children: "Genel SEO Ayarları" }),
+                /* @__PURE__ */ jsx(CardDescription, { children: "Sitenin varsayılan başlık ve açıklama ayarları." })
+              ] }),
+              /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
+                renderSettingInput("seo.defaults.title", "Site Başlığı"),
+                renderSettingInput("seo.defaults.description", "Site Açıklaması", true)
               ] })
             ] }),
-            /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-              renderSettingInput("seo.tours.index.title", "Tur Listeleme Sayfası Başlığı"),
-              renderSettingInput("seo.tours.index.description", "Tur Listeleme Sayfası Açıklaması", true),
-              renderSettingInput("seo.tour.show.title", "Tur Detay Sayfası Başlığı"),
-              renderSettingInput("seo.tour.show.description", "Tur Detay Sayfası Açıklaması", true)
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxs(Card, { children: [
-            /* @__PURE__ */ jsxs(CardHeader, { children: [
-              /* @__PURE__ */ jsx(CardTitle, { children: "İçerik Sayfaları" }),
-              /* @__PURE__ */ jsxs(CardDescription, { children: [
-                "Değişkenler: ",
-                `{site_title}`,
-                ", ",
-                `{content_title}`,
-                ", ",
-                `{content_summary}`
+            /* @__PURE__ */ jsxs(Card, { children: [
+              /* @__PURE__ */ jsxs(CardHeader, { children: [
+                /* @__PURE__ */ jsx(CardTitle, { children: "Tur Sayfaları" }),
+                /* @__PURE__ */ jsxs(CardDescription, { children: [
+                  "Değişkenler: ",
+                  `{site_title}`,
+                  ", ",
+                  `{tour_title}`,
+                  ", ",
+                  `{tour_summary}`
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
+                renderSettingInput("seo.tours.index.title", "Tur Listeleme Sayfası Başlığı"),
+                renderSettingInput("seo.tours.index.description", "Tur Listeleme Sayfası Açıklaması", true),
+                renderSettingInput("seo.tour.show.title", "Tur Detay Sayfası Başlığı"),
+                renderSettingInput("seo.tour.show.description", "Tur Detay Sayfası Açıklaması", true)
               ] })
             ] }),
-            /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-              renderSettingInput("seo.contents.index.title", "İçerik Listeleme Sayfası Başlığı"),
-              renderSettingInput("seo.contents.index.description", "İçerik Listeleme Sayfası Açıklaması", true),
-              renderSettingInput("seo.content.show.title", "İçerik Detay Sayfası Başlığı"),
-              renderSettingInput("seo.content.show.description", "İçerik Detay Sayfası Açıklaması", true)
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxs(Card, { children: [
-            /* @__PURE__ */ jsxs(CardHeader, { children: [
-              /* @__PURE__ */ jsx(CardTitle, { children: "Destinasyon Sayfaları" }),
-              /* @__PURE__ */ jsxs(CardDescription, { children: [
-                "Değişkenler: ",
-                `{site_title}`,
-                ", ",
-                `{destination_name}`,
-                ", ",
-                `{destination_description}`
+            /* @__PURE__ */ jsxs(Card, { children: [
+              /* @__PURE__ */ jsxs(CardHeader, { children: [
+                /* @__PURE__ */ jsx(CardTitle, { children: "İçerik Sayfaları" }),
+                /* @__PURE__ */ jsxs(CardDescription, { children: [
+                  "Değişkenler: ",
+                  `{site_title}`,
+                  ", ",
+                  `{content_title}`,
+                  ", ",
+                  `{content_summary}`
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
+                renderSettingInput("seo.contents.index.title", "İçerik Listeleme Sayfası Başlığı"),
+                renderSettingInput("seo.contents.index.description", "İçerik Listeleme Sayfası Açıklaması", true),
+                renderSettingInput("seo.content.show.title", "İçerik Detay Sayfası Başlığı"),
+                renderSettingInput("seo.content.show.description", "İçerik Detay Sayfası Açıklaması", true)
               ] })
             ] }),
-            /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
-              renderSettingInput("seo.destinations.index.title", "Destinasyon Listeleme Sayfası Başlığı"),
-              renderSettingInput("seo.destinations.index.description", "Destinasyon Listeleme Sayfası Açıklaması", true),
-              renderSettingInput("seo.destination.show.title", "Destinasyon Detay Sayfası Başlığı"),
-              renderSettingInput("seo.destination.show.description", "Destinasyon Detay Sayfası Açıklaması", true)
+            /* @__PURE__ */ jsxs(Card, { children: [
+              /* @__PURE__ */ jsxs(CardHeader, { children: [
+                /* @__PURE__ */ jsx(CardTitle, { children: "Destinasyon Sayfaları" }),
+                /* @__PURE__ */ jsxs(CardDescription, { children: [
+                  "Değişkenler: ",
+                  `{site_title}`,
+                  ", ",
+                  `{destination_name}`,
+                  ", ",
+                  `{destination_description}`
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxs(CardContent, { className: "space-y-4", children: [
+                renderSettingInput("seo.destinations.index.title", "Destinasyon Listeleme Sayfası Başlığı"),
+                renderSettingInput("seo.destinations.index.description", "Destinasyon Listeleme Sayfası Açıklaması", true),
+                renderSettingInput("seo.destination.show.title", "Destinasyon Detay Sayfası Başlığı"),
+                renderSettingInput("seo.destination.show.description", "Destinasyon Detay Sayfası Açıklaması", true)
+              ] })
             ] })
           ] })
-        ] }) })
+        ] })
       ]
     }
   );
@@ -5181,7 +5220,7 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
         className: "sidebar-category-link text-muted-foreground hover:text-primary transition-colors flex justify-between items-center",
         children: [
           category.name,
-          /* @__PURE__ */ jsx("i", { className: "fas fa-chevron-right text-xs" })
+          /* @__PURE__ */ jsx(ChevronRight, { className: "h-4 w-4" })
         ]
       }
     ) }, category.id)) })
@@ -5221,12 +5260,12 @@ function ContentDetail({ seo }) {
           /* @__PURE__ */ jsxs("div", { className: "relative z-10 max-w-6xl mx-auto w-full", children: [
             /* @__PURE__ */ jsx("h1", { className: "content-title text-4xl md:text-6xl font-extrabold leading-tight mb-2 font-playfair", children: post.title }),
             /* @__PURE__ */ jsxs("div", { className: "content-meta flex flex-wrap gap-x-4 gap-y-2 items-center text-sm text-gray-300", children: [
-              /* @__PURE__ */ jsxs("span", { className: "meta-date", children: [
-                /* @__PURE__ */ jsx("i", { className: "fas fa-calendar-alt mr-2" }),
+              /* @__PURE__ */ jsxs("span", { className: "meta-date flex items-center", children: [
+                /* @__PURE__ */ jsx(Calendar$1, { className: "h-4 w-4 mr-2" }),
                 moment(post.published_at).locale("tr").format("DD MMMM YYYY")
               ] }),
-              (_a = post.content_categories) == null ? void 0 : _a.map((cat) => /* @__PURE__ */ jsxs(Link, { href: route("contents.index", { category: cat.slug }), className: "meta-category-tag hover:text-primary transition-colors", children: [
-                /* @__PURE__ */ jsx("i", { className: "fas fa-tag mr-1" }),
+              (_a = post.content_categories) == null ? void 0 : _a.map((cat) => /* @__PURE__ */ jsxs(Link, { href: route("contents.index", { category: cat.slug }), className: "meta-category-tag hover:text-primary transition-colors flex items-center", children: [
+                /* @__PURE__ */ jsx(Tag, { className: "h-4 w-4 mr-1" }),
                 cat.name
               ] }, cat.id))
             ] })
@@ -5478,11 +5517,11 @@ function Contents({ seo }) {
               /* @__PURE__ */ jsx("p", { className: "blog-post-summary text-muted-foreground text-sm mb-3", children: post.summary && post.summary.length > 0 ? post.summary.substring(0, 150) + (post.summary.length > 150 ? "..." : "") : "Bu blog yazısı için özet bulunmamaktadır." }),
               /* @__PURE__ */ jsxs("div", { className: "blog-post-meta flex flex-wrap gap-2 items-center text-xs text-muted-foreground mt-4", children: [
                 post.content_categories.map((cat) => /* @__PURE__ */ jsxs("span", { className: "blog-category-tag bg-muted rounded-full px-2 py-1 flex items-center", children: [
-                  /* @__PURE__ */ jsx("i", { className: "fas fa-tag mr-1 text-primary" }),
+                  /* @__PURE__ */ jsx(Tag, { className: "h-3 w-3 mr-1 text-primary" }),
                   cat.name
                 ] }, cat.id)),
                 post.destinations.map((dest) => /* @__PURE__ */ jsxs("span", { className: "blog-destination-tag bg-muted rounded-full px-2 py-1 flex items-center", children: [
-                  /* @__PURE__ */ jsx("i", { className: "fas fa-map-marker-alt mr-1 text-secondary" }),
+                  /* @__PURE__ */ jsx(MapPin, { className: "h-3 w-3 mr-1 text-secondary" }),
                   dest.name
                 ] }, dest.id))
               ] }),
@@ -5678,14 +5717,14 @@ function DestinationDetail({ seo }) {
                   " ",
                   /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-4 text-sm text-muted-foreground tours-card-details", children: [
                     /* @__PURE__ */ jsxs("span", { className: "flex items-center tours-card-participants", children: [
-                      /* @__PURE__ */ jsx("i", { className: "fas fa-users mr-1" }),
+                      /* @__PURE__ */ jsx(Users, { className: "h-4 w-4 mr-1" }),
                       tour.min_participants ?? "N/A",
                       "-",
                       tour.max_participants ?? "N/A",
                       " Kişi"
                     ] }),
                     /* @__PURE__ */ jsxs("span", { className: "flex items-center tours-card-rating", children: [
-                      /* @__PURE__ */ jsx("i", { className: "fas fa-star mr-1 text-yellow-500" }),
+                      /* @__PURE__ */ jsx(Star, { className: "h-4 w-4 mr-1 text-yellow-500" }),
                       typeof tour.rating === "number" ? tour.rating.toFixed(1) : "N/A"
                     ] })
                   ] })
@@ -5740,7 +5779,7 @@ function DestinationDetail({ seo }) {
                     // Undefined kontrolü eklendi
                     /* @__PURE__ */ jsxs("span", { className: "blog-category-tag bg-muted rounded-full px-2 py-1 flex items-center", children: [
                       " ",
-                      /* @__PURE__ */ jsx("i", { className: "fas fa-tag mr-1 text-primary" }),
+                      /* @__PURE__ */ jsx(Tag, { className: "h-3 w-3 mr-1 text-primary" }),
                       cat.name
                     ] }, cat.id)
                   )),
@@ -5748,7 +5787,7 @@ function DestinationDetail({ seo }) {
                     // Undefined kontrolü eklendi
                     /* @__PURE__ */ jsxs("span", { className: "blog-destination-tag bg-muted rounded-full px-2 py-1 flex items-center", children: [
                       " ",
-                      /* @__PURE__ */ jsx("i", { className: "fas fa-map-marker-alt mr-1 text-secondary" }),
+                      /* @__PURE__ */ jsx(MapPin, { className: "h-3 w-3 mr-1 text-secondary" }),
                       dest.name
                     ] }, dest.id)
                   ))
@@ -6038,17 +6077,17 @@ function Home({ tours, popularDestinations, seo }) {
       /* @__PURE__ */ jsx("p", { className: "text-lg text-muted-foreground max-w-7xl mx-auto mb-12", children: "Yılların verdiği tecrübe ve müşteri memnuniyeti odaklı hizmet anlayışımızla, size en iyi seyahat deneyimini sunmak için buradayız." }),
       /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-8", children: [
         /* @__PURE__ */ jsxs("div", { className: "p-6 bg-card rounded-lg shadow-md border border-border", children: [
-          /* @__PURE__ */ jsx("i", { className: "fas fa-globe text-primary text-5xl mb-4" }),
+          /* @__PURE__ */ jsx(Globe, { className: "h-12 w-12 text-primary mb-4" }),
           /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold mb-2", children: "Geniş Destinasyon Seçenekleri" }),
           /* @__PURE__ */ jsx("p", { className: "text-muted-foreground text-sm", children: "Türkiye'nin her köşesinden eşsiz turlar." })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "p-6 bg-card rounded-lg shadow-md border border-border", children: [
-          /* @__PURE__ */ jsx("i", { className: "fas fa-star text-primary text-5xl mb-4" }),
+          /* @__PURE__ */ jsx(Star, { className: "h-12 w-12 text-primary mb-4" }),
           /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold mb-2", children: "Müşteri Memnuniyeti" }),
           /* @__PURE__ */ jsx("p", { className: "text-muted-foreground text-sm", children: "Binlerce mutlu müşteri yorumu." })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "p-6 bg-card rounded-lg shadow-md border border-border", children: [
-          /* @__PURE__ */ jsx("i", { className: "fas fa-wallet text-primary text-5xl mb-4" }),
+          /* @__PURE__ */ jsx(Wallet, { className: "h-12 w-12 text-primary mb-4" }),
           /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold mb-2", children: "Uygun Fiyatlar" }),
           /* @__PURE__ */ jsx("p", { className: "text-muted-foreground text-sm", children: "En uygun fiyat garantisi." })
         ] })
@@ -6740,10 +6779,11 @@ function TourDetail({ tour, config, seo }) {
   const galleryImages = tour.gallery_images_urls || [];
   const featuredImageUrl = (_a = tour.image) == null ? void 0 : _a.original_url;
   const getSeasonIcon = (seasonName) => {
-    if (seasonName.includes("Düşük Sezon")) return "fas fa-snowflake text-blue-500";
-    if (seasonName.includes("Orta Sezon")) return "fas fa-leaf text-green-500";
-    if (seasonName.includes("Yüksek Sezon")) return "fas fa-sun text-orange-500";
-    return "fas fa-dollar-sign text-green-500";
+    const commonClasses = "mr-2 h-5 w-5";
+    if (seasonName.includes("Düşük Sezon")) return /* @__PURE__ */ jsx(Snowflake, { className: `${commonClasses} text-blue-500` });
+    if (seasonName.includes("Orta Sezon")) return /* @__PURE__ */ jsx(Leaf, { className: `${commonClasses} text-green-500` });
+    if (seasonName.includes("Yüksek Sezon")) return /* @__PURE__ */ jsx(Sun, { className: `${commonClasses} text-orange-500` });
+    return /* @__PURE__ */ jsx(DollarSign, { className: `${commonClasses} text-green-500` });
   };
   const pricingData = [];
   const groupedPricing = (tour.pricing_tiers || []).reduce((acc, tier) => {
@@ -6859,7 +6899,7 @@ function TourDetail({ tour, config, seo }) {
         /* @__PURE__ */ jsx("p", { className: "text-xl md:text-2xl mb-6 opacity-0 animate-fade-in-up animation-delay-300", children: tour == null ? void 0 : tour.summary }),
         /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap items-center space-x-4 md:space-x-6 text-sm md:text-base opacity-0 animate-fade-in-up animation-delay-600", children: [
           /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-            /* @__PURE__ */ jsx("i", { className: "fas fa-calendar-alt mr-2" }),
+            /* @__PURE__ */ jsx(Calendar$1, { className: "h-4 w-4 mr-2" }),
             /* @__PURE__ */ jsxs("span", { children: [
               tour == null ? void 0 : tour.duration_days,
               " Gün ",
@@ -6868,7 +6908,7 @@ function TourDetail({ tour, config, seo }) {
             ] })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-            /* @__PURE__ */ jsx("i", { className: "fas fa-users mr-2" }),
+            /* @__PURE__ */ jsx(Users, { className: "h-4 w-4 mr-2" }),
             /* @__PURE__ */ jsxs("span", { children: [
               tour == null ? void 0 : tour.min_participants,
               "-",
@@ -6877,11 +6917,11 @@ function TourDetail({ tour, config, seo }) {
             ] })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-            /* @__PURE__ */ jsx("i", { className: "fas fa-language mr-2" }),
+            /* @__PURE__ */ jsx(Languages, { className: "h-4 w-4 mr-2" }),
             /* @__PURE__ */ jsx("span", { children: tour == null ? void 0 : tour.language })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-            /* @__PURE__ */ jsx("i", { className: "fas fa-star text-yellow-400 mr-2" }),
+            /* @__PURE__ */ jsx(Star, { className: "h-4 w-4 text-yellow-400 mr-2" }),
             /* @__PURE__ */ jsxs("span", { children: [
               tour == null ? void 0 : tour.rating,
               " (",
@@ -6891,7 +6931,7 @@ function TourDetail({ tour, config, seo }) {
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "flex items-center mt-4 text-sm md:text-base opacity-0 animate-fade-in-up animation-delay-900", children: [
-          /* @__PURE__ */ jsx("i", { className: "fas fa-map-marker-alt mr-2" }),
+          /* @__PURE__ */ jsx(MapPin, { className: "h-4 w-4 mr-2" }),
           /* @__PURE__ */ jsx("span", { children: Object.keys(tour.hotel_options || {}).join(", ") })
         ] })
       ] })
@@ -6920,14 +6960,14 @@ function TourDetail({ tour, config, seo }) {
           /* @__PURE__ */ jsxs("div", { className: "mt-6 grid grid-cols-1 md:grid-cols-2 gap-4", children: [
             /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-4", children: [
               /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-2 text-primary mb-2", children: [
-                /* @__PURE__ */ jsx("i", { className: "fas fa-check-circle" }),
+                /* @__PURE__ */ jsx(CheckCircle, { className: "h-5 w-5" }),
                 /* @__PURE__ */ jsx("span", { className: "font-medium", children: "Garanti Başlangıç" })
               ] }),
               /* @__PURE__ */ jsx("p", { className: "text-sm text-muted-foreground", children: "Her gün başlangıç garantisi" })
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "bg-muted/50 rounded-lg p-4", children: [
               /* @__PURE__ */ jsxs("div", { className: "flex items-center space-x-2 text-primary mb-2", children: [
-                /* @__PURE__ */ jsx("i", { className: "fas fa-users" }),
+                /* @__PURE__ */ jsx(Users, { className: "h-5 w-5" }),
                 /* @__PURE__ */ jsx("span", { className: "font-medium", children: "Küçük Gruplar" })
               ] }),
               /* @__PURE__ */ jsxs("p", { className: "text-sm text-muted-foreground", children: [
@@ -6940,15 +6980,15 @@ function TourDetail({ tour, config, seo }) {
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 pb-4", children: [
             /* @__PURE__ */ jsxs("div", { className: "bg-card rounded-lg border border-border p-6", children: [
-              /* @__PURE__ */ jsxs("h3", { className: "font-semibold mb-4 text-green-600", children: [
-                /* @__PURE__ */ jsx("i", { className: "fas fa-check mr-2" }),
+              /* @__PURE__ */ jsxs("h3", { className: "font-semibold mb-4 text-green-600 flex items-center", children: [
+                /* @__PURE__ */ jsx(Check, { className: "h-5 w-5 mr-2" }),
                 "Dahil Olan Hizmetler"
               ] }),
               /* @__PURE__ */ jsx("div", { className: "space-y-1 text-sm", dangerouslySetInnerHTML: { __html: tour.inclusions_html } })
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "bg-card rounded-lg border border-border p-6", children: [
-              /* @__PURE__ */ jsxs("h3", { className: "font-semibold mb-4 text-red-600", children: [
-                /* @__PURE__ */ jsx("i", { className: "fas fa-times mr-2" }),
+              /* @__PURE__ */ jsxs("h3", { className: "font-semibold mb-4 text-red-600 flex items-center", children: [
+                /* @__PURE__ */ jsx(X, { className: "h-5 w-5 mr-2" }),
                 "Dahil Olmayan Hizmetler"
               ] }),
               /* @__PURE__ */ jsx("div", { className: "space-y-1 text-sm", dangerouslySetInnerHTML: { __html: tour.exclusions_html } })
@@ -6998,7 +7038,7 @@ function TourDetail({ tour, config, seo }) {
           /* @__PURE__ */ jsx("h2", { className: "text-2xl font-bold mb-6", children: "Sezon Fiyatları" }),
           pricingData.map((seasonItem, index) => /* @__PURE__ */ jsxs("div", { className: "mb-8", children: [
             /* @__PURE__ */ jsxs("h3", { className: "text-lg font-semibold mb-4 flex items-center", children: [
-              /* @__PURE__ */ jsx("i", { className: `${seasonItem.icon} mr-2` }),
+              seasonItem.icon,
               seasonItem.season
             ] }),
             /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "w-full border-collapse", children: [
@@ -7118,11 +7158,11 @@ function TourDetail({ tour, config, seo }) {
           /* @__PURE__ */ jsx("h4", { className: "font-semibold mb-2", children: "İletişim" }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-2 text-sm", children: [
             /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-              /* @__PURE__ */ jsx("i", { className: "fas fa-phone mr-2 text-primary" }),
+              /* @__PURE__ */ jsx(Phone, { className: "h-4 w-4 mr-2 text-primary" }),
               "+90 212 123 45 67"
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "flex items-center", children: [
-              /* @__PURE__ */ jsx("i", { className: "fas fa-envelope mr-2 text-primary" }),
+              /* @__PURE__ */ jsx(Mail, { className: "h-4 w-4 mr-2 text-primary" }),
               "info@turkiyetours.com"
             ] })
           ] })

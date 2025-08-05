@@ -4,6 +4,7 @@ import { Card } from '@/Components/ui/card';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useState, useEffect } from 'react';
 import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
+import { Globe, Star, Wallet } from 'lucide-react';
 
 // Merkezi Kart Bileşenlerini ve Etiketi İçe Aktarma
 import TourCard from '@/Components/TourCard';
@@ -185,17 +186,17 @@ export default function Home({ tours, popularDestinations, seo }) {
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="p-6 bg-card rounded-lg shadow-md border border-border">
-                            <i className="fas fa-globe text-primary text-5xl mb-4"></i>
+                            <Globe className="h-12 w-12 text-primary mb-4" />
                             <h3 className="text-xl font-semibold mb-2">Geniş Destinasyon Seçenekleri</h3>
                             <p className="text-muted-foreground text-sm">Türkiye'nin her köşesinden eşsiz turlar.</p>
                         </div>
                         <div className="p-6 bg-card rounded-lg shadow-md border border-border">
-                            <i className="fas fa-star text-primary text-5xl mb-4"></i>
+                            <Star className="h-12 w-12 text-primary mb-4" />
                             <h3 className="text-xl font-semibold mb-2">Müşteri Memnuniyeti</h3>
                             <p className="text-muted-foreground text-sm">Binlerce mutlu müşteri yorumu.</p>
                         </div>
                         <div className="p-6 bg-card rounded-lg shadow-md border border-border">
-                            <i className="fas fa-wallet text-primary text-5xl mb-4"></i>
+                            <Wallet className="h-12 w-12 text-primary mb-4" />
                             <h3 className="text-xl font-semibold mb-2">Uygun Fiyatlar</h3>
                             <p className="text-muted-foreground text-sm">En uygun fiyat garantisi.</p>
                         </div>

@@ -5,6 +5,7 @@ import { useTheme } from '@/Context/ThemeContext';
 import moment from 'moment';
 import 'moment/locale/tr';
 import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
+import { ChevronRight, Calendar, Tag } from 'lucide-react';
 
 // Kenar çubuğu için bir bileşen
 const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, recentContents }) => (
@@ -90,7 +91,7 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
                 className="sidebar-category-link text-muted-foreground hover:text-primary transition-colors flex justify-between items-center"
               >
                 {category.name}
-                <i className="fas fa-chevron-right text-xs"></i>
+                <ChevronRight className="h-4 w-4" />
               </Link>
             </li>
           ))}
@@ -156,13 +157,13 @@ export default function ContentDetail({ seo }) {
               {post.title}
             </h1>
             <div className="content-meta flex flex-wrap gap-x-4 gap-y-2 items-center text-sm text-gray-300">
-              <span className="meta-date">
-                <i className="fas fa-calendar-alt mr-2"></i>
+              <span className="meta-date flex items-center">
+                <Calendar className="h-4 w-4 mr-2" />
                 {moment(post.published_at).locale('tr').format('DD MMMM YYYY')}
               </span>
               {post.content_categories?.map(cat => (
-                <Link key={cat.id} href={route('contents.index', { category: cat.slug })} className="meta-category-tag hover:text-primary transition-colors">
-                  <i className="fas fa-tag mr-1"></i>
+                <Link key={cat.id} href={route('contents.index', { category: cat.slug })} className="meta-category-tag hover:text-primary transition-colors flex items-center">
+                  <Tag className="h-4 w-4 mr-1" />
                   {cat.name}
                 </Link>
               ))}

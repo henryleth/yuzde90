@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
 import { Button } from '@/Components/ui/button';
 import { useTheme } from '@/Context/ThemeContext';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/Components/ui/sheet';
-import { MenuIcon, ChevronDown } from 'lucide-react';
+import { MenuIcon, ChevronDown, CaseSensitive, Sun, Moon } from 'lucide-react';
 import { Link, usePage } from '@inertiajs/react'; // usePage hook'u eklendi
 
 // URL'nin geçerli olup olmadığını kontrol eden ve pathname'i güvenli bir şekilde alan bir yardımcı fonksiyon.
@@ -93,7 +92,7 @@ export default function Header() {
               variant="ghost"
               className="flex items-center space-x-1"
             >
-              <i className="fas fa-font text-base"></i>
+              <CaseSensitive className="h-4 w-4" />
               <span className="hidden sm:inline text-sm font-semibold">{fonts[currentFont].name}</span>
               <ChevronDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -125,7 +124,7 @@ export default function Header() {
             className="hidden md:inline-flex"
             aria-label="Toggle dark mode"
           >
-            <i className={`fas ${darkMode ? 'fa-sun' : 'fa-moon'} text-lg`}></i>
+            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
           
           {/* Mobil Menü (Sheet) */}
@@ -172,7 +171,7 @@ export default function Header() {
                     variant="outline"
                     className="w-full flex items-center justify-center space-x-2"
                   >
-                    <i className="fas fa-font text-sm"></i>
+                    <CaseSensitive className="h-4 w-4" />
                     <span>{fonts[currentFont].name}</span>
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
@@ -202,7 +201,7 @@ export default function Header() {
                   variant="outline"
                   className="w-full flex items-center justify-center space-x-2"
                 >
-                  <i className={`fas ${darkMode ? 'fa-sun' : 'fa-moon'}`}></i>
+                  {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                   <span>{darkMode ? 'Aydınlık Mod' : 'Karanlık Mod'}</span>
                 </Button>
               </div>

@@ -65,4 +65,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Ayarlar Rotaları
     Route::get('settings/seo', [AdminSettingsController::class, 'index'])->name('settings.seo.index');
     Route::post('settings/seo', [AdminSettingsController::class, 'store'])->name('settings.seo.store');
+    Route::post('settings/cache/clear', [AdminSettingsController::class, 'clearCache'])->name('settings.cache.clear');
 });

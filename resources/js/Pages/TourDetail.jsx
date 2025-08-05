@@ -23,6 +23,8 @@ import Autoplay from "embla-carousel-autoplay"
 import Lightbox from "yet-another-react-lightbox";
 import LazyImage from '@/Components/LazyImage';
 import "yet-another-react-lightbox/styles.css";
+import { Snowflake, Leaf, Sun, DollarSign, Calendar, Users, Languages, Star, MapPin, CheckCircle, Check, X, Phone, Mail } from 'lucide-react';
+
 
 export default function TourDetail({ tour, config, seo }) {
   const [activeSection, setActiveSection] = useState('overview');
@@ -39,10 +41,11 @@ export default function TourDetail({ tour, config, seo }) {
   const featuredImageUrl = tour.image?.original_url;
 
   const getSeasonIcon = (seasonName) => {
-    if (seasonName.includes("Düşük Sezon")) return "fas fa-snowflake text-blue-500";
-    if (seasonName.includes("Orta Sezon")) return "fas fa-leaf text-green-500";
-    if (seasonName.includes("Yüksek Sezon")) return "fas fa-sun text-orange-500";
-    return "fas fa-dollar-sign text-green-500";
+    const commonClasses = "mr-2 h-5 w-5";
+    if (seasonName.includes("Düşük Sezon")) return <Snowflake className={`${commonClasses} text-blue-500`} />;
+    if (seasonName.includes("Orta Sezon")) return <Leaf className={`${commonClasses} text-green-500`} />;
+    if (seasonName.includes("Yüksek Sezon")) return <Sun className={`${commonClasses} text-orange-500`} />;
+    return <DollarSign className={`${commonClasses} text-green-500`} />;
   };
 
   const pricingData = [];
@@ -195,13 +198,13 @@ export default function TourDetail({ tour, config, seo }) {
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 font-playfair animate-fade-in-up">{tour?.title}</h1>
             <p className="text-xl md:text-2xl mb-6 opacity-0 animate-fade-in-up animation-delay-300">{tour?.summary}</p>
             <div className="flex flex-wrap items-center space-x-4 md:space-x-6 text-sm md:text-base opacity-0 animate-fade-in-up animation-delay-600"> 
-              <div className="flex items-center"><i className="fas fa-calendar-alt mr-2"></i><span>{tour?.duration_days} Gün {tour?.duration_nights} Gece</span></div>
-              <div className="flex items-center"><i className="fas fa-users mr-2"></i><span>{tour?.min_participants}-{tour?.max_participants} Kişi</span></div>
-              <div className="flex items-center"><i className="fas fa-language mr-2"></i><span>{tour?.language}</span></div>
-              <div className="flex items-center"><i className="fas fa-star text-yellow-400 mr-2"></i><span>{tour?.rating} ({tour?.reviews_count} değerlendirme)</span></div>
+              <div className="flex items-center"><Calendar className="h-4 w-4 mr-2" /><span>{tour?.duration_days} Gün {tour?.duration_nights} Gece</span></div>
+              <div className="flex items-center"><Users className="h-4 w-4 mr-2" /><span>{tour?.min_participants}-{tour?.max_participants} Kişi</span></div>
+              <div className="flex items-center"><Languages className="h-4 w-4 mr-2" /><span>{tour?.language}</span></div>
+              <div className="flex items-center"><Star className="h-4 w-4 text-yellow-400 mr-2" /><span>{tour?.rating} ({tour?.reviews_count} değerlendirme)</span></div>
             </div>
             <div className="flex items-center mt-4 text-sm md:text-base opacity-0 animate-fade-in-up animation-delay-900"> 
-              <i className="fas fa-map-marker-alt mr-2"></i>
+              <MapPin className="h-4 w-4 mr-2" />
               <span>{Object.keys(tour.hotel_options || {}).join(', ')}</span> 
             </div>
           </div>
@@ -236,13 +239,13 @@ export default function TourDetail({ tour, config, seo }) {
                   <div className="prose prose-slate dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: tour.description }} />
 
                   <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-muted/50 rounded-lg p-4"><div className="flex items-center space-x-2 text-primary mb-2"><i className="fas fa-check-circle"></i><span className="font-medium">Garanti Başlangıç</span></div><p className="text-sm text-muted-foreground">Her gün başlangıç garantisi</p></div>
-                    <div className="bg-muted/50 rounded-lg p-4"><div className="flex items-center space-x-2 text-primary mb-2"><i className="fas fa-users"></i><span className="font-medium">Küçük Gruplar</span></div><p className="text-sm text-muted-foreground">{tour.min_participants}-{tour.max_participants} kişilik gruplar</p></div>
+                    <div className="bg-muted/50 rounded-lg p-4"><div className="flex items-center space-x-2 text-primary mb-2"><CheckCircle className="h-5 w-5" /><span className="font-medium">Garanti Başlangıç</span></div><p className="text-sm text-muted-foreground">Her gün başlangıç garantisi</p></div>
+                    <div className="bg-muted/50 rounded-lg p-4"><div className="flex items-center space-x-2 text-primary mb-2"><Users className="h-5 w-5" /><span className="font-medium">Küçük Gruplar</span></div><p className="text-sm text-muted-foreground">{tour.min_participants}-{tour.max_participants} kişilik gruplar</p></div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 pb-4">
-                    <div className="bg-card rounded-lg border border-border p-6"><h3 className="font-semibold mb-4 text-green-600"><i className="fas fa-check mr-2"></i>Dahil Olan Hizmetler</h3><div className="space-y-1 text-sm" dangerouslySetInnerHTML={{ __html: tour.inclusions_html }} /></div>
-                    <div className="bg-card rounded-lg border border-border p-6"><h3 className="font-semibold mb-4 text-red-600"><i className="fas fa-times mr-2"></i>Dahil Olmayan Hizmetler</h3><div className="space-y-1 text-sm" dangerouslySetInnerHTML={{ __html: tour.exclusions_html }} /></div>
+                    <div className="bg-card rounded-lg border border-border p-6"><h3 className="font-semibold mb-4 text-green-600 flex items-center"><Check className="h-5 w-5 mr-2" />Dahil Olan Hizmetler</h3><div className="space-y-1 text-sm" dangerouslySetInnerHTML={{ __html: tour.inclusions_html }} /></div>
+                    <div className="bg-card rounded-lg border border-border p-6"><h3 className="font-semibold mb-4 text-red-600 flex items-center"><X className="h-5 w-5 mr-2" />Dahil Olmayan Hizmetler</h3><div className="space-y-1 text-sm" dangerouslySetInnerHTML={{ __html: tour.exclusions_html }} /></div>
                   </div>
 
                   <h3 className="text-2xl font-bold mb-4 mt-4">Fotoğraf Galerisi</h3>
@@ -319,7 +322,7 @@ export default function TourDetail({ tour, config, seo }) {
                   <h2 className="text-2xl font-bold mb-6">Sezon Fiyatları</h2>
                   {pricingData.map((seasonItem, index) => (
                     <div key={index} className="mb-8">
-                      <h3 className="text-lg font-semibold mb-4 flex items-center"><i className={`${seasonItem.icon} mr-2`}></i>{seasonItem.season}</h3>
+                      <h3 className="text-lg font-semibold mb-4 flex items-center">{seasonItem.icon}{seasonItem.season}</h3>
                       <div className="overflow-x-auto">
                         <table className="w-full border-collapse">
                           <thead><tr className="border-b border-border"><th className="text-left p-3">Kategori</th><th className="text-left p-3">Tek Kişilik</th><th className="text-left p-3">Çift Kişilik</th><th className="text-left p-3">Üçlü Kişilik</th></tr></thead>
@@ -422,7 +425,7 @@ export default function TourDetail({ tour, config, seo }) {
                     <div className="space-y-2"><Label htmlFor="phone">Telefon</Label><Input id="phone" type="tel" placeholder="+90 5XX XXX XX XX" /></div>
                     <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Rezervasyon Yap</Button>
                   </form>
-                  <div className="mt-6 p-4 bg-muted rounded-lg"><h4 className="font-semibold mb-2">İletişim</h4><div className="space-y-2 text-sm"><div className="flex items-center"><i className="fas fa-phone mr-2 text-primary"></i>+90 212 123 45 67</div><div className="flex items-center"><i className="fas fa-envelope mr-2 text-primary"></i>info@turkiyetours.com</div></div></div>
+                  <div className="mt-6 p-4 bg-muted rounded-lg"><h4 className="font-semibold mb-2">İletişim</h4><div className="space-y-2 text-sm"><div className="flex items-center"><Phone className="h-4 w-4 mr-2 text-primary" />+90 212 123 45 67</div><div className="flex items-center"><Mail className="h-4 w-4 mr-2 text-primary" />info@turkiyetours.com</div></div></div>
                 </div>
               </div>
             </div>

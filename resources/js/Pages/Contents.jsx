@@ -10,6 +10,7 @@ import moment from 'moment';
 import 'moment/locale/tr';
 import GuestLayout from '@/Layouts/GuestLayout';
 import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
+import { Tag, MapPin } from 'lucide-react';
 
 export default function Contents({ seo }) {
   const { posts: backendPosts, categories: backendCategories, destinations: backendDestinations, filters } = usePage().props;
@@ -250,13 +251,13 @@ export default function Contents({ seo }) {
                                 <div className="blog-post-meta flex flex-wrap gap-2 items-center text-xs text-muted-foreground mt-4">
                                     {post.content_categories.map(cat => (
                                         <span key={cat.id} className="blog-category-tag bg-muted rounded-full px-2 py-1 flex items-center">
-                                            <i className="fas fa-tag mr-1 text-primary"></i>
+                                            <Tag className="h-3 w-3 mr-1 text-primary" />
                                             {cat.name}
                                         </span>
                                     ))}
                                     {post.destinations.map(dest => (
                                         <span key={dest.id} className="blog-destination-tag bg-muted rounded-full px-2 py-1 flex items-center">
-                                            <i className="fas fa-map-marker-alt mr-1 text-secondary"></i>
+                                            <MapPin className="h-3 w-3 mr-1 text-secondary" />
                                             {dest.name}
                                         </span>
                                     ))}

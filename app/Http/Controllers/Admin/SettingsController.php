@@ -36,4 +36,25 @@ class SettingsController extends Controller
 
         return redirect()->back()->with('success', 'Ayarlar başarıyla kaydedildi.');
     }
+
+    /**
+     * Tüm uygulama önbelleğini temizler.
+     * Bu işlem, SSR sayfaları, veritabanı sorguları ve diğer tüm Laravel
+     * önbelleklerini sıfırlar. Yönetim panelinden manuel olarak tetiklenir.
+     */
+    public function clearCache()
+    {
+        // Tüm uygulama önbelleğini temizler.
+        Cache::flush();
+
+        // Rota ve config önbelleğini de temizlemek için Artisan komutlarını çağırır.
+        // Bu komutlar sunucuda 'exec' fonksiyonunun aktif olmasını gerektirir.
+        // Eğer sunucu kısıtlamaları varsa, bu satırları yorum satırı yapıp
+        // bu komutları manuel olarak çalıştırmanız gerekebilir.
+        \Artisan::call('route:clear');
+        \Artisan::call('config:clear');
+        \Artisan::call('view:clear');
+
+        return redirect()->back()->with('success', 'Tüm uygulama önbelleği başarıyla temizlendi.');
+    }
 }

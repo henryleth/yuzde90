@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { useTheme } from '@/Context/ThemeContext';
 import { format } from "date-fns";
-import { ChevronRight, ChevronLeft } from 'lucide-react'; // ChevronLeft eklendi
+import { ChevronRight, ChevronLeft, Users, Star, Tag, MapPin } from 'lucide-react'; // ChevronLeft eklendi
 import { Button } from '@/Components/ui/button';
 // SSR (Sunucu Tarafı Oluşturma) hatasını çözmek için içe aktarma yöntemi güncellendi.
 import LazyLoadImagePkg from 'react-lazy-load-image-component';
@@ -194,11 +194,11 @@ export default function DestinationDetail({ seo }) {
                                             <div className="flex items-center justify-between mb-4 tours-card-meta"> {/* Orijinal meta sınıfı */} 
                                                 <div className="flex items-center space-x-4 text-sm text-muted-foreground tours-card-details">
                                                     <span className="flex items-center tours-card-participants">
-                                                        <i className="fas fa-users mr-1"></i>
+                                                        <Users className="h-4 w-4 mr-1" />
                                                         {tour.min_participants ?? 'N/A'}-{tour.max_participants ?? 'N/A'} Kişi
                                                     </span>
                                                     <span className="flex items-center tours-card-rating">
-                                                        <i className="fas fa-star mr-1 text-yellow-500"></i>
+                                                        <Star className="h-4 w-4 mr-1 text-yellow-500" />
                                                         {typeof tour.rating === 'number' ? tour.rating.toFixed(1) : 'N/A'}
                                                     </span>
                                                 </div>
@@ -272,13 +272,13 @@ export default function DestinationDetail({ seo }) {
                                     <div className="blog-post-meta flex flex-wrap gap-2 items-center text-xs text-muted-foreground mt-4"> {/* blog-post-meta eklendi */} 
                                         {(content.content_categories || []).map(cat => ( // Undefined kontrolü eklendi
                                             <span key={cat.id} className="blog-category-tag bg-muted rounded-full px-2 py-1 flex items-center"> {/* blog-category-tag eklendi */} 
-                                                <i className="fas fa-tag mr-1 text-primary"></i>
+                                                <Tag className="h-3 w-3 mr-1 text-primary" />
                                                 {cat.name}
                                             </span>
                                         ))}
                                         {(content.destinations || []).map(dest => ( // Undefined kontrolü eklendi
                                             <span key={dest.id} className="blog-destination-tag bg-muted rounded-full px-2 py-1 flex items-center"> {/* blog-destination-tag eklendi */} 
-                                                <i className="fas fa-map-marker-alt mr-1 text-secondary"></i>
+                                                <MapPin className="h-3 w-3 mr-1 text-secondary" />
                                                 {dest.name}
                                             </span>
                                         ))}

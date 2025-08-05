@@ -1,6 +1,6 @@
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Label } from '@/Components/ui/label';
 import { Input } from '@/Components/ui/input';
@@ -50,6 +50,34 @@ export default function Seo({ auth, settings }) {
         });
     };
 
+    /**
+     * Cache'i temizlemek için backend'e istek gönderir.
+     * Bu fonksiyon, Inertia router'ını kullanarak belirtilen rotaya bir POST isteği yapar.
+     * İşlem tamamlandığında, sayfanın yeniden yüklenmesini önlemek için preserveState: true kullanılır
+     * ve kullanıcıya bir bildirim gösterilir.
+     */
+    const handleClearCache = () => {
+        router.post(route('admin.settings.cache.clear'), {}, {
+            preserveState: true, // Form state'ini koru
+            onSuccess: () => {
+                toast({
+                    title: "Başarılı!",
+                    description: "Tüm uygulama önbelleği başarıyla temizlendi.",
+                    className: 'bg-green-600 text-white border-green-600',
+                });
+            },
+            onError: (errors) => {
+                 console.error(errors);
+                toast({
+                    title: "Hata!",
+                    description: "Önbellek temizlenirken bir hata oluştu. Lütfen konsolu kontrol edin.",
+                    variant: "destructive",
+                });
+            }
+        });
+    };
+
+
     const handleInputChange = (key, value) => {
         setData('settings', { ...data.settings, [key]: value });
     };
@@ -80,13 +108,34 @@ export default function Seo({ auth, settings }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header="SEO Ayarları"
+            header="Genel Ayarlar"
             actionButton={<Button onClick={submit} disabled={processing}>Ayarları Kaydet</Button>}
         >
-            <Head title="SEO Ayarları" />
+            <Head title="Genel Ayarlar" />
 
-            <form onSubmit={submit}>
-                <div className="space-y-8">
+            <div className="space-y-8">
+                {/* Önbellek Yönetimi Kartı */}
+                <Card className="cache-management-card">
+                    <CardHeader>
+                        <CardTitle>Önbellek Yönetimi</CardTitle>
+                        <CardDescription>
+                            Sitede yapılan içerik veya ayar değişikliklerinin anında görünür olması için önbelleği temizleyin.
+                            Bu işlem tüm SSR, veritabanı ve yapılandırma önbelleklerini sıfırlar.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button
+                            onClick={handleClearCache}
+                            variant="destructive"
+                            disabled={processing}
+                            className="clear-cache-button"
+                        >
+                            Tüm Site Önbelleğini Temizle
+                        </Button>
+                    </CardContent>
+                </Card>
+
+                <form onSubmit={submit} className="space-y-8">
                     <Card>
                         <CardHeader>
                             <CardTitle>Genel SEO Ayarları</CardTitle>
@@ -136,8 +185,8 @@ export default function Seo({ auth, settings }) {
                             {renderSettingInput('seo.destination.show.description', 'Destinasyon Detay Sayfası Açıklaması', true)}
                         </CardContent>
                     </Card>
-                </div>
-            </form>
+                </form>
+            </div>
         </AuthenticatedLayout>
     );
 }
