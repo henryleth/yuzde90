@@ -37,9 +37,11 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'translations' => function () {
+            'translations' => function () use ($request) {
+                if (str_starts_with($request->route()->getName(), 'admin.')) {
+                    return null;
+                }
                 $locale = app()->getLocale();
-                // Sadece 'site' çeviri dosyasını yükle, gerekirse diğerlerini de ekleyebiliriz.
                 return [
                     'site' => trans('site', [], $locale)
                 ];
@@ -66,6 +68,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function handle(Request $request, \Closure $next)
     {
+        // Admin paneli rotaları için SSR'ı devre dışı bırak.
+        // Bu, admin panelinde ham JSON çıktısı ve konsol hatalarını önler.
+        if ($request->routeIs('admin.*')) {
+            config(['inertia.ssr.enabled' => false]);
+        }
+        
         // Önbellekleme ayarını, performansı artırmak için 1 saatliğine önbelleğe al.
         // Bu, her istekte veritabanına gitmeyi önler.
         $isCacheEnabled = Cache::remember('cache.enabled.status', 3600, function () {

@@ -8,7 +8,9 @@ Bu doküman, projenin Laravel backend yapısını, controller'larını, modeller
 -   **Modeller**: Veritabanı tablolarıyla etkileşim kuran ve iş mantığını içeren Laravel Eloquent ORM sınıflarıdır.
 -   **Rotalar**: Uygulama URL'lerini belirli controller aksiyonlarına veya kapatmalara yönlendiren kurallaradır.
 -   **Konfigürasyon (`config/`)**: Sezon ve kategori gibi sabit ama özelleştirilebilir veriler bu klasörde tutulur.
--   **Viewler (Inertia.js)**: Laravel ile React frontend arasında köprü görevi gören, sunucu tarafında oluşturulan tek sayfa uygulama (SPA) görünümleridir. Veriyi backend'den frontend'e iletmek için kullanılır.
+-   **Inertia SSR Yönetimi**: `App\Http\Middleware\HandleInertiaRequests.php` içindeki `resolveView` metodu, admin paneli rotaları (`Admin/*` ile başlayan component'ler) için SSR'ı devre dışı bırakır. Bu, admin panelinin her zaman istemci tarafında işlenmesini sağlar.
+-   `App\Http\Middleware\HandleInertiaRequests.php` içindeki `share` metodu güncellenerek çeviri verilerinin çift JSON kodlamasını önlemek amacıyla `json_encode` kullanımı kaldırıldı.
+-   `App\Http\Middleware\HandleInertiaRequests.php` içindeki `share` metodu, flash mesajların (`success`, `error`, `message`) ve doğrulama hata mesajlarının HTML özel karakterlerini kaçırarak (htmlspecialchars ile) güvenli hale getirilmesi için güncellendi. Bu, frontend tarafında JSON ayrıştırma hatalarını önlemeyi amaçlar.
 
 ### Dinamik Rota Yönetimi (Permalink)
 
@@ -49,36 +51,4 @@ Uygulamanın ana modüllerine ait URL yapıları (permalink'ler), `.env` dosyas�
     -   `summary` (string) ve `description` (text) alanları eklendi. `summary` kısa bir özet, `description` ise HTML içerik barındırır.
     -   `is_popular` (boolean) alanı eklendi. Bu alan, destinasyonun anasayfada gösterilip gösterilmeyeceğini belirler.
     -   `$fillable` dizisine `summary`, `description` ve `is_popular` eklendi.
-    -   `$casts` dizisine `is_popular` alanı `boolean` olarak eklendi.
-
-### Konfigürasyon Dosyaları
-
--   **`config/tour.php` (Güncellendi)**: 
-    -   Proje genelindeki sabit sezon ve kategori isimlerini merkezi olarak yönetir.
-    -   `seasons` dizisi, anahtar-değer yapısına dönüştürüldü. Anahtar sezon adını, değer ise sezonun kapsadığı ayları belirtir. (Örn: `'Düşük Sezon' => 'Kasım - Mart'`).
-    -   `categories` dizisi: Fiyatlandırma matrisinde kullanılacak kategori adlarını içerir (örn: 'Category A').
--   **`config/dynamic_routes.php` (YENİ)**: Yukarıda "Dinamik Rota Yönetimi" bölümünde detaylandırılmıştır.
-
-### Kontrolcü Değişiklikleri
-
--   **`App\Http\Controllers\Admin\TourController.php`**: 
-    -   `create()` ve `edit()` metodları: Frontend'e `config('tour.seasons')` verisini gönderirken artık `array_keys()` kullanarak sadece sezon isimlerini (dizi olarak) gönderir. Bu, frontend'deki `forEach` hatasını önler.
-    -   `store()` ve `update()` metodları: `pricing_tiers` için validasyon kuralı, `Rule::in(array_keys(config('tour.seasons')))` olarak güncellenmiştir.
--   **`App\Http\Controllers\TourController.php` (Güncellendi)**:
-    -   `show()` metodu: Artık Inertia.js üzerinden `TourDetail` bileşenine `seo` verilerini (başlık ve açıklama) sağlamaktadır.
--   **`App\Http\Controllers\Admin\DestinationController.php` (Güncellendi)**:
-    -   `store` ve `update` metodlarındaki validasyon kurallarına `is_popular` (boolean) alanı eklendi.
--   **`App\Http\Controllers\HomeController.php` (Güncellendi)**:
-    -   `index` metodu, anasayfada gösterilecek destinasyonları çekerken artık `->where('is_popular', 1)` koşulunu kullanarak sadece popüler olarak işaretlenmiş olanları listeler.
-
-(Diğer controller ve model açıklamaları bu refaktörden etkilenmemiştir ve aynı kalmıştır.)
-
-### ContentController'da Yapılan Değişiklikler
-
-- `show` metodunda, `post` verisine `image_original_url` ve `image_thumbnail_url` alanları doğrudan eklendi. Bu, frontend'de `post.image?.original_url` ve `post.image_thumbnail` yerine doğrudan bu alanlara erişimi sağlar.
-- Loglama satırına içeriğin ID'si eklenerek, logların daha anlamlı hale getirilmesi sağlandı.
-
-### ContentDetail.jsx'te Yapılan Değişiklikler
-
-- `post.image_thumbnail` yerine `post.image_thumbnail_url` kullanıldı.
-- `post.image?.original_url` yerine `post.image_original_url` kullanıldı.
+    -   `$casts` dizisine `is_popular` alanı `
