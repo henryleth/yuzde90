@@ -321,4 +321,20 @@ return [
         'per_person' => 'per person',
         'view_details' => 'View Details',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tour Seasons & Months
+    |--------------------------------------------------------------------------
+    */
+    'seasons' => [
+        'low_season' => 'Low Season',
+        'mid_season' => 'Mid Season',
+        'high_season' => 'High Season',
+    ],
+    'season_months' => [
+        'low_season' => 'November - March',
+        'mid_season' => 'April - May / September - October',
+        'high_season' => 'June - August',
+    ],
 ];

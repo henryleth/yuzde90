@@ -322,4 +322,20 @@ return [
         'per_person' => 'kişi başına',
         'view_details' => 'Detayları Gör',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tour Seasons & Months
+    |--------------------------------------------------------------------------
+    */
+    'seasons' => [
+        'low_season' => 'Düşük Sezon',
+        'mid_season' => 'Orta Sezon',
+        'high_season' => 'Yüksek Sezon',
+    ],
+    'season_months' => [
+        'low_season' => 'Kasım - Mart',
+        'mid_season' => 'Nisan - Mayıs / Eylül - Ekim',
+        'high_season' => 'Haziran - Ağustos',
+    ],
 ];

@@ -57,8 +57,10 @@ class TourController extends Controller
                 'original_url' => $media->original_url,
                 'thumbnail_url' => $media->thumbnail_url,
             ]),
-            'config_seasons' => array_keys(config('tour.seasons')), // Sadece anahtarları (isimleri) gönder
-            'config_categories' => config('tour.categories'), // Kategoriler zaten bir dizi
+            'config_seasons' => collect(config('tour.seasons'))->mapWithKeys(function ($seasonKey) {
+                return [$seasonKey => __('site.seasons.' . $seasonKey)];
+            })->all(),
+            'config_categories' => config('tour.categories'),
         ]);
     }
 
@@ -79,8 +81,10 @@ class TourController extends Controller
                 'original_url' => $media->original_url,
                 'thumbnail_url' => $media->thumbnail_url,
             ]),
-            'config_seasons' => array_keys(config('tour.seasons')), // Sadece anahtarları (isimleri) gönder
-            'config_categories' => config('tour.categories'), // Kategoriler zaten bir dizi
+            'config_seasons' => collect(config('tour.seasons'))->mapWithKeys(function ($seasonKey) {
+                return [$seasonKey => __('site.seasons.' . $seasonKey)];
+            })->all(),
+            'config_categories' => config('tour.categories'),
         ]);
     }
 
@@ -218,7 +222,7 @@ class TourController extends Controller
             'daily_program.*.activities.*.is_highlight' => 'boolean',
             'daily_program.*.activities.*.order' => 'integer',
             'pricing_tiers' => 'nullable|array',
-            'pricing_tiers.*.season_name' => ['required', 'string', Rule::in(array_keys(config('tour.seasons')))],
+            'pricing_tiers.*.season_name' => ['required', 'string', Rule::in(config('tour.seasons'))],
             'pricing_tiers.*.category_name' => ['required', 'string', Rule::in(config('tour.categories'))],
             'pricing_tiers.*.price_per_person_1' => 'nullable|numeric|min:0',
             'pricing_tiers.*.price_per_person_2' => 'nullable|numeric|min:0',

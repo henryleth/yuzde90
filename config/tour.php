@@ -12,9 +12,9 @@ return [
     |
     */
     'seasons' => [
-        'Düşük Sezon' => 'Kasım - Mart',
-        'Orta Sezon' => 'Nisan - Mayıs / Eylül - Ekim',
-        'Yüksek Sezon' => 'Haziran - Ağustos',
+        'low_season',
+        'mid_season',
+        'high_season',
     ],
 
     /*

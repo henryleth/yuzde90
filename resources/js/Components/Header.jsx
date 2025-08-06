@@ -89,11 +89,12 @@ export default function Header() {
         {/* Sağ Taraf: Ayarlar ve Mobil Menü Butonu */}
         <div className="flex items-center space-x-2 flex-shrink-0">
           {/* Dark Mode Butonu */}
+          {/* Bu düğme artık hem mobil hem de masaüstünde görünür. */}
           <Button 
             onClick={toggleDarkMode} 
             variant="ghost"
             size="icon"
-            className="hidden md:inline-flex"
+            className="inline-flex"
             aria-label="Toggle dark mode"
           >
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -136,15 +137,7 @@ export default function Header() {
                 })}
               </nav>
               <div className="mt-auto pt-8 space-y-4">
-                {/* Mobil Dark Mode Butonu */}
-                <Button 
-                  onClick={toggleDarkMode} 
-                  variant="outline"
-                  className="w-full flex items-center justify-center space-x-2"
-                >
-                  {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                  <span>{darkMode ? t('navbar.light_mode') : t('navbar.dark_mode')}</span>
-                </Button>
+                {/* Mobil menü içindeki Dark Mode Butonu kaldırıldı. */}
               </div>
             </SheetContent>
           </Sheet>

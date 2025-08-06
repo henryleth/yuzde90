@@ -59,7 +59,7 @@ export default function Tours({ tours: initialTours, allDestinations, filters, s
 
   // Fiyat aralıkları güncellendi ve dil bağımlılığı kaldırıldı
   const prices = [
-    { value: 'all', label: 'Tümü' },
+    { value: 'all', label: t('tours.filters.all', 'Tümü') },
     { value: '500-1000', label: '€500 - €1000' },
     { value: '1000-1500', label: '€1000 - €1500' },
     { value: '1500-2000', label: '€1500 - €2000' },

@@ -45,9 +45,9 @@ export default function TourDetail({ tour, config, seo }) {
 
   const getSeasonIcon = (seasonName) => {
     const commonClasses = "mr-2 h-5 w-5";
-    if (seasonName.includes("Düşük Sezon")) return <Snowflake className={`${commonClasses} text-blue-500`} />;
-    if (seasonName.includes("Orta Sezon")) return <Leaf className={`${commonClasses} text-green-500`} />;
-    if (seasonName.includes("Yüksek Sezon")) return <Sun className={`${commonClasses} text-orange-500`} />;
+    if (seasonName.includes("low_season")) return <Snowflake className={`${commonClasses} text-blue-500`} />;
+    if (seasonName.includes("mid_season")) return <Leaf className={`${commonClasses} text-green-500`} />;
+    if (seasonName.includes("high_season")) return <Sun className={`${commonClasses} text-orange-500`} />;
     return <DollarSign className={`${commonClasses} text-green-500`} />;
   };
 
@@ -60,8 +60,10 @@ export default function TourDetail({ tour, config, seo }) {
   }, {});
 
   for (const seasonName in groupedPricing) {
-    const seasonMonths = config.seasons[seasonName] || '';
-    const seasonNameWithMonths = `${seasonName} (${seasonMonths})`;
+    // Sezon adını ve ay aralığını dil dosyasından çevirerek alıyoruz.
+    // `seasonName` burada 'low_season', 'mid_season' gibi bir anahtardır.
+    const translatedSeasonName = t(`seasons.${seasonName}`, seasonName); // Çeviri bulunamazsa anahtarı kullan
+    const translatedMonths = t(`season_months.${seasonName}`, ''); // Ay çevirisi
     
     const categoriesForSeason = (groupedPricing[seasonName] || []).map(tier => ({
       name: tier.category_name,
@@ -71,7 +73,8 @@ export default function TourDetail({ tour, config, seo }) {
     }));
 
     pricingData.push({
-      season: seasonNameWithMonths,
+      // Görüntülenecek metni birleştiriyoruz.
+      season: `${translatedSeasonName} (${translatedMonths})`,
       icon: getSeasonIcon(seasonName),
       categories: categoriesForSeason,
     });

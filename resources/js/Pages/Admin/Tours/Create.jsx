@@ -25,7 +25,8 @@ import InputError from '@/Components/InputError';
 // Yeni, basitleştirilmiş başlangıç fiyatlandırma verisini oluşturan yardımcı fonksiyon
 const initializePricingTiers = (seasons, categories) => {
     let tiers = [];
-    seasons.forEach(season => {
+    // `seasons` artık bir nesne olduğu için, anahtarları üzerinde döngü kuruyoruz.
+    Object.keys(seasons).forEach(season => {
         categories.forEach(category => {
             tiers.push({
                 season_name: season,
@@ -783,27 +784,30 @@ export default function Create({ auth, destinations, optionalActivities, media_f
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {config_seasons.map(season => (
-                                                    <tr key={season} className="border-b last:border-b-0 hover:bg-muted/50">
+                                                {/* `config_seasons` bir nesne olduğu için `Object.entries` ile hem anahtarı hem de değeri alıyoruz. */}
+                                                {Object.entries(config_seasons).map(([seasonKey, seasonName]) => (
+                                                    <tr key={seasonKey} className="border-b last:border-b-0 hover:bg-muted/50">
                                                         <td className="px-3 py-2 text-sm font-medium sticky left-0 bg-background z-10 border-r">
-                                                            <span className="font-semibold">{season}</span>
+                                                            {/* Görünen isim çevrilmiş `seasonName` olacak. */}
+                                                            <span className="font-semibold">{seasonName}</span>
                                                         </td>
                                                         {config_categories.map(category => {
-                                                            const tier = data.pricing_tiers.find(t => t.season_name === season && t.category_name === category) || {};
+                                                            // Fiyatları bulurken ve güncellerken `seasonKey` (`low_season` vb.) kullanıyoruz.
+                                                            const tier = data.pricing_tiers.find(t => t.season_name === seasonKey && t.category_name === category) || {};
                                                             return (
-                                                                <td key={`${season}-${category}`} className="px-3 py-2 text-left text-sm border-l">
+                                                                <td key={`${seasonKey}-${category}`} className="px-3 py-2 text-left text-sm border-l">
                                                                     <div className="flex flex-col space-y-1">
                                                                         <div className="flex items-center justify-between">
                                                                             <label className="text-xs w-12">1 Kişi:</label>
-                                                                                                                                                        <Input type="number" step="0.01" value={tier.price_per_person_1 || ''} onChange={e => handleMatrixPriceChange(season, category, 'price_per_person_1', e.target.value)} className="w-[80px]" placeholder="-" />
-                                                                         </div>
-                                                                         <div className="flex items-center justify-between">
-                                                                             <label className="text-xs w-12">2 Kişi:</label>
-                                                                             <Input type="number" step="0.01" value={tier.price_per_person_2 || ''} onChange={e => handleMatrixPriceChange(season, category, 'price_per_person_2', e.target.value)} className="w-[80px]" placeholder="-" />
-                                                                         </div>
-                                                                         <div className="flex items-center justify-between">
-                                                                             <label className="text-xs w-12">3 Kişi:</label>
-                                                                             <Input type="number" step="0.01" value={tier.price_per_person_3 || ''} onChange={e => handleMatrixPriceChange(season, category, 'price_per_person_3', e.target.value)} className="w-[80px]" placeholder="-" />
+                                                                            <Input type="number" step="0.01" value={tier.price_per_person_1 || ''} onChange={e => handleMatrixPriceChange(seasonKey, category, 'price_per_person_1', e.target.value)} className="w-[80px]" placeholder="-" />
+                                                                        </div>
+                                                                        <div className="flex items-center justify-between">
+                                                                            <label className="text-xs w-12">2 Kişi:</label>
+                                                                            <Input type="number" step="0.01" value={tier.price_per_person_2 || ''} onChange={e => handleMatrixPriceChange(seasonKey, category, 'price_per_person_2', e.target.value)} className="w-[80px]" placeholder="-" />
+                                                                        </div>
+                                                                        <div className="flex items-center justify-between">
+                                                                            <label className="text-xs w-12">3 Kişi:</label>
+                                                                            <Input type="number" step="0.01" value={tier.price_per_person_3 || ''} onChange={e => handleMatrixPriceChange(seasonKey, category, 'price_per_person_3', e.target.value)} className="w-[80px]" placeholder="-" />
                                                                         </div>
                                                                     </div>
                                                                 </td>

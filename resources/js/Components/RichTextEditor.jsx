@@ -1,8 +1,10 @@
 // resources/js/Components/RichTextEditor.jsx
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '@/Components/ui/button'; // ShadCN Button bileşenini import ediyoruz
-import { Code } from 'lucide-react'; // İkon import ediyoruz
+import React, { useState, useRef, useEffect } from 'react';
+import ReactQuill from 'react-quill'; // Doğrudan import ediyoruz
+import 'react-quill/dist/quill.snow.css'; // CSS dosyasını import ediyoruz
+import { Button } from '@/Components/ui/button';
+import { Code } from 'lucide-react';
 
 /**
  * RichTextEditor Bileşeni
@@ -16,23 +18,28 @@ import { Code } from 'lucide-react'; // İkon import ediyoruz
  * @param {string} className - Bileşene uygulanacak ek CSS sınıfları.
  * @param {boolean} showHtmlButton - HTML göster/gizle düğmesinin görünürlüğünü kontrol eder. Varsayılan: true.
  */
-const RichTextEditor = ({ value, onChange, placeholder, className, showHtmlButton = true }) => {
+const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, className, showHtmlButton = true }, ref) => {
   const [showHtml, setShowHtml] = useState(false);
-  const QuillComponent = useRef(null);
-  const [isQuillLoaded, setIsQuillLoaded] = useState(false);
+  const localRef = useRef();
 
-  // Bu useEffect, bileşenin yalnızca istemci tarafında (tarayıcıda)
-  // yüklendiğinden emin olmak için kullanılır.
+  // findDOMNode uyarısını konsoldan gizlemek için bir useEffect kullanıyoruz.
+  // Bu, kütüphaneden kaynaklanan ve bizim doğrudan çözemeyeceğimiz bir uyarı olduğu için
+  // geçici bir çözümdür.
   useEffect(() => {
-    // Dinamik import ile ReactQuill'i ve CSS'ini yalnızca istemci tarafında yüklüyoruz.
-    import('react-quill').then(module => {
-      QuillComponent.current = module.default;
-      import('react-quill/dist/quill.snow.css');
-      setIsQuillLoaded(true);
-    });
+    const originalError = console.error;
+    console.error = (...args) => {
+      if (typeof args[0] === 'string' && /findDOMNode/.test(args[0])) {
+        return;
+      }
+      originalError.apply(console, args);
+    };
+
+    // Bileşen unmount olduğunda orijinal console.error fonksiyonunu geri yüklüyoruz.
+    return () => {
+      console.error = originalError;
+    };
   }, []);
 
-  // Araç çubuğu için modül konfigürasyonu.
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }, { 'font': [] }],
@@ -45,7 +52,6 @@ const RichTextEditor = ({ value, onChange, placeholder, className, showHtmlButto
     ],
   };
 
-  // Araç çubuğunda kullanılabilecek formatların listesi.
   const formats = [
     'header', 'font',
     'bold', 'italic', 'underline', 'blockquote',
@@ -57,7 +63,6 @@ const RichTextEditor = ({ value, onChange, placeholder, className, showHtmlButto
 
   return (
     <div className={`richtext-editor-wrapper border rounded-md ${className || ''}`}>
-      {/* Editör ve HTML görünümü arasında geçiş yapan düğme (koşullu) */}
       {showHtmlButton && (
         <div className="p-2 border-b bg-gray-50 flex justify-end">
           <Button
@@ -72,7 +77,6 @@ const RichTextEditor = ({ value, onChange, placeholder, className, showHtmlButto
         </div>
       )}
 
-      {/* Koşullu olarak editör veya textarea'yı render et */}
       <div className="p-1">
         {showHtml ? (
           <textarea
@@ -82,22 +86,20 @@ const RichTextEditor = ({ value, onChange, placeholder, className, showHtmlButto
             placeholder="HTML kodunu buraya girin..."
           />
         ) : (
-          // Quill yüklendiğinde editörü, yüklenmediğinde ise bir yüklenme göstergesi göster.
-          isQuillLoaded && QuillComponent.current ? (
-            <QuillComponent.current
-              theme="snow"
-              value={value}
-              onChange={onChange}
-              modules={modules}
-              formats={formats}
-              placeholder={placeholder || 'İçeriğinizi buraya yazın...'}
-              className="bg-white" // Quill editörünün arkaplanını beyaz yapar
-            />
-          ) : <div>Editör yükleniyor...</div>
+          <ReactQuill
+            ref={ref || localRef}
+            theme="snow"
+            value={value}
+            onChange={onChange}
+            modules={modules}
+            formats={formats}
+            placeholder={placeholder || 'İçeriğinizi buraya yazın...'}
+            className="bg-white"
+          />
         )}
       </div>
     </div>
   );
-};
+});
 
 export default RichTextEditor;
