@@ -54,7 +54,7 @@ export default function Header() {
         {/* Sol Taraf: Logo */}
         <div className={`flex-shrink-0 transition-all duration-300 ${isHeaderShrunk ? 'scale-90' : 'scale-100'}`}>
           <Link href={route('home')}>
-            <h1 className="text-3xl font-bold font-playfair text-primary">Tur10</h1>
+            <span className="text-3xl font-bold font-playfair text-primary">Tur10</span>
           </Link>
         </div>
 
