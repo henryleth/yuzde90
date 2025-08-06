@@ -23,4 +23,5 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 storage/app/public
-bootstrap/ssr
+bootstrap/ssr/
+composer.lock
