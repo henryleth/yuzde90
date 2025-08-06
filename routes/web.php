@@ -50,13 +50,16 @@ Route::get(config('dynamic_routes.destination_show', 'destinations/{slug}'), [De
 
 
 // Admin Rotaları
-Route::prefix('admin')->name('admin.')->group(function () {
-    // Giriş ve Çıkış Rotaları
-    Route::middleware('guest')->group(function () {
-        Route::get('login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
-        Route::post('login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
-    });
 
+// Giriş rotaları, admin prefix'i dışında ama URL'de admin içeriyor.
+// Bu, Laravel'in varsayılan 'login' ismini kullanabilmesini sağlar.
+Route::middleware('guest')->group(function () {
+    Route::get('admin/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('admin/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Çıkış Rotası (giriş yapılmış olmayı gerektirir)
     Route::middleware('auth')->group(function () {
         Route::post('logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
     });
