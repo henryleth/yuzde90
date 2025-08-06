@@ -1,7 +1,8 @@
 // resources/js/Components/RichTextEditor.jsx
 
 import React, { useState, useRef, useEffect } from 'react';
-import ReactQuill from 'react-quill'; // Doğrudan import ediyoruz
+// ReactQuill'i doğrudan import etmek yerine, dinamik olarak yükleyeceğiz.
+// import ReactQuill from 'react-quill'; 
 import 'react-quill/dist/quill.snow.css'; // CSS dosyasını import ediyoruz
 import { Button } from '@/Components/ui/button';
 import { Code } from 'lucide-react';
@@ -21,11 +22,20 @@ import { Code } from 'lucide-react';
 const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, className, showHtmlButton = true }, ref) => {
   const [showHtml, setShowHtml] = useState(false);
   const localRef = useRef();
+  
+  // SSR'da 'document is not defined' hatasını önlemek için
+  // ReactQuill'i sadece client tarafında render ediyoruz.
+  const [isClient, setIsClient] = useState(false);
+  const [ReactQuill, setReactQuill] = useState(null);
 
-  // findDOMNode uyarısını konsoldan gizlemek için bir useEffect kullanıyoruz.
-  // Bu, kütüphaneden kaynaklanan ve bizim doğrudan çözemeyeceğimiz bir uyarı olduğu için
-  // geçici bir çözümdür.
   useEffect(() => {
+    // Component mount olduğunda client tarafında olduğumuzu anlıyoruz.
+    setIsClient(true);
+    // Dinamik olarak react-quill'i import ediyoruz.
+    import('react-quill').then((module) => {
+      setReactQuill(() => module.default);
+    });
+
     const originalError = console.error;
     console.error = (...args) => {
       if (typeof args[0] === 'string' && /findDOMNode/.test(args[0])) {
@@ -60,6 +70,11 @@ const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, classNa
     'color', 'background',
     'link', 'image', 'video',
   ];
+
+  // Client tarafında değilsek veya modül henüz yüklenmediyse, bir placeholder göster.
+  if (!isClient || !ReactQuill) {
+    return <div>Editör yükleniyor...</div>;
+  }
 
   return (
     <div className={`richtext-editor-wrapper border rounded-md ${className || ''}`}>

@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactQuill from 'react-quill';
+import React, { useState, useEffect } from 'react';
 import 'react-quill/dist/quill.snow.css'; // Quill editor stilleri
 
 // Tailwind CSS ile Quill'in default stillerini override etmek için
@@ -23,6 +22,25 @@ const quillFormats = [
 ];
 
 export function RichTextEditor({ value, onChange, className, ...props }) {
+  // SSR'da 'document is not defined' hatasını önlemek için
+  // ReactQuill'i sadece client tarafında render ediyoruz.
+  const [isClient, setIsClient] = useState(false);
+  const [ReactQuill, setReactQuill] = useState(null);
+
+  useEffect(() => {
+    // Component mount olduğunda client tarafında olduğumuzu anlıyoruz.
+    setIsClient(true);
+    // Dinamik olarak react-quill'i import ediyoruz.
+    import('react-quill').then((module) => {
+      setReactQuill(() => module.default);
+    });
+  }, []);
+
+  // Client tarafında değilsek veya modül henüz yüklenmediyse, bir placeholder göster.
+  if (!isClient || !ReactQuill) {
+    return <div>Editör yükleniyor...</div>;
+  }
+
   return (
     <div className={className}>
       <ReactQuill
@@ -37,4 +55,4 @@ export function RichTextEditor({ value, onChange, className, ...props }) {
       {/* Quill editor için custom CSS buradan eklenebilir veya app.css'e dahil edilebilir */}
     </div>
   );
-} 
+}
