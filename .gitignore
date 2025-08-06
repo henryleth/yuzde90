@@ -25,3 +25,4 @@ Thumbs.db
 /storage/app/public
 /bootstrap/ssr
 composer.lock
+/bootstrap/cache
