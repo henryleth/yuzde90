@@ -2,7 +2,8 @@ import { Button } from '@/Components/ui/button';
 import { useTheme } from '@/Context/ThemeContext';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/Components/ui/sheet';
 import { MenuIcon, ChevronDown, CaseSensitive, Sun, Moon } from 'lucide-react';
-import { Link, usePage } from '@inertiajs/react'; // usePage hook'u eklendi
+import { Link, usePage } from '@inertiajs/react';
+import { useTranslation } from '@/hooks/useTranslation'; // Çeviri hook'u eklendi
 
 // URL'nin geçerli olup olmadığını kontrol eden ve pathname'i güvenli bir şekilde alan bir yardımcı fonksiyon.
 // SSR sırasında `route()` fonksiyonu tam bir URL döndürmezse veya geçersiz bir URL (örn. '#') döndürürse
@@ -33,16 +34,18 @@ const getPathname = (href) => {
 
 export default function Header() {
   const { darkMode, toggleDarkMode, isHeaderShrunk } = useTheme();
-  const { url } = usePage(); // Aktif URL'yi almak için usePaghte hook'u kullanılıyor
+  const { url } = usePage();
+  const { t } = useTranslation(); // locale'e artık burada ihtiyacımız yok
 
-  // Navigasyon linklerini bir dizi olarak tanımlıyoruz. Bu, kodu daha temiz ve yönetilebilir hale getirir.
+  // Navigasyon linklerini bir dizi olarak tanımlıyoruz.
+  // Linkler artık locale parametresi içermiyor.
   const navLinks = [
-    { href: route('home'), label: 'Ana Sayfa' },
-    { href: route('tours.index'), label: 'Turlar' },
-    { href: route('destinations.index'), label: 'Destinasyonlar' },
-    { href: route('contents.index'), label: 'Blog' },
-    { href: route('about.us'), label: 'Hakkımızda' },
-    { href: route('contact.us'), label: 'İletişim' },
+    { href: route('home'), label: t('navbar.home') },
+    { href: route('tours.index'), label: t('navbar.tours') },
+    { href: route('destinations.index'), label: t('navbar.destinations') },
+    { href: route('contents.index'), label: t('navbar.blog') },
+    { href: route('about.us'), label: t('navbar.about_us') },
+    { href: route('contact.us'), label: t('navbar.contact') },
   ];
 
   return (
@@ -110,7 +113,7 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="right" className={`w-full sm:w-80 flex flex-col p-6 text-foreground ${darkMode ? 'bg-background' : 'bg-white/80 backdrop-blur-sm'}`}>
               <SheetHeader className="text-left mb-8">
-                <SheetTitle className="text-3xl font-bold font-playfair text-primary">Menü</SheetTitle>
+                <SheetTitle className="text-3xl font-bold font-playfair text-primary">{t('navbar.menu')}</SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col space-y-6 text-xl">
                 {navLinks.map((link) => {
@@ -140,7 +143,7 @@ export default function Header() {
                   className="w-full flex items-center justify-center space-x-2"
                 >
                   {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                  <span>{darkMode ? 'Aydınlık Mod' : 'Karanlık Mod'}</span>
+                  <span>{darkMode ? t('navbar.light_mode') : t('navbar.dark_mode')}</span>
                 </Button>
               </div>
             </SheetContent>

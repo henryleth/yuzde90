@@ -1,5 +1,6 @@
 import React from 'react';
 import { usePage, Link } from '@inertiajs/react';
+import { useTranslation } from '@/hooks/useTranslation'; // Çeviri hook'u eklendi
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useTheme } from '@/Context/ThemeContext';
 import moment from 'moment';
@@ -8,16 +9,18 @@ import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import 
 import { ChevronRight, Calendar, Tag } from 'lucide-react';
 
 // Kenar çubuğu için bir bileşen
-const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, recentContents }) => (
+const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, recentContents }) => {
+  const { t } = useTranslation();
+  return (
   <aside className="sidebar w-full lg:w-1/3 lg:pl-8">
     {/* İlgili Yazılar */}
     {relatedPosts && relatedPosts.length > 0 && (
       <div className="sidebar-widget mb-8 bg-card p-4 rounded-lg border border-border shadow-sm">
-        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">İlgili Yazılar</h3>
+        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.related_posts', 'İlgili Yazılar')}</h3>
         <ul className="sidebar-post-list space-y-4">
           {relatedPosts.map(post => (
             <li key={post.id} className="sidebar-post-item flex items-center">
-              <Link href={route('contents.show', post.slug)} className="flex items-center group">
+              <Link href={route('contents.show', { slug: post.slug })} className="flex items-center group">
                 <LazyImage 
                   src={post.image_thumbnail_url || 'https://via.placeholder.com/80'} 
                   alt={post.title} 
@@ -36,11 +39,11 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
     {/* İlgili Turlar */}
     {relatedTours && relatedTours.length > 0 && (
       <div className="sidebar-widget mb-8 bg-card p-4 rounded-lg border border-border shadow-sm">
-        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">İlgili Turlar</h3>
+        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.related_tours', 'İlgili Turlar')}</h3>
         <ul className="sidebar-post-list space-y-4">
           {relatedTours.map(tour => (
             <li key={tour.id} className="sidebar-post-item flex items-center">
-              <Link href={route('tour.show', tour.slug)} className="flex items-center group">
+              <Link href={route('tour.show', { slug: tour.slug })} className="flex items-center group">
                 <LazyImage 
                   src={tour.image_thumbnail || 'https://via.placeholder.com/80'} 
                   alt={tour.title} 
@@ -59,11 +62,11 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
     {/* Son İçerikler */}
     {recentContents && recentContents.length > 0 && (
       <div className="sidebar-widget mb-8 bg-card p-4 rounded-lg border border-border shadow-sm">
-        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">Son İçerikler</h3>
+        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.recent_contents', 'Son İçerikler')}</h3>
         <ul className="sidebar-post-list space-y-4">
           {recentContents.map(content => (
             <li key={content.id} className="sidebar-post-item flex items-center">
-              <Link href={route('contents.show', content.slug)} className="flex items-center group">
+              <Link href={route('contents.show', { slug: content.slug })} className="flex items-center group">
                 <LazyImage 
                   src={content.image_thumbnail || 'https://via.placeholder.com/80'} 
                   alt={content.title} 
@@ -82,7 +85,7 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
     {/* Kategoriler */}
     {allCategories && allCategories.length > 0 && (
       <div className="sidebar-widget mb-8 bg-card p-4 rounded-lg border border-border shadow-sm">
-        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">Kategoriler</h3>
+        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.categories', 'Kategoriler')}</h3>
         <ul className="sidebar-category-list space-y-2">
           {allCategories.map(category => (
             <li key={category.id}>
@@ -102,12 +105,12 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
     {/* Destinasyonlar */}
     {allDestinations && allDestinations.length > 0 && (
         <div className="sidebar-widget bg-card p-4 rounded-lg border border-border shadow-sm">
-            <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">Destinasyonlar</h3>
+            <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.destinations', 'Destinasyonlar')}</h3>
             <div className="flex flex-wrap gap-2">
                 {allDestinations.map(destination => (
                     <Link 
                         key={destination.id}
-                        href={route('destinations.show', destination.slug)}
+                        href={route('destinations.show', { slug: destination.slug })}
                         className="sidebar-destination-tag bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground px-3 py-1 rounded-full text-sm transition-colors"
                     >
                         {destination.name}
@@ -117,10 +120,11 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
         </div>
     )}
   </aside>
-);
+)};
 
 
 export default function ContentDetail({ seo }) {
+  const { t } = useTranslation();
   // Gerekli propları usePage'den alıyoruz.
   const { post, relatedPosts, allCategories, allDestinations, relatedTours, recentContents } = usePage().props;
 
@@ -130,10 +134,10 @@ export default function ContentDetail({ seo }) {
       <GuestLayout>
         <div className={`bg-background text-foreground min-h-screen flex items-center justify-center`}>
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">İçerik Bulunamadı</h1>
-            <p className="text-muted-foreground">Aradığınız içerik mevcut değil veya silinmiş olabilir.</p>
+            <h1 className="text-4xl font-bold mb-4">{t('content_detail.not_found.title', 'İçerik Bulunamadı')}</h1>
+            <p className="text-muted-foreground">{t('content_detail.not_found.text', 'Aradığınız içerik mevcut değil veya silinmiş olabilir.')}</p>
             <Link href={route('home')} className="mt-6 inline-block bg-primary text-primary-foreground px-6 py-2 rounded-md hover:bg-primary/80 transition-colors">
-              Ana Sayfaya Dön
+              {t('content_detail.not_found.go_home', 'Ana Sayfaya Dön')}
             </Link>
           </div>
         </div>

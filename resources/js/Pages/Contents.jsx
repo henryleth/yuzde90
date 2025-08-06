@@ -1,5 +1,6 @@
 import { useTheme } from '@/Context/ThemeContext';
 import { useState } from 'react';
+import { useTranslation } from '@/hooks/useTranslation'; // Çeviri hook'u eklendi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Label } from '@/Components/ui/label';
 import { Input } from '@/Components/ui/input';
@@ -13,6 +14,7 @@ import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import 
 import { Tag, MapPin } from 'lucide-react';
 
 export default function Contents({ seo }) {
+  const { t } = useTranslation();
   const { posts: backendPosts, categories: backendCategories, destinations: backendDestinations, filters } = usePage().props;
 
   const [selectedCategory, setSelectedCategory] = useState(filters.category || 'all');
@@ -22,8 +24,8 @@ export default function Contents({ seo }) {
   const posts = backendPosts.data;
   const paginationLinks = backendPosts.links;
 
-  const categories = [{ name: 'Tümü', slug: 'all' }, ...backendCategories];
-  const destinations = [{ name: 'Tümü', slug: 'all' }, ...backendDestinations];
+  const categories = [{ name: t('contents_page.filters.all', 'Tümü'), slug: 'all' }, ...backendCategories];
+  const destinations = [{ name: t('contents_page.filters.all', 'Tümü'), slug: 'all' }, ...backendDestinations];
 
   const applyFilters = () => {
     const queryParams = {};
@@ -57,10 +59,10 @@ export default function Contents({ seo }) {
             <div className="absolute inset-0 bg-black/60 blog-hero-overlay"></div>
             <div className="relative z-10 text-white p-4 max-w-4xl mx-auto blog-hero-content">
                   <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 font-playfair">
-                      Blog
+                      {t('contents_page.hero.title', 'Blog')}
                   </h1>
                   <p className="text-lg md:text-xl mb-8 opacity-0 animate-fade-in-up animation-delay-300">
-                      Seyahat dünyasından en güncel haberler, ipuçları ve ilham verici hikayeler.
+                      {t('contents_page.hero.subtitle', 'Seyahat dünyasından en güncel haberler, ipuçları ve ilham verici hikayeler.')}
                   </p>
               </div>
           </section>
@@ -73,16 +75,16 @@ export default function Contents({ seo }) {
                     <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="blog-filters">
                             <AccordionTrigger className="blog-accordion-trigger px-4 py-3 bg-card text-foreground font-semibold rounded-t-lg border border-b-0 border-border">
-                                Blog Filtreleri
+                                {t('contents_page.filters.mobile_title', 'Blog Filtreleri')}
                             </AccordionTrigger>
-                            <AccordionContent className="blog-accordion-content bg-card border border-border rounded-b-lg p-4">
+                            <AccordionContent className="blog-accordion-content bg-card border border-b-0 border-border p-4">
                                 <div className="grid grid-cols-1 gap-4">
                                     <div className="blog-search-input-wrapper space-y-2">
-                                        <Label htmlFor="search-input" className="block text-sm font-medium text-muted-foreground">Arama</Label>
+                                        <Label htmlFor="search-input" className="block text-sm font-medium text-muted-foreground">{t('contents_page.filters.search', 'Arama')}</Label>
                                         <Input
                                             id="search-input"
                                             type="text"
-                                            placeholder="Yazı başlığında ara..."
+                                            placeholder={t('contents_page.filters.search_placeholder', 'Yazı başlığında ara...')}
                                             value={searchQuery}
                                             onChange={handleSearchChange}
                                             onKeyDown={handleSearchSubmit}
@@ -90,7 +92,7 @@ export default function Contents({ seo }) {
                                         />
                                     </div>
                                     <div className="blog-category-filter-wrapper space-y-2">
-                                        <Label htmlFor="category-filter" className="block text-sm font-medium text-muted-foreground">Kategori</Label>
+                                        <Label htmlFor="category-filter" className="block text-sm font-medium text-muted-foreground">{t('contents_page.filters.category', 'Kategori')}</Label>
                                         <Select
                                             value={selectedCategory}
                                             onValueChange={(value) => {
@@ -101,7 +103,7 @@ export default function Contents({ seo }) {
                                                 id="category-filter"
                                                 className="inline-flex items-center justify-between whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-3 py-2"
                                             >
-                                                <SelectValue placeholder="Kategori seçin" className="text-muted-foreground" />
+                                                <SelectValue placeholder={t('contents_page.filters.category_placeholder', 'Kategori seçin')} className="text-muted-foreground" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {categories.map(cat => (
@@ -111,7 +113,7 @@ export default function Contents({ seo }) {
                                         </Select>
                                     </div>
                                     <div className="blog-destination-filter-wrapper space-y-2">
-                                        <Label htmlFor="destination-filter" className="block text-sm font-medium text-muted-foreground">Destinasyon</Label>
+                                        <Label htmlFor="destination-filter" className="block text-sm font-medium text-muted-foreground">{t('contents_page.filters.destination', 'Destinasyon')}</Label>
                                         <Select
                                             value={selectedDestination}
                                             onValueChange={(value) => {
@@ -122,7 +124,7 @@ export default function Contents({ seo }) {
                                                 id="destination-filter"
                                                 className="inline-flex items-center justify-between whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-3 py-2"
                                             >
-                                                <SelectValue placeholder="Destinasyon seçin" className="text-muted-foreground" />
+                                                <SelectValue placeholder={t('contents_page.filters.destination_placeholder', 'Destinasyon seçin')} className="text-muted-foreground" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {destinations.map(dest => (
@@ -136,7 +138,7 @@ export default function Contents({ seo }) {
                                     onClick={handleSearchSubmit}
                                     className="blog-filter-button mt-4 w-full bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-2 rounded-md font-semibold transition-colors"
                                 >
-                                    Filtrele
+                                    {t('contents_page.filters.filter_button', 'Filtrele')}
                                 </button>
                             </AccordionContent>
                         </AccordionItem>
@@ -144,18 +146,18 @@ export default function Contents({ seo }) {
                 </div>
 
               {/* Filtreleme ve Arama Bölümü - Masaüstü için Card */}
-              <Card className="blog-filter-card hidden md:block"> 
-                  <CardHeader className="blog-filter-header"> 
-                      <CardTitle className="blog-filter-title text-2xl">Filtrele ve Ara</CardTitle> 
+              <Card className="blog-filter-card hidden md:block">
+                  <CardHeader className="blog-filter-header">
+                      <CardTitle className="blog-filter-title text-2xl">{t('contents_page.filters.desktop_title', 'Filter and Search')}</CardTitle>
                   </CardHeader>
-                  <CardContent className="blog-filter-content"> 
+                  <CardContent className="blog-filter-content">
                       <div className="grid grid-cols-1 gap-4">
                           <div className="blog-search-input-wrapper space-y-2">
-                              <Label htmlFor="search-input" className="block text-sm font-medium text-muted-foreground">Arama</Label>
+                              <Label htmlFor="search-input" className="block text-sm font-medium text-muted-foreground">{t('contents_page.filters.search', 'Search')}</Label>
                               <Input
                                   id="search-input"
                                   type="text"
-                                  placeholder="Yazı başlığında ara..."
+                                  placeholder={t('contents_page.filters.search_placeholder', 'Yazı başlığında ara...')}
                                   value={searchQuery}
                                   onChange={handleSearchChange}
                                   onKeyDown={handleSearchSubmit}
@@ -163,7 +165,7 @@ export default function Contents({ seo }) {
                               />
                           </div>
                           <div className="blog-category-filter-wrapper space-y-2">
-                              <Label htmlFor="category-filter" className="block text-sm font-medium text-muted-foreground">Kategori</Label>
+                              <Label htmlFor="category-filter" className="block text-sm font-medium text-muted-foreground">{t('contents_page.filters.category', 'Kategori')}</Label>
                               <Select
                                   value={selectedCategory}
                                   onValueChange={(value) => {
@@ -174,7 +176,7 @@ export default function Contents({ seo }) {
                                       id="category-filter"
                                       className="inline-flex items-center justify-between whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-3 py-2"
                                   >
-                                      <SelectValue placeholder="Kategori seçin" className="text-muted-foreground" />
+                                      <SelectValue placeholder={t('contents_page.filters.category_placeholder', 'Kategori seçin')} className="text-muted-foreground" />
                                   </SelectTrigger>
                                   <SelectContent>
                                       {categories.map(cat => (
@@ -184,7 +186,7 @@ export default function Contents({ seo }) {
                               </Select>
                           </div>
                           <div className="blog-destination-filter-wrapper space-y-2">
-                              <Label htmlFor="destination-filter" className="block text-sm font-medium text-muted-foreground">Destinasyon</Label>
+                              <Label htmlFor="destination-filter" className="block text-sm font-medium text-muted-foreground">{t('contents_page.filters.destination', 'Destinasyon')}</Label>
                               <Select
                                   value={selectedDestination}
                                   onValueChange={(value) => {
@@ -195,7 +197,7 @@ export default function Contents({ seo }) {
                                       id="destination-filter"
                                       className="inline-flex items-center justify-between whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-3 py-2"
                                   >
-                                      <SelectValue placeholder="Destinasyon seçin" className="text-muted-foreground" />
+                                      <SelectValue placeholder={t('contents_page.filters.destination_placeholder', 'Destinasyon seçin')} className="text-muted-foreground" />
                                   </SelectTrigger>
                                   <SelectContent>
                                       {destinations.map(dest => (
@@ -209,7 +211,7 @@ export default function Contents({ seo }) {
                           onClick={handleSearchSubmit}
                           className="blog-filter-button mt-4 w-full md:w-auto bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-2 rounded-md font-semibold transition-colors"
                       >
-                          Filtrele
+                          {t('contents_page.filters.filter_button', 'Filtrele')}
                       </button>
                   </CardContent>
               </Card>
@@ -224,7 +226,7 @@ export default function Contents({ seo }) {
                     {posts.map(post => (
                         <div key={post.id} className="blog-post-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group">
                             {/* Blog Kart Görseli (Tıklanabilir) */}
-                            <Link href={route('contents.show', post.slug)} className="blog-post-image-link block relative w-full h-48 overflow-hidden">
+                            <Link href={route('contents.show', { slug: post.slug })} className="blog-post-image-link block relative w-full h-48 overflow-hidden">
                                 <LazyImage
                                     src={post.image?.thumbnail_url || 'https://placehold.co/600x400?text=Görsel+Bulunamadı'}
                                     alt={post.title}
@@ -236,13 +238,13 @@ export default function Contents({ seo }) {
 
                             <div className="blog-post-content p-4">
                                 {/* Başlık (Tıklanabilir) */}
-                                <Link href={route('contents.show', post.slug)} className="blog-post-title-link block">
+                                <Link href={route('contents.show', { slug: post.slug })} className="blog-post-title-link block">
                                     <h2 className="blog-post-title text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">{post.title}</h2>
                                 </Link>
                                 <p className="blog-post-summary text-muted-foreground text-sm mb-3">
                                   {post.summary && post.summary.length > 0
                                     ? post.summary.substring(0, 150) + (post.summary.length > 150 ? '...' : '')
-                                    : 'Bu blog yazısı için özet bulunmamaktadır.'
+                                    : t('contents_page.card.no_summary', 'Bu blog yazısı için özet bulunmamaktadır.')
                                   }
                                 </p>
 
@@ -265,18 +267,18 @@ export default function Contents({ seo }) {
                                 <div className="blog-post-date-readtime flex items-center justify-between text-xs text-muted-foreground mt-4 pt-4 border-t border-border">
                                     <p>{moment(post.published_at).locale('tr').format('DD MMMM YYYY')}</p>
                                     {post.content && (
-                                        <p>{Math.ceil(post.content.split(' ').length / 200)} dk okuma</p>
+                                        <p>{t('contents_page.card.reading_time', '{minutes} min read', { minutes: Math.ceil(post.content.split(' ').length / 200) })}</p>
                                     )}
                                 </div>
-                                <Link href={route('contents.show', post.slug)} className="blog-read-more-link inline-flex items-center mt-4 text-primary hover:underline text-sm font-medium transition-colors">
-                                    Devamını Oku <span className="ml-1">&rarr;</span>
+                                <Link href={route('contents.show', { slug: post.slug })} className="blog-read-more-link inline-flex items-center mt-4 text-primary hover:underline text-sm font-medium transition-colors">
+                                    {t('contents_page.card.read_more', 'Devamını Oku')} <span className="ml-1">&rarr;</span>
                                 </Link>
                             </div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="blog-no-posts-message text-center text-muted-foreground text-lg mt-8">Hiç blog yazısı bulunamadı.</p>
+                <p className="blog-no-posts-message text-center text-muted-foreground text-lg mt-8">{t('contents_page.no_posts_found', 'Hiç blog yazısı bulunamadı.')}</p>
             )}
 
             {/* Pagination */} 

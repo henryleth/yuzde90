@@ -53,14 +53,17 @@ class TourController extends Controller
             });
         }
 
+        // Fiyat aralığı filtresi güncellendi
         if (!empty($filters['price_range'])) {
             $query->whereHas('pricingTiers', function ($q) use ($filters) {
                 $q->where(function ($priceQuery) use ($filters) {
                     foreach ($filters['price_range'] as $range) {
-                        [$minPrice, $maxPrice] = explode('-', $range);
-                        if ($maxPrice === '100000') {
-                            $priceQuery->orWhere('price_per_person_1', '>=', (float)$minPrice);
+                        // '2000+' gibi aralıkları yönetmek için kontrol
+                        if (str_contains($range, '+')) {
+                            $minPrice = (float)str_replace('+', '', $range);
+                            $priceQuery->orWhere('price_per_person_1', '>=', $minPrice);
                         } else {
+                            [$minPrice, $maxPrice] = explode('-', $range);
                             $priceQuery->orWhereBetween('price_per_person_1', [(float)$minPrice, (float)$maxPrice]);
                         }
                     }
@@ -97,34 +100,48 @@ class TourController extends Controller
                 break;
         }
 
-        $tours = $query->paginate(10)->withQueryString();
+        // Arama motoru botları için tüm turları, diğerleri için sayfalamayı getir
+        $userAgent = $request->header('User-Agent');
+        $isCrawler = Str::contains($userAgent, ['bot', 'crawl', 'slurp', 'spider', 'mediapartners']);
+
+        if ($isCrawler) {
+            $tours = $query->get();
+        } else {
+            $tours = $query->paginate(6)->withQueryString();
+        }
 
         $allDestinations = Destination::all();
 
+        $transformedTours = $tours->through(function ($tour) {
+            Log::info('TourController Index Tour Data', ['id' => $tour->id, 'title' => $tour->title, 'featuredMedia' => $tour->featuredMedia ? ['original_url' => $tour->featuredMedia->original_url, 'thumbnail_url' => $tour->featuredMedia->thumbnail_url] : null]);
+            return [
+                'id' => $tour->id,
+                'title' => $tour->title,
+                'slug' => $tour->slug,
+                'summary' => $tour->summary,
+                'min_participants' => $tour->min_participants,
+                'max_participants' => $tour->max_participants,
+                'duration_days' => $tour->duration_days,
+                'duration_nights' => $tour->duration_nights,
+                'language' => $tour->language,
+                'rating' => (float) $tour->rating,
+                'reviews_count' => $tour->reviews_count,
+                'image' => $tour->featuredMedia ? [
+                    'original_url' => $tour->featuredMedia->original_url,
+                    'thumbnail_url' => $tour->featuredMedia->thumbnail_url,
+                ] : null, // featuredMedia objesini doğrudan geçir
+                'price_from' => $tour->pricingTiers->min('price_per_person_1'),
+                'destinations' => $tour->destinations->map(fn($dest) => ['slug' => $dest->slug, 'name' => $dest->name]),
+            ];
+        });
+
+        if ($request->expectsJson()) {
+            return $transformedTours;
+        }
+
         return Inertia::render('Tours', [
             'seo' => $seoService->generateForPage('tours.index'),
-            'tours' => $tours->through(function ($tour) {
-                Log::info('TourController Index Tour Data', ['id' => $tour->id, 'title' => $tour->title, 'featuredMedia' => $tour->featuredMedia ? ['original_url' => $tour->featuredMedia->original_url, 'thumbnail_url' => $tour->featuredMedia->thumbnail_url] : null]);
-                return [
-                    'id' => $tour->id,
-                    'title' => $tour->title,
-                    'slug' => $tour->slug,
-                    'summary' => $tour->summary,
-                    'min_participants' => $tour->min_participants,
-                    'max_participants' => $tour->max_participants,
-                    'duration_days' => $tour->duration_days,
-                    'duration_nights' => $tour->duration_nights,
-                    'language' => $tour->language,
-                    'rating' => (float) $tour->rating,
-                    'reviews_count' => $tour->reviews_count,
-                    'image' => $tour->featuredMedia ? [
-                        'original_url' => $tour->featuredMedia->original_url,
-                        'thumbnail_url' => $tour->featuredMedia->thumbnail_url,
-                    ] : null, // featuredMedia objesini doğrudan geçir
-                    'price_from' => $tour->pricingTiers->min('price_per_person_1'),
-                    'destinations' => $tour->destinations->map(fn($dest) => ['slug' => $dest->slug, 'name' => $dest->name]),
-                ];
-            }),
+            'tours' => $transformedTours,
             'allDestinations' => $allDestinations->map(fn($dest) => ['slug' => $dest->slug, 'name' => $dest->name]),
             'filters' => $filters,
         ]);
@@ -137,7 +154,7 @@ class TourController extends Controller
     {
         $tour = Tour::where('slug', $slug)->firstOrFail();
 
-        $tour->load(['featuredMedia', 'tourDays.dayActivities', 'pricingTiers', 'optionalActivities.image']);
+        $tour->load(['featuredMedia', 'tourDays.dayActivities', 'pricingTiers', 'optionalActivities.image', 'destinations']);
 
         $tour->append(['gallery_images_urls']); 
 
@@ -193,6 +210,12 @@ class TourController extends Controller
                     'price' => $activity->price,
                     'is_published' => $activity->is_published,
                     'image_url' => $activity->image?->thumbnail_url, // Thumbnail olarak gelmeli
+                ];
+            }),
+            'destinations' => $tour->destinations->map(function ($destination) {
+                return [
+                    'name' => $destination->name,
+                    'slug' => $destination->slug,
                 ];
             }),
         ];

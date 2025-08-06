@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Link, usePage } from '@inertiajs/react';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { useTheme } from '@/Context/ThemeContext';
 import { format } from "date-fns";
@@ -9,15 +10,24 @@ import { Button } from '@/Components/ui/button';
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import LazyImage from '@/Components/LazyImage';
+import TourCard from '@/Components/TourCard'; // TourCard bileşenini import et
 
 export default function DestinationDetail({ seo }) {
   const { destination } = usePage().props;
-  const { darkMode } = useTheme();
-  const [activeSection, setActiveSection] = useState('about');
+  const { t } = useTranslation();
+  const { darkMode, setHeaderShrunk } = useTheme(); // setHeaderShrunk eklendi
+  const [activeSection, setActiveSection] = useState('tours');
   const [lightboxIndex, setLightboxIndex] = useState(-1);
+  const [isNavSticky, setNavSticky] = useState(false); // Navigasyonun yapışkan durumu için state
+  const [navTop, setNavTop] = useState(64); // Navigasyonun 'top' pozisyonu için state
+
+  // İçerik filtreleme ve sayfalama için state'ler
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [visibleContents, setVisibleContents] = useState(4);
 
   const toursCarouselRef = useRef(null);
-  const contentsCarouselRef = useRef(null);
+  const heroRef = useRef(null); // Hero bölümü için ref eklendi
+  const navRef = useRef(null); // Navigasyon menüsü için ref eklendi
 
   const scrollCarousel = (ref, direction) => {
     if (ref.current) {
@@ -38,21 +48,18 @@ export default function DestinationDetail({ seo }) {
     };
 
     const tourInterval = setInterval(() => autoScroll(toursCarouselRef), 5000);
-    const contentsInterval = setInterval(() => autoScroll(contentsCarouselRef), 5000);
-
     return () => {
       clearInterval(tourInterval);
-      clearInterval(contentsInterval);
     };
-  }, [destination.tours, destination.contents]);
+  }, [destination.tours]);
 
   if (!destination) {
     return (
       <GuestLayout>
         <div className={`bg-background text-foreground min-h-screen`}>
           <main className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-4xl font-bold mb-6">Destinasyon Bulunamadı</h1>
-            <p className="text-muted-foreground">Aradığınız destinasyon mevcut değil veya silinmiş olabilir.</p>
+            <h1 className="text-4xl font-bold mb-6">{t('destination_detail.not_found.title', 'Destinasyon Bulunamadı')}</h1>
+            <p className="text-muted-foreground">{t('destination_detail.not_found.text', 'Aradığınız destinasyon mevcut değil veya silinmiş olabilir.')}</p>
           </main>
         </div>
       </GuestLayout>
@@ -85,11 +92,54 @@ export default function DestinationDetail({ seo }) {
     };
   }, []);
 
+  // Header daraltma ve navigasyon pozisyonu için birleşik useEffect
+  useEffect(() => {
+    const handleScrollAndResize = () => {
+      if (!heroRef.current || !navRef.current) return;
+
+      const isMobile = window.innerWidth < 768;
+      const heroHeight = heroRef.current.offsetHeight;
+      const scrollPosition = window.scrollY;
+      const headerHeight = 64; // Standart header yüksekliği (h-16)
+      const shrunkHeaderHeight = 40; // Küçülmüş header yüksekliği (h-10)
+
+      // 1. Header'ı daraltma mantığı (sadece mobilde)
+      const shouldShrink = isMobile && scrollPosition > (heroHeight - headerHeight);
+      setHeaderShrunk(shouldShrink);
+
+      // 2. Alt menünün sticky ve 'top' pozisyonu mantığı
+      const effectiveHeaderHeight = shouldShrink ? shrunkHeaderHeight : headerHeight;
+      const stickyThreshold = heroHeight - effectiveHeaderHeight;
+
+      if (scrollPosition > stickyThreshold) {
+        setNavSticky(true);
+        setNavTop(effectiveHeaderHeight);
+      } else {
+        setNavSticky(false);
+        // Yapışkan olmadığında top değeri önemli değil, ancak varsayılan olarak ayarlanabilir.
+        setNavTop(headerHeight); 
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollAndResize);
+    window.addEventListener('resize', handleScrollAndResize);
+    handleScrollAndResize(); // İlk yüklemede durumu kontrol et
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollAndResize);
+      window.removeEventListener('resize', handleScrollAndResize);
+      setHeaderShrunk(false); // Component kaldırıldığında header'ı varsayılan durumuna döndür
+    };
+  }, [setHeaderShrunk]);
+
   return (
     <GuestLayout seo={seo}>
       <div className={`destination-detail-page bg-background text-foreground min-h-screen`}>
         {/* Hero Section */}
-        <section className="hero-section relative h-[50vh] flex items-center justify-center text-center bg-cover bg-center" style={{ backgroundImage: `url(${destination.image?.original_url || 'https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'})` }}>
+        <section 
+          ref={heroRef} // Ref hero bölümüne eklendi
+          className="hero-section relative h-[50vh] flex items-center justify-center text-center bg-cover bg-center" 
+          style={{ backgroundImage: `url(${destination.image?.original_url || 'https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'})` }}>
           <div className="absolute inset-0 bg-black/60 hero-overlay"></div>
           <div className="relative z-10 text-white p-4 max-w-4xl mx-auto hero-content">
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 font-playfair animate-fade-in-up">
@@ -104,16 +154,20 @@ export default function DestinationDetail({ seo }) {
         </section>
 
         {/* Destinasyon Navigasyon Menüsü */}
-        <nav className={`sticky top-16 z-40 w-full border-b border-border ${darkMode ? 'bg-black/60' : 'bg-white/60'} backdrop-blur supports-[backdrop-filter]:`}> 
+        <nav 
+          ref={navRef}
+          className={`w-full border-b border-border ${darkMode ? 'bg-black/60' : 'bg-white/60'} backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-black/60 ${isNavSticky ? 'sticky z-40' : ''}`}
+          style={{ top: isNavSticky ? `${navTop}px` : 'auto' }} // Dinamik 'top' değeri
+        >
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex flex-wrap gap-2 py-2">
-              <a href="#tours" 
+              <a href="#tours"
                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                    activeSection === 'tours' 
                      ? 'bg-primary text-primary-foreground' 
                      : 'hover:bg-muted'
                  }`}>
-                Turlar ({destination.tours.length})
+                {t('destination_detail.nav.tours', 'Turlar')} ({destination.tours.length})
               </a>
               <a href="#about" 
                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -121,7 +175,7 @@ export default function DestinationDetail({ seo }) {
                      ? 'bg-primary text-primary-foreground' 
                      : 'hover:bg-muted'
                  }`}>
-                Hakkında
+                {t('destination_detail.nav.about', 'Hakkında')}
               </a>
               <a href="#contents" 
                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -129,7 +183,7 @@ export default function DestinationDetail({ seo }) {
                      ? 'bg-primary text-primary-foreground' 
                      : 'hover:bg-muted'
                  }`}>
-                İçerikler ({destination.contents.length})
+                {t('destination_detail.nav.contents', 'İçerikler')} ({destination.contents.length})
               </a>
               <a href="#gallery" 
                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -137,7 +191,7 @@ export default function DestinationDetail({ seo }) {
                      ? 'bg-primary text-primary-foreground' 
                      : 'hover:bg-muted'
                  }`}>
-                Galeri ({destination.gallery_images.length})
+                {t('destination_detail.nav.gallery', 'Galeri')} ({destination.gallery_images.length})
               </a>
             </div>
           </div>
@@ -150,70 +204,17 @@ export default function DestinationDetail({ seo }) {
               <section id="tours" className="space-y-6">
                 <Card className="bg-card rounded-lg border border-border shadow-sm">
                   <CardHeader>
-                    <h2 className="text-2xl font-bold">{destination.name} Turları</h2>
+                    <h2 className="text-2xl font-bold">{t('destination_detail.tours.title', '{name} Turları', { name: destination.name })}</h2>
                   </CardHeader>
                   <CardContent>
                     {destination.tours.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-4">
                         {destination.tours.slice(0, 3).map(tour => (
-                          <Card key={tour.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group tours-card flex flex-col">
-                            <Link href={route('tour.show', tour.slug)} className="block">
-                              <div className="relative overflow-hidden tours-card-image-wrapper h-48">
-                                <LazyImage
-                                  src={tour.image?.thumbnail_url || 'https://via.placeholder.com/400x200?text=Görsel+Bulunamadı'}
-                                  alt={tour.title}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 tours-card-image"
-                                  effect="blur"
-                                  wrapperClassName="w-full h-full"
-                                />
-                                {tour.is_popular && (
-                                  <div className="absolute top-4 left-4 tours-popular-tag-wrapper">
-                                    <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium tours-popular-tag">
-                                      En Popüler
-                                    </span>
-                                  </div>
-                                )}
-                                <div className="absolute top-4 right-4 tours-duration-tag-wrapper">
-                                  <span className="bg-background/90 text-foreground px-3 py-1 rounded-full text-sm font-medium tours-duration-tag">
-                                    {tour.duration_days} Gün
-                                  </span>
-                                </div>
-                              </div>
-                            </Link>
-                            <div className="p-6 flex flex-col justify-between flex-grow tours-card-content">
-                              <Link href={route('tour.show', tour.slug)}>
-                                <h3 className="text-xl font-semibold mb-2 tours-card-title hover:text-primary transition-colors">{tour.title}</h3>
-                              </Link>
-                              <p className="text-muted-foreground text-sm mb-4 tours-card-summary">
-                                {tour.summary ? tour.summary.substring(0, 100) + '...' : ''}
-                              </p>
-                              <div className="flex items-center justify-between mb-4 tours-card-meta">
-                                <div className="flex items-center space-x-4 text-sm text-muted-foreground tours-card-details">
-                                  <span className="flex items-center tours-card-participants">
-                                    <Users className="h-4 w-4 mr-1" />
-                                    {tour.min_participants ?? 'N/A'}-{tour.max_participants ?? 'N/A'} Kişi
-                                  </span>
-                                  <span className="flex items-center tours-card-rating">
-                                    <Star className="h-4 w-4 mr-1 text-yellow-500" />
-                                    {typeof tour.rating === 'number' ? tour.rating.toFixed(1) : 'N/A'}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-between tours-card-footer">
-                                <div>
-                                  <span className="text-2xl font-bold text-primary tours-card-price">€{tour.price_from || 'N/A'}</span>
-                                  <span className="text-sm text-muted-foreground block tours-card-price-label">kişi başına</span>
-                                </div>
-                                <Button asChild className="tours-card-detail-button">
-                                  <Link href={route('tour.show', tour.slug)}>Detayları Gör</Link>
-                                </Button>
-                              </div>
-                            </div>
-                          </Card>
+                          <TourCard key={tour.id} tour={tour} />
                         ))}
                       </div>
                     ) : (
-                      <p className="text-muted-foreground">Bu destinasyon için henüz tur bulunmamaktadır.</p>
+                      <p className="text-muted-foreground">{t('destination_detail.tours.no_tours_found', 'Bu destinasyon için henüz tur bulunmamaktadır.')}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -223,13 +224,13 @@ export default function DestinationDetail({ seo }) {
               <section id="about" className="space-y-6">
                 <Card className="bg-card rounded-lg border border-border shadow-sm">
                   <CardHeader>
-                    <CardTitle>Destinasyon Hakkında</CardTitle>
+                    <CardTitle>{t('destination_detail.about.title', 'Destinasyon Hakkında')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {destination.description ? (
                       <div className="prose prose-slate dark:prose-invert max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: destination.description }} />
                     ) : (
-                      <p className="text-muted-foreground">Bu destinasyon için detaylı bir açıklama bulunmamaktadır.</p>
+                      <p className="text-muted-foreground">{t('destination_detail.about.no_description', 'Bu destinasyon için detaylı bir açıklama bulunmamaktadır.')}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -239,65 +240,123 @@ export default function DestinationDetail({ seo }) {
               <section id="contents" className="space-y-6">
                 <Card className="bg-card rounded-lg border border-border shadow-sm">
                   <CardHeader>
-                    <h2 className="text-2xl font-bold">{destination.name} İçerikleri</h2>
+                    <h2 className="text-2xl font-bold">{t('destination_detail.contents.title', '{name} İçerikleri', { name: destination.name })}</h2>
                   </CardHeader>
                   <CardContent>
-                    {destination.contents.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 overflow-x-auto hide-scrollbar">
-                        {destination.contents.slice(0, 4).map(content => (
-                          <Card key={content.id} className="blog-post-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group h-full flex flex-col">
-                            <Link href={route('contents.show', content.slug)} className="block">
-                              <div className="relative w-full h-48 overflow-hidden">
-                                <LazyImage
-                                  src={content.image?.thumbnail_url || 'https://placehold.co/600x400?text=Görsel+Bulunamadı'}
-                                  alt={content.title}
-                                  className="blog-post-image w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                  effect="blur"
-                                  wrapperClassName="w-full h-full"
-                                />
-                              </div>
-                            </Link>
-                            <CardContent className="blog-post-content p-4 flex flex-col flex-grow">
-                              <Link href={route('contents.show', content.slug)} className="blog-post-title-link block">
-                                <h3 className="blog-post-title text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
-                                  {content.title}
-                                </h3>
-                              </Link>
-                              {content.summary && (
-                                <p className="blog-post-summary text-muted-foreground text-sm line-clamp-3 mb-auto">
-                                  {content.summary ? content.summary.substring(0, 150) + (content.summary.length > 150 ? '...' : '') : 'Bu blog yazısı için özet bulunmamaktadır.'}
-                                </p>
-                              )}
-                              <div className="blog-post-meta flex flex-wrap gap-2 items-center text-xs text-muted-foreground mt-4">
-                                {(content.content_categories || []).map(cat => (
-                                  <span key={cat.id} className="blog-category-tag bg-muted rounded-full px-2 py-1 flex items-center">
-                                    <Tag className="h-3 w-3 mr-1 text-primary" />
-                                    {cat.name}
-                                  </span>
-                                ))}
-                                {(content.destinations || []).map(dest => (
-                                  <span key={dest.id} className="blog-destination-tag bg-muted rounded-full px-2 py-1 flex items-center">
-                                    <MapPin className="h-3 w-3 mr-1 text-secondary" />
-                                    {dest.name}
-                                  </span>
-                                ))}
-                              </div>
-                              <div className="blog-post-date-readtime flex items-center justify-between text-xs text-muted-foreground mt-4 pt-4 border-t border-border">
-                                <p>{content.published_at ? format(new Date(content.published_at), 'dd.MM.yyyy') : '-'}</p>
-                                {content.content && (
-                                  <p>{Math.ceil(content.content.split(' ').length / 200)} dk okuma</p>
-                                )}
-                              </div>
-                              <Link href={route('contents.show', content.slug)} className="blog-read-more-link inline-flex items-center mt-4 text-primary hover:underline text-sm font-medium transition-colors">
-                                Devamını Oku <span className="ml-1">&rarr;</span>
-                              </Link>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-muted-foreground">Bu destinasyon için henüz içerik bulunmamaktadır.</p>
-                    )}
+                    {(() => {
+                      // 1. Tüm kategorileri topla ve tekilleştir
+                      const allCategories = destination.contents.flatMap(content => content.content_categories || []);
+                      const uniqueCategories = allCategories.reduce((acc, category) => {
+                        if (!acc.find(item => item.id === category.id)) {
+                          acc.push(category);
+                        }
+                        return acc;
+                      }, []);
+
+                      // 2. Seçilen kategoriye göre içerikleri filtrele
+                      const filteredContents = destination.contents.filter(content => {
+                        if (selectedCategory === 'all') return true;
+                        return (content.content_categories || []).some(cat => cat.id === selectedCategory);
+                      });
+
+                      // 3. "Daha Fazla Yükle" butonu için mantık
+                      const handleLoadMore = () => {
+                        setVisibleContents(prev => prev + 4);
+                      };
+
+                      if (destination.contents.length === 0) {
+                        return <p className="text-muted-foreground">{t('destination_detail.contents.no_contents_found', 'Bu destinasyon için henüz içerik bulunmamaktadır.')}</p>;
+                      }
+
+                      return (
+                        <>
+                          {/* Kategori Filtreleme Butonları */}
+                          <div className="flex flex-wrap gap-2 mb-6">
+                            <Button
+                              variant={selectedCategory === 'all' ? 'default' : 'outline'}
+                              onClick={() => {
+                                setSelectedCategory('all');
+                                setVisibleContents(4); // Filtre değiştiğinde gösterilen içerik sayısını sıfırla
+                              }}
+                            >
+                              {t('all', 'Tümü')}
+                            </Button>
+                            {uniqueCategories.map(category => (
+                              <Button
+                                key={category.id}
+                                variant={selectedCategory === category.id ? 'default' : 'outline'}
+                                onClick={() => {
+                                  setSelectedCategory(category.id);
+                                  setVisibleContents(4); // Filtre değiştiğinde gösterilen içerik sayısını sıfırla
+                                }}
+                              >
+                                {category.name}
+                              </Button>
+                            ))}
+                          </div>
+
+                          {/* İçerik Kartları */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {filteredContents.slice(0, visibleContents).map(content => (
+                              <Card key={content.id} className="content-card bg-card rounded-lg border border-border overflow-hidden shadow-sm transition-all duration-200 flex flex-col sm:flex-row md:h-[15rem]">
+                                {/* Sol Taraf: Resim (Tıklanabilir) */}
+                                <Link href={route('contents.show', { slug: content.slug })} className="content-card-image-link block w-full sm:w-1/3 flex-shrink-0 group">
+                                  <div className="relative h-48 sm:h-full overflow-hidden">
+                                    <LazyImage
+                                      src={content.image?.thumbnail_url || 'https://placehold.co/400x400?text=Görsel+Yok'}
+                                      alt={content.title}
+                                      className="content-card-image w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                      effect="blur"
+                                      wrapperClassName="w-full h-full"
+                                    />
+                                  </div>
+                                </Link>
+                                {/* Sağ Taraf: İçerik */}
+                                <CardContent className="content-card-content p-4 flex flex-col flex-grow w-full sm:w-2/3">
+                                  {/* Başlık (Tıklanabilir) */}
+                                  <Link href={route('contents.show', { slug: content.slug })} className="group">
+                                    <h3 className="content-card-title text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-2">
+                                      {content.title}
+                                    </h3>
+                                  </Link>
+                                  {/* Özet */}
+                                  {content.summary && (
+                                    <p className="content-card-summary text-muted-foreground text-sm line-clamp-3 mb-2">
+                                      {content.summary}
+                                    </p>
+                                  )}
+                                  {/* Meta (Kategoriler ve Tarih) */}
+                                  <div className="mt-auto pt-2">
+                                    <div className="content-card-meta flex flex-wrap gap-2 items-center text-xs text-muted-foreground mb-2">
+                                      {(content.content_categories || []).map(cat => (
+                                        <Link key={cat.id} href={route('contents.index', { category: cat.slug })} className="content-card-category-link">
+                                          <span className="content-card-category-tag bg-muted rounded-full px-2 py-1 flex items-center hover:bg-primary/20 transition-colors">
+                                            <Tag className="h-3 w-3 mr-1 text-primary" />
+                                            {cat.name}
+                                          </span>
+                                        </Link>
+                                      ))}
+                                    </div>
+                                    <div className="content-card-date text-xs text-muted-foreground mt-2">
+                                      {content.published_at ? format(new Date(content.published_at), 'dd.MM.yyyy') : ''}
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+
+                          {/* "Daha Fazla Yükle" Butonu */}
+                          {visibleContents < filteredContents.length && (
+                            <div className="text-center mt-8">
+                              <Button onClick={handleLoadMore} variant="outline">
+                                {t('load_more', 'Daha Fazla Yükle')}
+                              </Button>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
                   </CardContent>
                 </Card>
               </section>
@@ -306,7 +365,7 @@ export default function DestinationDetail({ seo }) {
               <section id="gallery" className="space-y-6">
                 <Card className="bg-card rounded-lg border border-border shadow-sm">
                   <CardHeader>
-                    <h2 className="text-2xl font-bold">{destination.name} Galerisi</h2>
+                    <h2 className="text-2xl font-bold">{t('destination_detail.gallery.title', '{name} Galerisi', { name: destination.name })}</h2>
                   </CardHeader>
                   <CardContent>
                     {destination.gallery_images.length > 0 ? (
@@ -328,7 +387,7 @@ export default function DestinationDetail({ seo }) {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-muted-foreground">Bu destinasyon için henüz galeri görseli bulunmamaktadır.</p>
+                      <p className="text-muted-foreground">{t('destination_detail.gallery.no_images_found', 'Bu destinasyon için henüz galeri görseli bulunmamaktadır.')}</p>
                     )}
                   </CardContent>
                 </Card>

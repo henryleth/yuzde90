@@ -1,4 +1,5 @@
 import { Link, router } from '@inertiajs/react';
+import { useTranslation } from '@/hooks/useTranslation'; // Çeviri hook'u eklendi
 import { Button } from '@/Components/ui/button';
 import { Card } from '@/Components/ui/card';
 import GuestLayout from '@/Layouts/GuestLayout';
@@ -11,6 +12,7 @@ import TourCard from '@/Components/TourCard';
 import FeaturedBadge from '@/Components/Badges/FeaturedBadgeCorner';
 
 export default function Home({ tours, popularDestinations, seo }) {
+  const { t } = useTranslation(); // locale'e artık burada ihtiyacımız yok
   // Video hazır olma durumunu ve iframe dikey konumunu yöneten state'ler
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [iframeTop, setIframeTop] = useState('-20%'); // Varsayılan masaüstü değeri
@@ -70,16 +72,16 @@ export default function Home({ tours, popularDestinations, seo }) {
                 {/* Metin İçeriği Katmanı */}
                 <div className="relative z-10 text-white p-4 max-w-6xl mx-auto">
                     <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-up font-playfair">
-                        Türkiye'nin Keşfedilmeyi Bekleyen Cennetleri
+                        {t('home.hero.title', "Türkiye'nin Keşfedilmeyi Bekleyen Cennetleri")}
                     </h1>
                     <p className="text-lg md:text-xl mb-8 opacity-0 animate-fade-in-up animation-delay-300">
-                        Unutulmaz turlar ve eşsiz deneyimlerle Türkiye'nin büyülü güzelliklerini keşfedin.
+                        {t('home.hero.subtitle', "Unutulmaz turlar ve eşsiz deneyimlerle Türkiye'nin büyülü güzelliklerini keşfedin.")}
                     </p>
                     <Button
                         asChild
                         className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 opacity-0 animate-fade-in-up animation-delay-600"
                     >
-                        <Link href="/tours">Tüm Turlarımızı Keşfedin</Link>
+                        <Link href={route('tours.index')}>{t('home.hero.button', "Tüm Turlarımızı Keşfedin")}</Link>
                     </Button>
                 </div>
             </section>
@@ -91,16 +93,16 @@ export default function Home({ tours, popularDestinations, seo }) {
                         {/* Sol Taraf: Pazarlama Metinleri */}
                         <div className="md:col-span-2">
                             <h2 className="text-3xl font-bold text-amber-600 mb-4 font-playfair">
-                                Hayallerinizdeki Türkiye Turu, Profesyonel Dokunuşlarla Gerçeğe Dönüşüyor
+                                {t('home.marketing.title', "Hayallerinizdeki Türkiye Turu, Profesyonel Dokunuşlarla Gerçeğe Dönüşüyor")}
                             </h2>
                             <p className="text-muted-foreground mb-6 text-lg">
-                                Büyüleyici İstanbul'dan masalsı Kapadokya'ya, antik Efes'ten bembeyaz Pamukkale'ye uzanan bu topraklarda, size özel olarak hazırladığımız, <span className="font-semibold text-foreground">sadece İspanyolca konuşan profesyonel rehberler</span> eşliğinde unutulmaz anılar biriktirin.
+                                {t('home.marketing.subtitle1', "Büyüleyici İstanbul'dan masalsı Kapadokya'ya, antik Efes'ten bembeyaz Pamukkale'ye uzanan bu topraklarda, size özel olarak hazırladığımız, sadece İspanyolca konuşan profesyonel rehberler eşliğinde unutulmaz anılar biriktirin.")}
                             </p>
                             <h3 className="text-2xl font-bold text-amber-600 mb-4 font-playfair">
-                                Her Şey Dahil, Stresten Uzak Bir Tatil Deneyimi
+                                {t('home.marketing.title2', "Her Şey Dahil, Stresten Uzak Bir Tatil Deneyimi")}
                             </h3>
                             <p className="text-muted-foreground text-lg">
-                                Uluslararası uçuşlarınız hariç tüm detayları biz düşünüyoruz. Size sadece Türkiye'nin tadını çıkarmak kalıyor. Konforlu konaklama, yerel lezzetler ve kusursuz bir seyahat planı ile yolculuğunuzun her anı keyif dolu geçecek.
+                                {t('home.marketing.subtitle2', "Uluslararası uçuşlarınız hariç tüm detayları biz düşünüyoruz. Size sadece Türkiye'nin tadını çıkarmak kalıyor. Konforlu konaklama, yerel lezzetler ve kusursuz bir seyahat planı ile yolculuğunuzun her anı keyif dolu geçecek.")}
                             </p>
                         </div>
 
@@ -112,10 +114,8 @@ export default function Home({ tours, popularDestinations, seo }) {
                             <div className="border p-4 rounded-lg text-center bg-card shadow-lg w-full">
                                 <a href="https://www.tursab.org.tr/tr/dd-acente-sorgulama" target="_blank" rel="noopener noreferrer" className="group">
                                     <p className="font-extrabold text-xl text-red-600 group-hover:text-red-700 transition-colors">TÜRSAB</p>
-                                    <p className="text-sm font-semibold text-muted-foreground">Resmi Acente Doğrulama</p>
-                                    <p className="text-xs mt-2 text-muted-foreground group-hover:text-foreground transition-colors">
-                                        Güvenliğiniz bizim için öncelik. <br/> <span className="font-bold">A-5240</span> lisans numaramızla kaydımızı doğrulayın.
-                                    </p>
+                                    <p className="text-sm font-semibold text-muted-foreground">{t('home.marketing.tursab_title', 'Resmi Acente Doğrulama')}</p>
+                                    <p className="text-xs mt-2 text-muted-foreground group-hover:text-foreground transition-colors" dangerouslySetInnerHTML={{ __html: t('home.marketing.tursab_text', 'Güvenliğiniz bizim için öncelik. <br/> <span class="font-bold">A-5240</span> lisans numaramızla kaydımızı doğrulayın.') }} />
                                 </a>
                             </div>
                         </div>
@@ -127,13 +127,13 @@ export default function Home({ tours, popularDestinations, seo }) {
             {/* Featured Tours Section */}
             <section className="py-16 bg-muted/40">
                 <div className="max-w-6xl mx-auto px-4">
-                    <h2 className="text-4xl font-bold text-center mb-12 font-playfair">Öne Çıkan Turlarımız</h2>
+                    <h2 className="text-4xl font-bold text-center mb-12 font-playfair">{t('home.featured_tours.title', "Öne Çıkan Turlarımız")}</h2>
                     {tours.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {tours.map((tour) => <TourCard key={tour.id} tour={tour} featuredBadge={FeaturedBadge} />)}
                         </div>
                     ) : (
-                        <p className="text-center text-muted-foreground">Şu anda öne çıkan tur bulunmamaktadır.</p>
+                        <p className="text-center text-muted-foreground">{t('home.featured_tours.no_tours', "Şu anda öne çıkan tur bulunmamaktadır.")}</p>
                     )}
                 </div>
             </section>
@@ -141,11 +141,11 @@ export default function Home({ tours, popularDestinations, seo }) {
             {/* Popüler Destinasyonlar Section */}
             <section className="py-16 bg-muted/40"> {/* Arka plan rengi eski haline getirildi */}
                 <div className="max-w-6xl mx-auto px-4">
-                    <h2 className="text-4xl font-bold text-center mb-12 font-playfair">Popüler Destinasyonlar</h2>
+                    <h2 className="text-4xl font-bold text-center mb-12 font-playfair">{t('home.popular_destinations.title', "Popüler Destinasyonlar")}</h2>
                     {popularDestinations.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> {/* Carousel yerine grid düzeni */}
                             {popularDestinations.map((destination) => (
-                                <Link key={destination.id} href={route('destinations.show', destination.slug)} className="block">
+                                <Link key={destination.id} href={route('destinations.show', { slug: destination.slug })} className="block">
                                     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 relative group">
                                         <div className="relative w-full h-64"> {/* Görsel boyutu artırıldı */}
                                             <LazyImage
@@ -161,8 +161,8 @@ export default function Home({ tours, popularDestinations, seo }) {
                                                     <p className="text-sm opacity-90 mb-2 destinasyon-aciklama">{destination.summary}</p>
                                                 </div>
                                                 <div className="flex justify-end mt-4">
-                                                    <Button onClick={() => router.visit(route('destinations.show', destination.slug))} className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 destinasyon-butonu">
-                                                        Turları Gör
+                                                    <Button onClick={(e) => { e.preventDefault(); router.visit(route('destinations.show', { slug: destination.slug }))}} className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 destinasyon-butonu">
+                                                        {t('home.popular_destinations.button', "Turları Gör")}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -172,7 +172,7 @@ export default function Home({ tours, popularDestinations, seo }) {
                             ))}
                         </div>
                     ) : (
-                        <p className="text-center text-muted-foreground">Şu anda popüler destinasyon bulunmamaktadır.</p>
+                        <p className="text-center text-muted-foreground">{t('home.popular_destinations.no_destinations', "Şu anda popüler destinasyon bulunmamaktadır.")}</p>
                     )}
                 </div>
             </section>
@@ -180,25 +180,25 @@ export default function Home({ tours, popularDestinations, seo }) {
             {/* About Us / Why Choose Us Section */}
             <section className="py-16 bg-background">
                 <div className="max-w-6xl mx-auto px-4"> {/* max-w-6xl -> max-w-7xl */}
-                    <h2 className="text-4xl font-bold mb-8 font-playfair">Neden Bizi Seçmelisiniz?</h2>
+                    <h2 className="text-4xl font-bold mb-8 font-playfair">{t('home.why_us.title', "Neden Bizi Seçmelisiniz?")}</h2>
                     <p className="text-lg text-muted-foreground max-w-7xl mx-auto mb-12">
-                        Yılların verdiği tecrübe ve müşteri memnuniyeti odaklı hizmet anlayışımızla, size en iyi seyahat deneyimini sunmak için buradayız.
+                        {t('home.why_us.subtitle', "Yılların verdiği tecrübe ve müşteri memnuniyeti odaklı hizmet anlayışımızla, size en iyi seyahat deneyimini sunmak için buradayız.")}
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="p-6 bg-card rounded-lg shadow-md border border-border">
                             <Globe className="h-12 w-12 text-primary mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Geniş Destinasyon Seçenekleri</h3>
-                            <p className="text-muted-foreground text-sm">Türkiye'nin her köşesinden eşsiz turlar.</p>
+                            <h3 className="text-xl font-semibold mb-2">{t('home.why_us.item1_title', "Geniş Destinasyon Seçenekleri")}</h3>
+                            <p className="text-muted-foreground text-sm">{t('home.why_us.item1_text', "Türkiye'nin her köşesinden eşsiz turlar.")}</p>
                         </div>
                         <div className="p-6 bg-card rounded-lg shadow-md border border-border">
                             <Star className="h-12 w-12 text-primary mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Müşteri Memnuniyeti</h3>
-                            <p className="text-muted-foreground text-sm">Binlerce mutlu müşteri yorumu.</p>
+                            <h3 className="text-xl font-semibold mb-2">{t('home.why_us.item2_title', "Müşteri Memnuniyeti")}</h3>
+                            <p className="text-muted-foreground text-sm">{t('home.why_us.item2_text', "Binlerce mutlu müşteri yorumu.")}</p>
                         </div>
                         <div className="p-6 bg-card rounded-lg shadow-md border border-border">
                             <Wallet className="h-12 w-12 text-primary mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Uygun Fiyatlar</h3>
-                            <p className="text-muted-foreground text-sm">En uygun fiyat garantisi.</p>
+                            <h3 className="text-xl font-semibold mb-2">{t('home.why_us.item3_title', "Uygun Fiyatlar")}</h3>
+                            <p className="text-muted-foreground text-sm">{t('home.why_us.item3_text', "En uygun fiyat garantisi.")}</p>
                         </div>
                     </div>
                 </div>
@@ -207,12 +207,12 @@ export default function Home({ tours, popularDestinations, seo }) {
             {/* Call to Action Section */}
             <section className="py-16 bg-primary text-primary-foreground text-center">
                 <div className="max-w-6xl mx-auto px-4"> {/* max-w-4xl -> max-w-7xl */}
-                    <h2 className="text-4xl font-bold mb-6 font-playfair">Hayalinizdeki Turu Planlayın</h2>
+                    <h2 className="text-4xl font-bold mb-6 font-playfair">{t('home.cta.title', "Hayalinizdeki Turu Planlayın")}</h2>
                     <p className="text-lg mb-8 opacity-80">
-                        Türkiye'nin büyüleyici manzaralarını keşfetmek için daha ne bekliyorsunuz? Hemen bize ulaşın!
+                        {t('home.cta.subtitle', "Türkiye'nin büyüleyici manzaralarını keşfetmek için daha ne bekliyorsunuz? Hemen bize ulaşın!")}
                     </p>
                     <Button asChild className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-8 py-6 text-lg rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
-                        <Link href="/contact">Bize Ulaşın</Link>
+                        <Link href={route('contact.us')}>{t('home.cta.button', "Bize Ulaşın")}</Link>
                     </Button>
                 </div>
             </section>

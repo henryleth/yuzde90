@@ -1,12 +1,14 @@
 import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Link, usePage } from '@inertiajs/react';
+import { useTranslation } from '@/hooks/useTranslation'; // Çeviri hook'u eklendi
 import { Card, CardContent } from '@/Components/ui/card'; // Card bileşenlerini import et
 import { useTheme } from '@/Context/ThemeContext'; // useTheme hook'unu import et
 import LazyImage from '@/Components/LazyImage'; // Merkezi LazyImage bileşenini import et
 
 export default function Destinations({ seo }) {
   const { destinations } = usePage().props; // Backend'den gelen destinasyon verisi
+  const { t } = useTranslation();
 
   return (
     <GuestLayout seo={seo}>
@@ -16,21 +18,21 @@ export default function Destinations({ seo }) {
           <div className="absolute inset-0 bg-black/60 hero-overlay"></div>
           <div className="relative z-10 text-white p-4 max-w-4xl mx-auto hero-content">
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 font-playfair animate-fade-in-up">
-              Keşfedilecek Destinasyonlar
+              {t('destinations_page.hero.title', 'Keşfedilecek Destinasyonlar')}
             </h1>
             <p className="text-lg md:text-xl mb-4 opacity-0 animate-fade-in-up animation-delay-300">
-              Türkiye'nin dört bir yanındaki eşsiz güzellikleri keşfedin.
+              {t('destinations_page.hero.subtitle', "Türkiye'nin dört bir yanındaki eşsiz güzellikleri keşfedin.")}
             </p>
           </div>
         </section>
 
         <main className="max-w-6xl mx-auto px-4 py-8">
-          <h2 className="text-3xl font-bold mb-6">Tüm Destinasyonlarımız</h2>
+          <h2 className="text-3xl font-bold mb-6">{t('destinations_page.main.title', 'Tüm Destinasyonlarımız')}</h2>
 
           {destinations.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {destinations.map(destination => (
-                <Link key={destination.id} href={route('destinations.show', destination.slug)} className="block">
+                <Link key={destination.id} href={route('destinations.show', { slug: destination.slug })} className="block">
                   <Card className="destination-card bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group">
                     <div className="relative w-full h-48 overflow-hidden">
                       {/* 
@@ -57,7 +59,7 @@ export default function Destinations({ seo }) {
                       )}
                       {destination.lowest_tour_price !== null && (
                         <p className="text-sm text-primary font-bold mt-2">
-                          starts from €{destination.lowest_tour_price}
+                          {t('destinations_page.card.starts_from', 'starts from')} €{destination.lowest_tour_price}
                         </p>
                       )}
                     </CardContent>
@@ -66,7 +68,7 @@ export default function Destinations({ seo }) {
               ))}
             </div>
           ) : (
-            <p className="text-center text-muted-foreground">Henüz keşfedilecek destinasyon bulunamadı.</p>
+            <p className="text-center text-muted-foreground">{t('destinations_page.no_destinations_found', 'Henüz keşfedilecek destinasyon bulunamadı.')}</p>
           )}
         </main>
       </div>

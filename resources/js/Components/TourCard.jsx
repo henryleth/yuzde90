@@ -4,9 +4,12 @@ import { Button } from '@/Components/ui/button';
 import { Card } from '@/Components/ui/card';
 import { Star, Users } from 'lucide-react';
 import LazyImage from './LazyImage'; // Yeni merkezi LazyImage bileşenimizi import ediyoruz
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Merkezi ve Yeniden Kullanılabilir Tur Kartı Bileşeni
 export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
+  const { t } = useTranslation();
+
   return (
     <Card className="w-full h-full flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative">
       {/* Köşe Şeridi */}
@@ -17,7 +20,7 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
       <Link href={route('tour.show', tour.slug)} className="block">
         <div className="relative overflow-hidden h-48">
           <LazyImage
-            src={tour.image?.thumbnail_url || 'https://via.placeholder.com/400x200?text=Görsel+Bulunamadı'}
+            src={tour.image?.thumbnail_url || `https://via.placeholder.com/400x200?text=${encodeURIComponent(t('tour_card.image_not_found', 'Görsel Bulunamadı'))}`}
             alt={tour.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             wrapperClassName="w-full h-full"
@@ -25,7 +28,7 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
           />
           <div className="absolute top-4 right-4">
             <div className="inline-flex items-center rounded-full bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-              <span>{tour.duration_days} Gün</span>
+              <span>{t('tour_card.days', '{count} Gün', { count: tour.duration_days })}</span>
             </div>
           </div>
         </div>
@@ -45,7 +48,7 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
           <div className="flex items-center justify-between mb-4 text-sm text-muted-foreground">
             <span className="flex items-center">
               <Users size={14} className="mr-1.5" />
-              {tour.min_participants ?? 'N/A'}-{tour.max_participants ?? 'N/A'} Kişi
+              {t('tour_card.people', '{min}-{max} Kişi', { min: tour.min_participants ?? 'N/A', max: tour.max_participants ?? 'N/A' })}
             </span>
             <span className="flex items-center">
               <Star size={14} className="mr-1.5 text-yellow-500" />
@@ -55,10 +58,10 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
           <div className="flex items-center justify-between">
             <div>
               <span className="text-2xl font-bold text-primary">€{tour.price_from || 'N/A'}</span>
-              <span className="text-sm text-muted-foreground block -mt-1">kişi başına</span>
+              <span className="text-sm text-muted-foreground block -mt-1">{t('tour_card.per_person', 'kişi başına')}</span>
             </div>
             <Button asChild>
-              <Link href={route('tour.show', tour.slug)}>Detayları Gör</Link>
+              <Link href={route('tour.show', tour.slug)}>{t('tour_card.view_details', 'Detayları Gör')}</Link>
             </Button>
           </div>
         </div>

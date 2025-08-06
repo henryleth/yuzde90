@@ -37,6 +37,13 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'translations' => function () {
+                $locale = app()->getLocale();
+                // Sadece 'site' çeviri dosyasını yükle, gerekirse diğerlerini de ekleyebiliriz.
+                return [
+                    'site' => trans('site', [], $locale)
+                ];
+            },
             'flash' => [ // Flash mesajları eklendi
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

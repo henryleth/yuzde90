@@ -138,7 +138,7 @@ class ContentController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('İçerik oluşturma hatası: ' . $e->getMessage());
-            return back()->withErrors(['general' => 'İçerik oluşturulurken bir hata oluştu.']);
+            return back()->withErrors(['general' => 'İçerik oluşturulurken bir hata oluştu: ' . $e->getMessage()]);
         }
     }
 
@@ -192,7 +192,7 @@ class ContentController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('İçerik güncelleme hatası: ' . $e->getMessage());
-            return back()->withErrors(['general' => 'İçerik güncellenirken bir hata oluştu.']);
+            return back()->withErrors(['general' => 'İçerik güncellenirken bir hata oluştu: ' . $e->getMessage()]);
         }
     }
 
@@ -206,7 +206,7 @@ class ContentController extends Controller
             return redirect()->route('admin.contents.index')->with('success', 'İçerik başarıyla silindi.');
         } catch (\Exception $e) {
             Log::error('İçerik silme hatası: ' . $e->getMessage());
-            return back()->withErrors(['general' => 'İçerik silinirken bir hata oluştu.']);
+            return back()->withErrors(['general' => 'İçerik silinirken bir hata oluştu: ' . $e->getMessage()]);
         }
     }
 }

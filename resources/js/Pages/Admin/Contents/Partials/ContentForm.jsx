@@ -165,6 +165,7 @@ export default function ContentForm({ content, contentCategories, destinations, 
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit}>
+                    <InputError message={errors.general} className="mb-4" />
                     <Tabs defaultValue="general">
                         <TabsList>
                             <TabsTrigger value="general">Genel Bilgiler</TabsTrigger>
