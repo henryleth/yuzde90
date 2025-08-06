@@ -12,6 +12,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 class SettingsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:settings-management');
+    }
+
     public function index()
     {
         // Tüm ayarları veritabanından çek ve anahtar-değer çifti olarak düzenle.
@@ -20,7 +25,7 @@ class SettingsController extends Controller
         // Önbellek ayarını da ekle. Eğer veritabanında yoksa, varsayılan olarak '1' (aktif) kabul et.
         $settings['cache.enabled'] = $settings->get('cache.enabled', '1');
 
-        return Inertia::render('Admin/Settings/Seo', [
+        return Inertia::render('Admin/Settings/Index', [
             'settings' => $settings
         ]);
     }

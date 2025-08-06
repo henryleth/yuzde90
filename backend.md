@@ -11,6 +11,7 @@ Bu doküman, projenin Laravel backend yapısını, controller'larını, modeller
 -   **Inertia SSR Yönetimi**: `App\Http\Middleware\HandleInertiaRequests.php` içindeki `resolveView` metodu, admin paneli rotaları (`Admin/*` ile başlayan component'ler) için SSR'ı devre dışı bırakır. Bu, admin panelinin her zaman istemci tarafında işlenmesini sağlar.
 -   `App\Http\Middleware\HandleInertiaRequests.php` içindeki `share` metodu güncellenerek çeviri verilerinin çift JSON kodlamasını önlemek amacıyla `json_encode` kullanımı kaldırıldı.
 -   `App\Http\Middleware\HandleInertiaRequests.php` içindeki `share` metodu, flash mesajların (`success`, `error`, `message`) ve doğrulama hata mesajlarının HTML özel karakterlerini kaçırarak (htmlspecialchars ile) güvenli hale getirilmesi için güncellendi. Bu, frontend tarafında JSON ayrıştırma hatalarını önlemeyi amaçlar.
+-   `App\Http\Middleware\HandleInertiaRequests.php` içindeki `share` metodu, giriş yapmış kullanıcının rollerini ve yetkilerini de frontend'e gönderecek şekilde güncellendi. Bu, arayüzde yetki bazlı dinamik gösterim/gizleme işlemleri için kullanılır.
 
 ### Dinamik Rota Yönetimi (Permalink)
 
@@ -39,6 +40,9 @@ Uygulamanın ana modüllerine ait URL yapıları (permalink'ler), `.env` dosyas�
 
 ### Modeller
 
+-   **`App\Models\User.php` (Güncellendi)**:
+    -   Rol ve yetki yönetimi için `Spatie\Permission\Traits\HasRoles` trait'i eklendi.
+    -   `$fillable` dizisine opsiyonel `phone` alanı eklendi.
 -   **`App\Models\Setting.php`**: `key` ve `value` çiftleri olarak genel uygulama ayarlarını tutar.
 -   **`App\Models\Tour.php`**: `pricingTiers()` ilişkisi aracılığıyla `TourPricingTier` modeline bağlanır. Sezonlarla doğrudan bir ilişkisi kalmamıştır.
 -   **`App\Models\TourPricingTier.php`**: Fiyatlandırma katmanlarını temsil eder. 
@@ -51,4 +55,16 @@ Uygulamanın ana modüllerine ait URL yapıları (permalink'ler), `.env` dosyas�
     -   `summary` (string) ve `description` (text) alanları eklendi. `summary` kısa bir özet, `description` ise HTML içerik barındırır.
     -   `is_popular` (boolean) alanı eklendi. Bu alan, destinasyonun anasayfada gösterilip gösterilmeyeceğini belirler.
     -   `$fillable` dizisine `summary`, `description` ve `is_popular` eklendi.
-    -   `$casts` dizisine `is_popular` alanı `
+    -   `$casts` dizisine `is_popular` alanı `boolean` olarak eklendi.
+
+### Controller'lar (Yeni Eklenenler)
+
+-   **`App\Http\Controllers\Admin\UserController.php`**:
+    -   Admin panelindeki kullanıcılar için CRUD (Oluştur, Oku, Güncelle, Sil) işlemlerini yönetir.
+    -   Kullanıcıları listeler, yeni kullanıcı oluşturur, mevcut kullanıcıları günceller ve siler.
+    -   Kullanıcılara rol atama ve rollerini güncelleme işlemlerini (`syncRoles`) gerçekleştirir.
+-   **`App\Http\Controllers\Admin\RoleController.php`**:
+    -   Admin panelindeki roller için CRUD işlemlerini yönetir.
+    -   Rolleri ve rollere atanmış yetkileri listeler.
+    -   Yeni rol oluşturma, mevcut rolleri güncelleme ve silme işlemlerini yapar.
+    -   Rollere yetki atama ve güncelleme işlemlerini (`syncPermissions`) gerçekleştirir.

@@ -4,6 +4,47 @@ Bu belge, uygulamanın veritabanı şemasını açıklamaktadır.
 
 ## Tablolar
 
+### users
+- `id`: Kullanıcı ID (Primary Key, Auto-increment)
+- `name`: Kullanıcının adı ve soyadı
+- `email`: Kullanıcının e-posta adresi (Unique)
+- `phone`: Kullanıcının telefon numarası (Opsiyonel, Nullable)
+- `password`: Kullanıcının şifresi (Hashed)
+- `remember_token`: "Beni Hatırla" özelliği için token (Nullable)
+- `created_at`: Oluşturulma zamanı
+- `updated_at`: Güncellenme zamanı
+
+### roles
+- `id`: Rol ID (Primary Key, Auto-increment)
+- `name`: Rolün adı (örn: "Admin", "Satış", Unique)
+- `guard_name`: Kullanılan guard'ın adı (Genellikle "web")
+- `created_at`: Oluşturulma zamanı
+- `updated_at`: Güncellenme zamanı
+
+### permissions
+- `id`: Yetki ID (Primary Key, Auto-increment)
+- `name`: Yetkinin adı (örn: "user-management", Unique)
+- `guard_name`: Kullanılan guard'ın adı (Genellikle "web")
+- `created_at`: Oluşturulma zamanı
+- `updated_at`: Güncellenme zamanı
+
+### model_has_roles (Pivot Tablosu)
+- `role_id`: Rol ID (Foreign Key to `roles`)
+- `model_type`: İlişkili modelin sınıf adı (örn: `App\Models\User`)
+- `model_id`: İlişkili modelin ID'si
+- `(role_id, model_type, model_id)`: Primary Key
+
+### model_has_permissions (Pivot Tablosu)
+- `permission_id`: Yetki ID (Foreign Key to `permissions`)
+- `model_type`: İlişkili modelin sınıf adı (örn: `App\Models\User`)
+- `model_id`: İlişkili modelin ID'si
+- `(permission_id, model_type, model_id)`: Primary Key
+
+### role_has_permissions (Pivot Tablosu)
+- `permission_id`: Yetki ID (Foreign Key to `permissions`)
+- `role_id`: Rol ID (Foreign Key to `roles`)
+- `(permission_id, role_id)`: Primary Key
+
 ### tours
 - `id`: Tur ID (Primary Key, Auto-increment)
 - `title`: Turun ana başlığı (önceden `name`)
@@ -144,6 +185,7 @@ Bu belge, uygulamanın veritabanı şemasını açıklamaktadır.
 
 ### Seeders
 - `SettingSeeder`: Uygulamanın temel admin ve SEO ayarlarını veritabanına ekler.
+- `RolesAndPermissionsSeeder`: `Admin` ve `Satış` rollerini, ilgili yetkileri ve varsayılan admin kullanıcısını oluşturur.
 
 ### `tours` Tablosu Değişiklikleri
 

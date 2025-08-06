@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
@@ -73,7 +73,7 @@ export default function Create({ auth, media_files }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
             header="Yeni Destinasyon Ekle"
         >
@@ -206,6 +206,6 @@ export default function Create({ auth, media_files }) {
                     </form>
                 </CardContent>
             </Card>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

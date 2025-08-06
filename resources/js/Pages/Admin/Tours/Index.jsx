@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router } from '@inertiajs/react'; // router import edildi
 // import { Inertia } from '@inertiajs/inertia'; // Inertia importu kaldırıldı
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Components/ui/table';
@@ -18,7 +18,7 @@ export default function Index({ auth, tours }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
             header="Turlar"
             actionButton={
@@ -88,6 +88,6 @@ export default function Index({ auth, tours }) {
                     <Pagination links={tours.links} />
                 </CardContent>
             </Card>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

@@ -16,6 +16,11 @@ use Carbon\Carbon; // Carbon'u import et
 
 class ContentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:content-management')->except(['show']);
+    }
+
     /**
      * Display a listing of the resource.
      */

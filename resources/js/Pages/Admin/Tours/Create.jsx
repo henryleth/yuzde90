@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import React from 'react';
@@ -391,7 +391,7 @@ export default function Create({ auth, destinations, optionalActivities, media_f
     // Diğer tüm fonksiyonlar (removeDay, addActivity vb.) benzer şekilde setData kullanarak güncellenmeli
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
             header="Yeni Tur Ekle"
         >
@@ -837,6 +837,6 @@ export default function Create({ auth, destinations, optionalActivities, media_f
                         </CardContent>
                     </Card>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

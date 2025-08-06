@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import ContentForm from './Partials/ContentForm';
 import { useToast } from '@/hooks/use-toast'; // useToast hook'u eklendi
@@ -33,9 +33,9 @@ export default function Create({ auth, contentCategories, destinations, media_fi
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
-            header="Yeni İçerik Oluştur"
+            header="Yeni İçerik Ekle"
         >
             <Head title="Yeni İçerik Oluştur" />
             <div className="max-w-4xl mx-auto">
@@ -50,6 +50,6 @@ export default function Create({ auth, contentCategories, destinations, media_fi
                 onError={handleFormError} // Hata durumunda çağrılacak fonksiyon
                 />
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

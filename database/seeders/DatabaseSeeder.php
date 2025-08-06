@@ -26,7 +26,8 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // Yeni seederları çağır
-        $this->call([ 
+        $this->call([
+            RolesAndPermissionsSeeder::class, // Kullanıcı rolleri ve yetkileri için eklendi
             ContentCategorySeeder::class, // BlogCategorySeeder yerine ContentCategorySeeder
             DestinationSeeder::class,
             ContentSeeder::class, // PostSeeder yerine ContentSeeder

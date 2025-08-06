@@ -18,6 +18,11 @@ use App\Models\OptionalActivity;
 
 class TourController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:tour-management');
+    }
+
     /**
      * Admin paneli için turları listeleme.
      */

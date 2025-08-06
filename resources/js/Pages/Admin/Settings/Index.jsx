@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Label } from '@/Components/ui/label';
@@ -18,7 +18,7 @@ import {
 import { RefreshCw } from 'lucide-react';
 
 
-export default function Seo({ auth, settings }) {
+export default function Index({ auth, settings }) {
     const { data, setData, post, processing, errors } = useForm({
         settings: {
             'cache.enabled': settings['cache.enabled'] === '1', // String '1'/'0' değerini boolean'a çevir.
@@ -68,7 +68,7 @@ export default function Seo({ auth, settings }) {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('admin.settings.seo.store'), {
+        post(route('admin.settings.store'), {
             onSuccess: () => {
                 toast({
                     title: "Başarılı!",
@@ -139,7 +139,7 @@ export default function Seo({ auth, settings }) {
     );
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
             header="Genel Ayarlar"
             actionButton={<Button onClick={submit} disabled={processing}>Ayarları Kaydet</Button>}
@@ -297,6 +297,6 @@ export default function Seo({ auth, settings }) {
                     </TabsContent>
                 </Tabs>
             </form>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

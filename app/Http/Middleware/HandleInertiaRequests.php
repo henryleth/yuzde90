@@ -35,7 +35,9 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? tap($request->user()->load('roles'), function ($user) {
+                    $user->permissions = $user->getAllPermissions()->pluck('name');
+                }) : null,
             ],
             'translations' => function () use ($request) {
                 if (str_starts_with($request->route()->getName(), 'admin.')) {

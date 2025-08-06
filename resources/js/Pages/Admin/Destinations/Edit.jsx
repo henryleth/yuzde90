@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm, Link } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
@@ -112,7 +112,7 @@ export default function Edit({ auth, destination }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
             header={destination ? 'Destinasyon Düzenle' : 'Yeni Destinasyon Ekle'}
             actionButton={
@@ -232,6 +232,6 @@ export default function Edit({ auth, destination }) {
                 onClose={() => setIsMediaManagerOpen(false)}
                 onMediaSelect={handleMediaSelect}
             />
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Components/ui/table';
 import { Badge } from '@/Components/ui/badge';
@@ -16,7 +16,7 @@ export default function Index({ auth, activities }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
             header="Opsiyonel Aktiviteler"
             actionButton={
@@ -84,6 +84,6 @@ export default function Index({ auth, activities }) {
                     <Pagination links={activities.links} />
                 </CardContent>
             </Card>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

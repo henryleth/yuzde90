@@ -50,21 +50,45 @@ Route::get(config('dynamic_routes.destination_show', 'destinations/{slug}'), [De
 
 
 // Admin Rotaları
-Route::get('/dashboard', function () {
-    return Inertia::render('Admin/Dashboard');
-})->name('admin.dashboard');
-
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('tours', AdminTourController::class)->except(['show']);
-    Route::resource('contents', AdminContentController::class)->except(['show']);
-    Route::resource('content-categories', AdminContentCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
-    Route::resource('destinations', AdminDestinationController::class)->except(['show']);
-    Route::resource('optional-activities', AdminOptionalActivityController::class)->except(['show']);
-    Route::resource('media', AdminMediaController::class)->names('admin.media')->except(['show', 'edit', 'update']);
+    // Giriş ve Çıkış Rotaları
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+        Route::post('login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
+    });
+
+    Route::middleware('auth')->group(function () {
+        Route::post('logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    });
+
+    // Yetki gerektiren admin rotaları
+    Route::middleware('auth')->group(function() {
+        // /admin için yönlendirme
+        Route::get('/', function () {
+            return redirect()->route('admin.dashboard');
+        });
+
+        // Dashboard
+        Route::get('/dashboard', function () {
+            return Inertia::render('Admin/Dashboard');
+        })->name('dashboard')->middleware('can:view-dashboard');
+
+        // Kaynak Rotaları (Mevcut)
+        Route::resource('tours', AdminTourController::class)->except(['show']);
+        Route::resource('contents', AdminContentController::class)->except(['show']);
+        Route::resource('content-categories', AdminContentCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::resource('destinations', AdminDestinationController::class)->except(['show']);
+        Route::resource('optional-activities', AdminOptionalActivityController::class)->except(['show']);
+        Route::resource('media', AdminMediaController::class)->names('admin.media')->except(['show', 'edit', 'update']);
+
+        // Kullanıcı ve Rol Yönetimi Rotaları (Yeni)
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show']);
+        Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class)->except(['show']);
 
     // Ayarlar Rotaları
-    Route::get('settings/seo', [AdminSettingsController::class, 'index'])->name('settings.seo.index');
-    Route::post('settings/seo', [AdminSettingsController::class, 'store'])->name('settings.seo.store');
+    Route::get('settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+    Route::post('settings', [AdminSettingsController::class, 'store'])->name('settings.store');
     Route::post('settings/cache/clear', [AdminSettingsController::class, 'clearCache'])->name('settings.cache.clear');
     Route::get('settings/cache/list', [AdminSettingsController::class, 'listCachedPages'])->name('settings.cache.list');
+    });
 });

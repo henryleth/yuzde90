@@ -19,6 +19,11 @@ class DestinationController extends Controller
 {
     use HandlesMediaUploads;
 
+    public function __construct()
+    {
+        $this->middleware('can:destination-management');
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, usePage } from '@inertiajs/react';
 import ContentForm from './Partials/ContentForm';
 import { useToast } from '@/hooks/use-toast'; // useToast hook'u eklendi
@@ -34,9 +34,9 @@ export default function Edit({ auth, content, contentCategories, destinations })
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
-            header={`İçeriği Düzenle: ${content.title}`}
+            header="İçeriği Düzenle"
         >
             <Head title={`İçeriği Düzenle: ${content.title}`} />
             <div className="max-w-4xl mx-auto">
@@ -51,6 +51,6 @@ export default function Edit({ auth, content, contentCategories, destinations })
                 onError={handleFormError} // Hata durumunda çağrılacak fonksiyon
                 />
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

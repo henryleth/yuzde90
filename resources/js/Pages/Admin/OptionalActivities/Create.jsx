@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
@@ -20,7 +20,7 @@ export default function Create({ auth, media_files }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
             header="Yeni Opsiyonel Aktivite Ekle"
             actionButton={<Button onClick={submit} disabled={processing}>Kaydet</Button>}
@@ -41,6 +41,6 @@ export default function Create({ auth, media_files }) {
                     </CardContent>
                 </Card>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

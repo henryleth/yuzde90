@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm } from '@inertiajs/react';
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -318,9 +318,9 @@ export default function Edit({ auth, tour, destinations, optionalActivities, med
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
-            header={`Tur Düzenle: ${tour.title}`}
+            header={`Turu Düzenle: ${tour.title}`}
         >
             <Head title={`Tur Düzenle: ${tour.title}`} />
             <div>
@@ -744,6 +744,6 @@ export default function Edit({ auth, tour, destinations, optionalActivities, med
                     </CardContent>
                 </Card>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

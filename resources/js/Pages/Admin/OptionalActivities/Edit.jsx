@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
@@ -21,7 +21,7 @@ export default function Edit({ auth, activity, media_files }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             user={auth.user}
             header={`Opsiyonel Aktivite Düzenle: ${activity.name}`}
             actionButton={<Button onClick={submit} disabled={processing}>Değişiklikleri Kaydet</Button>}
@@ -42,6 +42,6 @@ export default function Edit({ auth, activity, media_files }) {
                     </CardContent>
                 </Card>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }
