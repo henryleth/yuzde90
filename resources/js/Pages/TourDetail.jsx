@@ -268,8 +268,8 @@ export default function TourDetail({ tour, config, seo }) {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 pb-4">
-                    <div className="bg-card rounded-lg border border-border p-6"><h3 className="font-semibold mb-4 text-green-600 flex items-center"><Check className="h-5 w-5 mr-2" />{t('tour_detail.overview.inclusions', 'Dahil Olan Hizmetler')}</h3><div className="space-y-1 text-sm" dangerouslySetInnerHTML={{ __html: tour.inclusions_html }} /></div>
-                    <div className="bg-card rounded-lg border border-border p-6"><h3 className="font-semibold mb-4 text-red-600 flex items-center"><X className="h-5 w-5 mr-2" />{t('tour_detail.overview.exclusions', 'Dahil Olmayan Hizmetler')}</h3><div className="space-y-1 text-sm" dangerouslySetInnerHTML={{ __html: tour.exclusions_html }} /></div>
+                    <div className="bg-card rounded-lg border border-border p-6"><h3 className="font-semibold mb-4 text-green-900 dark:text-green-300 flex items-center"><Check className="h-5 w-5 mr-2" />{t('tour_detail.overview.inclusions', 'Dahil Olan Hizmetler')}</h3><div className="space-y-1 text-sm" dangerouslySetInnerHTML={{ __html: tour.inclusions_html }} /></div>
+                    <div className="bg-card rounded-lg border border-border p-6"><h3 className="font-semibold mb-4 text-red-900 dark:text-red-300 flex items-center"><X className="h-5 w-5 mr-2" />{t('tour_detail.overview.exclusions', 'Dahil Olmayan Hizmetler')}</h3><div className="space-y-1 text-sm" dangerouslySetInnerHTML={{ __html: tour.exclusions_html }} /></div>
                   </div>
 
                   <h3 className="text-2xl font-bold mb-4 mt-4">{t('tour_detail.overview.gallery', 'Fotoğraf Galerisi')}</h3>
@@ -419,7 +419,7 @@ export default function TourDetail({ tour, config, seo }) {
                                 wrapperClassName="w-full h-full"
                               />
                             ) : (
-                              <div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-500">{t('tour_detail.optional.no_image', 'Görsel Yok')}</div>
+                              <div className="w-full h-48 flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">{t('tour_detail.optional.no_image', 'Görsel Yok')}</div>
                             )}
                           </div>
                           <div className="p-4">
@@ -444,8 +444,34 @@ export default function TourDetail({ tour, config, seo }) {
                   <h3 className="text-xl font-semibold mb-6">{t('tour_detail.booking.title', 'Hızlı Rezervasyon')}</h3>
                   <form className="space-y-4">
                     <div className="space-y-2"><Label htmlFor="date">{t('tour_detail.booking.date', 'Tarih')}</Label><Input id="date" type="date" /></div>
-                    <div className="space-y-2"><Label htmlFor="people">{t('tour_detail.booking.people', 'Kişi Sayısı')}</Label><Select><SelectTrigger><SelectValue placeholder={t('tour_detail.booking.people_placeholder', 'Kişi sayısı seçin')} /></SelectTrigger><SelectContent><SelectItem value="1">{t('tour_detail.booking.person', '1 Kişi', { count: 1 })}</SelectItem><SelectItem value="2">{t('tour_detail.booking.person', '{count} Kişi', { count: 2 })}</SelectItem><SelectItem value="3">{t('tour_detail.booking.person', '{count} Kişi', { count: 3 })}</SelectItem><SelectItem value="4">{t('tour_detail.booking.person', '{count} Kişi', { count: 4 })}</SelectItem><SelectItem value="5+">{t('tour_detail.booking.person_plus', '5+ Kişi')}</SelectItem></SelectContent></Select></div>
-                    <div className="space-y-2"><Label htmlFor="category">{t('tour_detail.booking.category', 'Kategori')}</Label><Select><SelectTrigger><SelectValue placeholder={t('tour_detail.booking.category_placeholder', 'Kategori seçin')} /></SelectTrigger><SelectContent><SelectItem value="category_a_code">{t('tour_detail.hotels.category_a', 'Kategori A')}</SelectItem><SelectItem value="category_b_code">{t('tour_detail.hotels.category_b', 'Kategori B')}</SelectItem><SelectItem value="category_c_code">{t('tour_detail.hotels.category_c', 'Kategori C')}</SelectItem></SelectContent></Select></div>
+                    <div className="space-y-2">
+                      <Label id="people-label" htmlFor="people">{t('tour_detail.booking.people', 'Kişi Sayısı')}</Label>
+                      <Select>
+                        <SelectTrigger id="people" aria-labelledby="people-label">
+                          <SelectValue placeholder={t('tour_detail.booking.people_placeholder', 'Kişi sayısı seçin')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">{t('tour_detail.booking.person', '1 Kişi', { count: 1 })}</SelectItem>
+                          <SelectItem value="2">{t('tour_detail.booking.person', '{count} Kişi', { count: 2 })}</SelectItem>
+                          <SelectItem value="3">{t('tour_detail.booking.person', '{count} Kişi', { count: 3 })}</SelectItem>
+                          <SelectItem value="4">{t('tour_detail.booking.person', '{count} Kişi', { count: 4 })}</SelectItem>
+                          <SelectItem value="5+">{t('tour_detail.booking.person_plus', '5+ Kişi')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label id="category-label" htmlFor="category">{t('tour_detail.booking.category', 'Kategori')}</Label>
+                      <Select>
+                        <SelectTrigger id="category" aria-labelledby="category-label">
+                          <SelectValue placeholder={t('tour_detail.booking.category_placeholder', 'Kategori seçin')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="category_a_code">{t('tour_detail.hotels.category_a', 'Kategori A')}</SelectItem>
+                          <SelectItem value="category_b_code">{t('tour_detail.hotels.category_b', 'Kategori B')}</SelectItem>
+                          <SelectItem value="category_c_code">{t('tour_detail.hotels.category_c', 'Kategori C')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <div className="space-y-2"><Label htmlFor="fullname">{t('tour_detail.booking.fullname', 'Ad Soyad')}</Label><Input id="fullname" type="text" placeholder={t('tour_detail.booking.fullname_placeholder', 'Adınız ve soyadınız')} /></div>
                     <div className="space-y-2"><Label htmlFor="email">{t('tour_detail.booking.email', 'E-posta')}</Label><Input id="email" type="email" placeholder={t('tour_detail.booking.email_placeholder', 'ornek@email.com')} /></div>
                     <div className="space-y-2"><Label htmlFor="phone">{t('tour_detail.booking.phone', 'Telefon')}</Label><Input id="phone" type="tel" placeholder="+90 5XX XXX XX XX" /></div>
