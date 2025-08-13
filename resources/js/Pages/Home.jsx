@@ -4,7 +4,6 @@ import { Button } from '@/Components/ui/button';
 import { Card } from '@/Components/ui/card';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useState, useEffect } from 'react';
-import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
 import { Globe, Star, Wallet } from 'lucide-react';
 
 // Merkezi Kart Bileşenlerini ve Etiketi İçe Aktarma
@@ -39,17 +38,14 @@ export default function Home({ tours, popularDestinations, seo }) {
             <section className="relative h-[calc(100vh-64px)] flex items-center justify-center text-center overflow-hidden">
                 {/* Arka Plan: Video veya Resim */}
                 <div className="absolute inset-0 w-full h-full">
-                    {/* Video hazır olana kadar kapak görseli gösterilir */}
-                    {!isVideoReady && (
-                        <LazyImage
-                            src="https://img.youtube.com/vi/oe_kmwcO1ag/maxresdefault.jpg"
-                            alt="Video Thumbnail"
-                            className="w-full h-full object-cover"
-                            wrapperClassName="w-full h-full"
-                            effect="blur"
-                        />
-                    )}
-                    {/* Video iframe'i her zaman DOM'da bulunur ancak sadece hazır olduğunda görünür olur */}
+                    {/* LCP Optimizasyonu: Kapak görseli doğrudan 'img' etiketi ile ve yüksek öncelikle yüklenir. */}
+                    <img
+                        src="https://img.youtube.com/vi/oe_kmwcO1ag/maxresdefault.jpg"
+                        alt="Video Thumbnail"
+                        className="w-full h-full object-cover"
+                        fetchPriority="high" // Tarayıcıya bu resmi öncelikli olarak indirmesini söyler.
+                    />
+                    {/* Video iframe'i, sayfa yüklendikten sonra görünür olur */}
                     <iframe
                         className={`absolute transition-opacity duration-1000 ${isVideoReady ? 'opacity-100' : 'opacity-0'}`}
                         style={{
@@ -59,10 +55,12 @@ export default function Home({ tours, popularDestinations, seo }) {
                             top: iframeTop,
                         }}
                         src="https://www.youtube.com/embed/oe_kmwcO1ag?autoplay=1&mute=1&loop=1&playlist=oe_kmwcO1ag&controls=0&modestbranding=1&rel=0"
+                        title={t('home.hero.video_title', "Türkiye Tanıtım Videosu")} // Erişilebilirlik için iframe başlığı eklendi.
                         frameBorder="0"
                         allow="autoplay; encrypted-media"
                         allowFullScreen
                         onLoad={() => setIsVideoReady(true)} // Video yüklendiğinde durumu güncelle
+                        loading="lazy" // iframe'in tembel yüklenmesini sağlar.
                     ></iframe>
                 </div>
 

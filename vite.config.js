@@ -10,7 +10,17 @@ export default defineConfig(({ ssrBuild }) => ({
             ssr: 'resources/js/ssr.jsx',
             refresh: true,
         }),
-        react(),
+        react({
+            // Geliştirme sırasında hızlı yenileme (fast refresh) için Babel'i kullan,
+            // ancak üretim derlemesinde (production build) gereksiz dönüşümleri (transforms) ve
+            // yardımcıları (helpers) eklemekten kaçın.
+            babel: {
+                plugins: [
+                    // Gerekli diğer Babel eklentileri buraya eklenebilir.
+                    // Örneğin: ['@babel/plugin-proposal-decorators', { legacy: true }]
+                ],
+            },
+        }),
     ],
     resolve: {
         alias: {
