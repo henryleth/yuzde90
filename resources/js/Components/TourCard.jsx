@@ -14,7 +14,7 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge, isLcp = f
   return (
     <Card className="w-full h-full flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative">
       {/* Köşe Şeridi */}
-      {tour.is_featured && FeaturedBadge && (
+      {tour.is_popular && FeaturedBadge && (
         <FeaturedBadge />
       )}
 

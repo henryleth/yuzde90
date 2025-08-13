@@ -19,7 +19,9 @@ class ContentController extends Controller
     {
         $filters = $request->only(['category', 'destination', 'search']);
 
-        $query = Content::query();
+        $query = Content::query()->select([
+            'id', 'title', 'slug', 'summary', 'content', 'published_at', 'image_id'
+        ]);
 
         // Kategoriye göre filtreleme
         if ($filters['category'] ?? false) {
@@ -43,7 +45,11 @@ class ContentController extends Controller
             });
         }
 
-        $contents = $query->with(['contentCategories', 'destinations', 'image'])
+        $contents = $query->with([
+                                'contentCategories:id,name,slug', 
+                                'destinations:id,name,slug', 
+                                'image:id,disk,file_name,path'
+                            ])
                             ->orderByDesc('published_at')
                             ->paginate(10)
                             ->through(function ($content) {
@@ -64,8 +70,8 @@ class ContentController extends Controller
                             })
                             ->withQueryString();
 
-        $contentCategories = ContentCategory::all();
-        $destinations = Destination::all();
+        $contentCategories = ContentCategory::select(['id', 'name', 'slug'])->get();
+        $destinations = Destination::select(['id', 'name', 'slug'])->get();
 
         return Inertia::render('Contents', [
             'seo' => $seoService->generateForPage('contents.index'),
@@ -79,100 +85,75 @@ class ContentController extends Controller
     /**
      * Display the specified content.
      */
-    public function show(string $slug, SeoService $seoService) // Content $content yerine string $slug
+    public function show(string $slug, SeoService $seoService)
     {
-        // Slug'a göre içeriği bul
-        $content = Content::where('slug', $slug)->first();
+        $content = Content::where('slug', $slug)
+            ->with([
+                'contentCategories:id,name,slug', 
+                'destinations:id,name,slug', 
+                'image:id,disk,file_name,path'
+            ])
+            ->first();
 
-        // Eğer içerik bulunamazsa hata logu ve yönlendirme
         if (!$content) {
-            Log::warning('Content not found for slug: ' . $slug);
-            // İstersen burada bir 404 sayfası döndürebilirsin veya ana sayfaya yönlendirebilirsin
-            // return Inertia::render('Error', ['status' => 404]);
-            // return redirect()->route('home');
             return Inertia::render('ContentDetail', [
-                'seo' => $seoService->generateForPage('contents.index'), // Varsayılan SEO
-                'post' => null, // Post verisi yok
+                'seo' => $seoService->generateForPage('contents.index'),
+                'post' => null,
                 'relatedPosts' => [],
-                'allCategories' => ContentCategory::all(['id', 'name', 'slug']),
-                'allDestinations' => Destination::all(['id', 'name', 'slug']),
+                'allCategories' => ContentCategory::select(['id', 'name', 'slug'])->get(),
+                'allDestinations' => Destination::select(['id', 'name', 'slug'])->get(),
             ]);
         }
 
-        // İçeriği ilişkili verilerle birlikte yükle
-        $content->load(['contentCategories', 'destinations', 'image']);
+        $categoryIds = $content->contentCategories->pluck('id');
+        $destinationIds = $content->destinations->pluck('id');
 
-        // Hata ayıklama için içeriğin tamamını loglayalım
-        Log::info('Content Detail Page Data for ID: ' . ($content->id ?? 'N/A') . ' and Image ID: ' . ($content->image_id ?? 'N/A'), $content->toArray());
-
-        // İlgili içerikleri al (aynı kategorideki diğer yazılar)
-        $relatedContents = Content::where('id', '!=', $content->id)
-            ->whereHas('contentCategories', function ($query) use ($content) {
-                $query->whereIn('id', $content->contentCategories->pluck('id'));
-            })
-            ->with('image')
+        $relatedContents = Content::select(['id', 'title', 'slug', 'image_id'])
+            ->where('id', '!=', $content->id)
+            ->whereHas('contentCategories', fn($q) => $q->whereIn('id', $categoryIds))
+            ->with('image:id,disk,file_name,path')
             ->orderByDesc('published_at')
             ->limit(5)
             ->get()
-            ->map(function ($related) {
-                return [
-                    'id' => $related->id,
-                    'title' => $related->title,
-                    'slug' => $related->slug,
-                    'image_thumbnail' => $related->image ? $related->image->thumbnail_url : null,
-                ];
-            });
+            ->map(fn ($related) => [
+                'id' => $related->id,
+                'title' => $related->title,
+                'slug' => $related->slug,
+                'image_thumbnail_url' => $related->image->thumbnail_url ?? null,
+            ]);
 
-        // İçerik destinasyonlarıyla ilgili turları al
         $relatedTours = collect();
-        if ($content->destinations->isNotEmpty()) {
-            $relatedTours = \App\Models\Tour::whereHas('destinations', function ($query) use ($content) {
-                $query->whereIn('id', $content->destinations->pluck('id'));
-            })
-            ->with('featuredMedia')
-            ->where('is_published', true)
-            ->orderByDesc('created_at')
-            ->limit(5)
-            ->get()
-            ->map(function ($tour) {
-                return [
+        if ($destinationIds->isNotEmpty()) {
+            $relatedTours = \App\Models\Tour::select(['id', 'title', 'slug', 'featured_media_id'])
+                ->whereHas('destinations', fn($q) => $q->whereIn('id', $destinationIds))
+                ->with('featuredMedia:id,disk,file_name,path')
+                ->where('is_published', true)
+                ->orderByDesc('created_at')
+                ->limit(5)
+                ->get()
+                ->map(fn ($tour) => [
                     'id' => $tour->id,
                     'title' => $tour->title,
                     'slug' => $tour->slug,
-                    'image_thumbnail' => $tour->featuredMedia ? $tour->featuredMedia->thumbnail_url : null,
-                ];
-            });
+                    'image_thumbnail' => $tour->featuredMedia->thumbnail_url ?? null,
+                ]);
         }
 
-        // Son içerikleri al (mevcut içerik hariç)
-        $recentContents = Content::where('id', '!=', $content->id)
-            ->with('image')
+        $recentContents = Content::select(['id', 'title', 'slug', 'image_id'])
+            ->where('id', '!=', $content->id)
+            ->with('image:id,disk,file_name,path')
             ->orderByDesc('published_at')
             ->limit(5)
             ->get()
-            ->map(function ($recent) {
-                return [
-                    'id' => $recent->id,
-                    'title' => $recent->title,
-                    'slug' => $recent->slug,
-                    'image_thumbnail' => $recent->image ? $recent->image->thumbnail_url : null,
-                ];
-            });
+            ->map(fn ($recent) => [
+                'id' => $recent->id,
+                'title' => $recent->title,
+                'slug' => $recent->slug,
+                'image_thumbnail_url' => $recent->image->thumbnail_url ?? null,
+            ]);
 
-        // Tüm kategorileri ve destinasyonları al
-        $allCategories = ContentCategory::all(['id', 'name', 'slug']);
-        $allDestinations = Destination::all(['id', 'name', 'slug']);
-
-        // Inertia'ya verileri gönder
         return Inertia::render('ContentDetail', [
-            'seo' => [
-                'title' => $content->seo_title,
-                'description' => $content->seo_description,
-                'og_title' => $content->og_title,
-                'og_description' => $content->og_description,
-                'og_image' => $content->og_image,
-                'og_url' => $content->og_url,
-            ],
+            'seo' => $seoService->generateForModel($content),
             'post' => [
                 'id' => $content->id,
                 'title' => $content->title,
@@ -184,16 +165,16 @@ class ContentController extends Controller
                     'original_url' => $content->image->original_url,
                     'thumbnail_url' => $content->image->thumbnail_url,
                 ] : null,
-                'image_original_url' => $content->image ? $content->image->original_url : null,
-                'image_thumbnail_url' => $content->image ? $content->image->thumbnail_url : null,
+                'image_original_url' => $content->image->original_url ?? null,
+                'image_thumbnail_url' => $content->image->thumbnail_url ?? null,
                 'content_categories' => $content->contentCategories->map(fn($cat) => ['id' => $cat->id, 'name' => $cat->name, 'slug' => $cat->slug]),
                 'destinations' => $content->destinations->map(fn($dest) => ['id' => $dest->id, 'name' => $dest->name, 'slug' => $dest->slug]),
             ],
             'relatedPosts' => $relatedContents,
-            'relatedTours' => $relatedTours, // Yeni eklenen
-            'recentContents' => $recentContents, // Yeni eklenen
-            'allCategories' => $allCategories,
-            'allDestinations' => $allDestinations,
+            'relatedTours' => $relatedTours,
+            'recentContents' => $recentContents,
+            'allCategories' => ContentCategory::select(['id', 'name', 'slug'])->get(),
+            'allDestinations' => Destination::select(['id', 'name', 'slug'])->get(),
         ]);
     }
 }

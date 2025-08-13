@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo; // BelongsTo ilişkisi için eklendi
+use Illuminate\Database\Eloquent\Relations\HasMany; // HasMany ilişkisi için eklendi
 use App\Traits\HasSeo;
 
 class Destination extends Model
@@ -67,6 +68,14 @@ class Destination extends Model
     public function contents(): BelongsToMany
     {
         return $this->belongsToMany(Content::class, 'content_destination');
+    }
+
+    /**
+     * Destinasyonun galeri görselleriyle ilişki.
+     */
+    public function galleryImages(): HasMany
+    {
+        return $this->hasMany(Media::class, 'destination_id');
     }
 
     /**

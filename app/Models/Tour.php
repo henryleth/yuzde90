@@ -44,7 +44,7 @@ class Tour extends Model
 
     // featured_image_url, destinations_names, gallery_images_urls, card_display_image_url gibi eklenen öznitelikler
     // Yeni standart: original_image (detay) ve thumbnail_image (liste)
-    protected $appends = ['destinations_names', 'duration_days', 'duration_nights', 'min_participants', 'max_participants', 'gallery_images_urls', 'price_from'];
+    protected $appends = ['destinations_names', 'gallery_images_urls', 'price_from'];
 
     /**
      * Turun öne çıkan görselinin URL'sini döndürür (Thumbnail versiyonu).
@@ -111,9 +111,9 @@ class Tour extends Model
     /**
      * Gece cinsinden süreyi döndürür.
      */
-    public function getDurationNightsAttribute(): int
+    public function getDurationNightsAttribute(): ?int
     {
-        return $this->attributes['duration_nights'];
+        return $this->attributes['duration_nights'] ?? null;
     }
 
     /**

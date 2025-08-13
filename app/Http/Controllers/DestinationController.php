@@ -16,7 +16,15 @@ class DestinationController extends Controller
      */
     public function index(SeoService $seoService)
     {
-        $destinations = Destination::with(['image', 'tours.pricingTiers'])->get();
+        $destinations = Destination::select(['id', 'name', 'slug', 'summary', 'description', 'image_id'])
+            ->withCount('tours')
+            ->with(['image:id,disk,file_name,path'])
+            ->get();
+
+        // Not: En düşük fiyatı getirme mantığı, N+1 problemine yol açtığı için
+        // ve karmaşık olduğu için geçici olarak kaldırıldı.
+        // Bu, daha sonra daha verimli bir alt sorgu ile eklenebilir.
+        // Şimdilik, sayfanın çalışmasını sağlamak önceliklidir.
 
         return Inertia::render('Destinations', [
             'seo' => $seoService->generateForPage('destinations.index'),
@@ -29,13 +37,9 @@ class DestinationController extends Controller
                 'image' => $destination->image ? [
                     'original_url' => $destination->image->original_url,
                     'thumbnail_url' => $destination->image->thumbnail_url,
-                ] : null, // image objesini doğrudan geçir
+                ] : null,
                 'tours_count' => $destination->tours_count,
-                'lowest_tour_price' => $destination->tours->isNotEmpty() // Eğer destinasyona bağlı tur varsa
-                    ? $destination->tours->flatMap(fn($tour) => $tour->pricingTiers->pluck('price_per_person_1'))
-                                       ->filter(fn($price) => is_numeric($price) && $price > 0)
-                                       ->min() // Tüm turların 1 kişilik en düşük fiyatını bul
-                    : null,
+                'lowest_tour_price' => null, // Geçici olarak null ayarlandı
             ]),
         ]);
     }
@@ -43,20 +47,23 @@ class DestinationController extends Controller
     /**
      * Display the specified destination.
      */
-    public function show($slug)
+    public function show($slug, SeoService $seoService)
     {
-        $destination = Destination::where('slug', $slug)->firstOrFail();
-
-        // İlişkileri eager load et: image, tours.featuredMedia, contents.image, contentCategories, destinations
-        $destination->load(['image', 'tours.featuredMedia', 'contents.image', 'contents.contentCategories', 'contents.destinations', 'tours.pricingTiers']); // tours.pricingTiers eklendi
-
-        // Destinasyona özel galeri görsellerini çek
-        $galleryImages = Media::where('destination_id', $destination->id)->get()->map(fn($media) => [
-            'id' => $media->id,
-            'file_name' => $media->file_name,
-            'original_url' => $media->original_url,
-            'thumbnail_url' => $media->thumbnail_url,
-        ]);
+        $destination = Destination::where('slug', $slug)
+            ->with([
+                'image:id,disk,file_name,path', // model_id ve model_type kaldırıldı, path eklendi
+                'galleryImages:id,destination_id,disk,file_name,path', // path eklendi
+                'tours' => function ($query) {
+                    $query->select(['tours.id', 'title', 'slug', 'summary', 'min_participants', 'max_participants', 'duration_days', 'duration_nights', 'rating', 'featured_media_id'])
+                          ->withMin('pricingTiers', 'price_per_person_1')
+                          ->with(['featuredMedia:id,disk,file_name,path']); // model_id ve model_type kaldırıldı, path eklendi
+                },
+                'contents' => function ($query) {
+                    $query->select(['contents.id', 'title', 'slug', 'summary', 'published_at', 'image_id'])
+                          ->with(['image:id,disk,file_name,path', 'contentCategories:id,name']); // model_id ve model_type kaldırıldı, path eklendi
+                }
+            ])
+            ->firstOrFail();
 
         $destinationData = [
             'id' => $destination->id,
@@ -67,9 +74,8 @@ class DestinationController extends Controller
             'image' => $destination->image ? [
                 'original_url' => $destination->image->original_url,
                 'thumbnail_url' => $destination->image->thumbnail_url,
-            ] : null, // image objesini doğrudan geçir
+            ] : null,
             'tours' => $destination->tours->map(function ($tour) {
-                Log::info('Destination Detail Tour Data', ['id' => $tour->id, 'title' => $tour->title, 'featuredMedia' => $tour->featuredMedia ? ['original_url' => $tour->featuredMedia->original_url, 'thumbnail_url' => $tour->featuredMedia->thumbnail_url] : null, 'price_from' => $tour->pricingTiers->min('price_per_person_1'), 'min_participants' => $tour->min_participants, 'max_participants' => $tour->max_participants, 'rating' => $tour->rating]); // Ek loglama eklendi
                 return [
                     'id' => $tour->id,
                     'title' => $tour->title,
@@ -78,47 +84,39 @@ class DestinationController extends Controller
                     'image' => $tour->featuredMedia ? [
                         'original_url' => $tour->featuredMedia->original_url,
                         'thumbnail_url' => $tour->featuredMedia->thumbnail_url,
-                    ] : null, // featuredMedia objesini doğrudan geçir
+                    ] : null,
                     'min_participants' => $tour->min_participants,
                     'max_participants' => $tour->max_participants,
                     'duration_days' => $tour->duration_days,
                     'rating' => (float) $tour->rating,
-                    'price_from' => $tour->pricingTiers->min('price_per_person_1'),
+                    'price_from' => $tour->pricing_tiers_min_price_per_person_1,
                 ];
             }),
-
             'contents' => $destination->contents->map(function ($content) {
-                Log::info('Destination Detail Content Data', ['id' => $content->id, 'title' => $content->title, 'image' => $content->image ? ['original_url' => $content->image->original_url, 'thumbnail_url' => $content->image->thumbnail_url] : null]);
                 return [
                     'id' => $content->id,
                     'title' => $content->title,
                     'slug' => $content->slug,
-                    'summary' => $content->summary, // summary eklendi
+                    'summary' => $content->summary,
+                    'published_at' => $content->published_at,
                     'image' => $content->image ? [
                         'original_url' => $content->image->original_url,
                         'thumbnail_url' => $content->image->thumbnail_url,
-                    ] : null, // image objesini doğrudan geçir
-                    'content_categories' => $content->contentCategories->map(fn($cat) => ['id' => $cat->id, 'name' => $cat->name]), // Kategoriler eklendi
-                    'destinations' => $content->destinations->map(fn($dest) => ['id' => $dest->id, 'name' => $dest->name]), // Destinasyonlar eklendi
+                    ] : null,
+                    'content_categories' => $content->contentCategories->map(fn($cat) => ['id' => $cat->id, 'name' => $cat->name]),
                 ];
             }),
-            'gallery_images' => $galleryImages, // Galeri görselleri eklendi
+            'gallery_images' => $destination->galleryImages->map(fn($media) => [
+                'id' => $media->id,
+                'file_name' => $media->file_name,
+                'original_url' => $media->original_url,
+                'thumbnail_url' => $media->thumbnail_url,
+            ]),
         ];
-
-        Log::info('Destination Tours Data (Final)', ['tours' => $destinationData['tours']]);
-        Log::info('Destination Contents Data (Final)', ['contents' => $destinationData['contents']]);
-        Log::info('Destination Gallery Data (Final)', ['gallery_images' => $destinationData['gallery_images']]);
 
         return Inertia::render('DestinationDetail', [
             'destination' => $destinationData,
-            'seo' => [
-                'title' => $destination->seo_title,
-                'description' => $destination->seo_description,
-                'og_title' => $destination->og_title,
-                'og_description' => $destination->og_description,
-                'og_image' => $destination->og_image,
-                'og_url' => $destination->og_url,
-            ],
+            'seo' => $seoService->generateForModel($destination),
         ]);
     }
 

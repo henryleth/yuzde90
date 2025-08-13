@@ -72,4 +72,40 @@ class SeoService
             'og_url' => url()->current(),
         ];
     }
+
+    /**
+     * Eloquent modeli gibi dinamik bir veri kaynağına dayalı sayfalar için SEO verilerini oluşturur.
+     */
+    public function generateForModel($model): array
+    {
+        // Modelin sınıf adından SEO anahtarını belirle (örn: 'App\Models\Tour' -> 'tour')
+        $modelType = strtolower(class_basename($model));
+        $pageKey = "{$modelType}.show";
+
+        // Modelin kendi SEO alanlarını (HasSeo trait'inden gelen) veya veritabanındaki şablonları kullan
+        $titleTemplate = $model->seo_title ?: $this->get("seo.{$pageKey}.title", '{' . $modelType . '_title} | {site_title}');
+        $descriptionTemplate = $model->seo_description ?: $this->get("seo.{$pageKey}.description", '{' . $modelType . '_summary}');
+
+        // Model verilerini diziye çevirerek yer tutucuları doldur
+        $modelData = $model->toArray();
+        $title = $this->replacePlaceholders($titleTemplate, $modelData);
+        $description = $this->replacePlaceholders($descriptionTemplate, $modelData);
+
+        // Open Graph (OG) etiketleri için modelin kendi alanlarını önceliklendir
+        $ogTitle = $model->og_title ?: $title;
+        $ogDescription = $model->og_description ?: $description;
+        
+        // Farklı medya ilişki adlarını kontrol et (featuredMedia, image)
+        $media = $model->featuredMedia ?? $model->image ?? null;
+        $ogImage = $model->og_image ?: ($media->original_url ?? $this->get('seo.defaults.image'));
+
+        return [
+            'title' => $title,
+            'description' => $description,
+            'og_title' => $ogTitle,
+            'og_description' => $ogDescription,
+            'og_image' => $ogImage,
+            'og_url' => url()->current(),
+        ];
+    }
 }

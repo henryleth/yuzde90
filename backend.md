@@ -56,8 +56,26 @@ Uygulamanın ana modüllerine ait URL yapıları (permalink'ler), `.env` dosyas�
     -   `is_popular` (boolean) alanı eklendi. Bu alan, destinasyonun anasayfada gösterilip gösterilmeyeceğini belirler.
     -   `$fillable` dizisine `summary`, `description` ve `is_popular` eklendi.
     -   `$casts` dizisine `is_popular` alanı `boolean` olarak eklendi.
+-   **`App\Models\Tour.php` (Güncellendi)**:
+    -   `$appends` dizisi güncellendi. `duration_days`, `duration_nights`, `min_participants`, `max_participants` gibi veritabanında zaten var olan alanlar, gereksiz yere "accessor" metodlarının tetiklenmesini önlemek için bu diziden kaldırıldı.
 
-### Controller'lar (Yeni Eklenenler)
+### Servisler (`App\Services`)
+
+-   **`App\Services\SeoService.php` (Güncellendi)**:
+    -   **`generateForModel($model)`**: Eloquent modelleri (`Tour`, `Destination`, `Content` vb.) için dinamik SEO verileri oluşturan yeni bir metod eklendi. Bu metod, modelin kendi üzerindeki SEO alanlarını (`HasSeo` trait'inden gelen) veya veritabanındaki genel şablonları kullanarak başlık, açıklama ve Open Graph etiketleri üretir. Bu, controller'lardaki SEO mantığını merkezileştirir ve basitleştirir.
+
+### Controller'lar
+
+#### Genel Controller Optimizasyonları
+
+Sitenin genel performansını ve özellikle sunucu yanıt süresini (TTFB) iyileştirmek amacıyla `HomeController`, `TourController`, `DestinationController` ve `ContentController` dosyalarında kapsamlı veritabanı sorgu optimizasyonları yapılmıştır.
+
+-   **Verimli Sütun Seçimi (`select()`):** Tüm sorgular, artık sadece frontend'de ihtiyaç duyulan sütunları seçecek şekilde güncellenmiştir. Bu, veritabanından PHP'ye aktarılan veri miktarını önemli ölçüde azaltır.
+-   **N+1 Problemlerinin Çözümü (Eager Loading):** İlişkili veriler (`featuredMedia`, `destinations`, `image` vb.), artık `with()` metodu kullanılarak tek bir sorguda verimli bir şekilde yüklenmektedir. Bu, her bir kayıt için ayrı ayrı sorgu yapılmasını (N+1 problemi) önler.
+-   **İlişki Anahtarlarının Seçimi:** `belongsTo` gibi ilişkilerin doğru çalışabilmesi için, `select()` ifadelerine `featured_media_id`, `image_id` gibi yabancı anahtar (foreign key) sütunları dahil edilmiştir.
+-   **Gereksiz Kodların Temizlenmesi:** Performansı olumsuz etkileyebilecek `Log` ifadeleri ve gereksiz veri işleme adımları kaldırılmıştır.
+
+#### Admin Controller'ları (Yeni Eklenenler)
 
 -   **`App\Http\Controllers\Admin\UserController.php`**:
     -   Admin panelindeki kullanıcılar için CRUD (Oluştur, Oku, Güncelle, Sil) işlemlerini yönetir.

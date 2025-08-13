@@ -39,9 +39,7 @@ class Media extends Model
      */
     public function getOriginalUrlAttribute(): string
     {
-        $url = asset('storage/' . $this->path);
-        \Illuminate\Support\Facades\Log::info('Generated Original URL', ['media_id' => $this->id, 'file_name' => $this->file_name, 'url' => $url]);
-        return $url;
+        return asset('storage/' . $this->path);
     }
 
     /**
@@ -51,10 +49,7 @@ class Media extends Model
     {
         $fileNameWithoutExtension = pathinfo($this->file_name, PATHINFO_FILENAME);
         $thumbnailPath = str_replace($this->file_name, 'thumbnail/' . $fileNameWithoutExtension . '.webp', $this->path);
-        $url = asset('storage/' . $thumbnailPath);
-        // Log::info('Generated Thumbnail URL', ['file_name' => $this->file_name, 'thumbnail_path' => $thumbnailPath, 'url' => $url]); // Bu log zaten vardı
-        \Illuminate\Support\Facades\Log::info('Generated Thumbnail URL', ['media_id' => $this->id, 'file_name' => $this->file_name, 'thumbnail_path' => $thumbnailPath, 'url' => $url]);
-        return $url;
+        return asset('storage/' . $thumbnailPath);
     }
 
     /**

@@ -32,7 +32,19 @@ class TourController extends Controller
             $filters['price_range'] = explode(',', $filters['price_range']);
         }
 
-        $query = Tour::query()->with(['featuredMedia', 'pricingTiers', 'destinations']);
+        // Sorgu optimizasyonu: Sadece gerekli alanları seç ve withMin kullan
+        $query = Tour::query()
+            ->select([
+                'id', 'title', 'slug', 'summary', 'min_participants', 'max_participants', 
+                'duration_days', 'duration_nights', 'language', 'rating', 'reviews_count', 
+                'is_popular', 'created_at', 'featured_media_id'
+            ])
+            ->with([
+                'featuredMedia:id,disk,file_name,path', 
+                'destinations:id,slug,name'
+            ])
+            // ->withMin('pricingTiers', 'price_per_person_1') // Hata nedeniyle geçici olarak kaldırıldı
+            ->with('pricingTiers'); // Geçici olarak tüm katmanları yükle
 
         if (!empty($filters['destinations'])) {
             $query->whereHas('destinations', function ($q) use ($filters) {
@@ -110,10 +122,10 @@ class TourController extends Controller
             $tours = $query->paginate(6)->withQueryString();
         }
 
-        $allDestinations = Destination::all();
+        // Sadece gerekli alanları seç
+        $allDestinations = Destination::select(['slug', 'name'])->get();
 
         $transformedTours = $tours->through(function ($tour) {
-            Log::info('TourController Index Tour Data', ['id' => $tour->id, 'title' => $tour->title, 'featuredMedia' => $tour->featuredMedia ? ['original_url' => $tour->featuredMedia->original_url, 'thumbnail_url' => $tour->featuredMedia->thumbnail_url] : null]);
             return [
                 'id' => $tour->id,
                 'title' => $tour->title,
@@ -129,7 +141,7 @@ class TourController extends Controller
                 'image' => $tour->featuredMedia ? [
                     'original_url' => $tour->featuredMedia->original_url,
                     'thumbnail_url' => $tour->featuredMedia->thumbnail_url,
-                ] : null, // featuredMedia objesini doğrudan geçir
+                ] : null,
                 'price_from' => $tour->pricingTiers->min('price_per_person_1'),
                 'destinations' => $tour->destinations->map(fn($dest) => ['slug' => $dest->slug, 'name' => $dest->name]),
             ];
@@ -150,13 +162,20 @@ class TourController extends Controller
     /**
      * Display the specified tour.
      */
-    public function show($slug)
+    public function show($slug, SeoService $seoService)
     {
-        $tour = Tour::where('slug', $slug)->firstOrFail();
-
-        $tour->load(['featuredMedia', 'tourDays.dayActivities', 'pricingTiers', 'optionalActivities.image', 'destinations']);
-
-        $tour->append(['gallery_images_urls']); 
+        // Sorgu optimizasyonu: Gerekli tüm ilişkileri `with` ile yükle ve sadece gerekli alanları seç.
+        $tour = Tour::where('slug', $slug)
+            ->with([
+                'featuredMedia:id,disk,file_name,path',
+                'tourDays:id,tour_id,day_number,title',
+                'tourDays.dayActivities:id,tour_day_id,description,is_highlight,order',
+                'pricingTiers:tour_id,category_name,price_per_person_1,price_per_person_2,price_per_person_3,season_name',
+                'optionalActivities:id,name,description,price,is_published',
+                'optionalActivities.image:id,disk,file_name,path',
+                'destinations:id,name,slug'
+            ])
+            ->firstOrFail();
 
         $tourData = [
             'id' => $tour->id,
@@ -177,7 +196,7 @@ class TourController extends Controller
             'image' => $tour->featuredMedia ? [
                 'original_url' => $tour->featuredMedia->original_url,
                 'thumbnail_url' => $tour->featuredMedia->thumbnail_url,
-            ] : null, // featuredMedia objesini doğrudan geçir
+            ] : null,
             'gallery_images_urls' => $tour->gallery_images_urls,
             'itinerary' => $tour->tourDays->map(function ($day) {
                 return [
@@ -209,7 +228,7 @@ class TourController extends Controller
                     'description' => $activity->description,
                     'price' => $activity->price,
                     'is_published' => $activity->is_published,
-                    'image_url' => $activity->image?->thumbnail_url, // Thumbnail olarak gelmeli
+                    'image_url' => $activity->image?->thumbnail_url,
                 ];
             }),
             'destinations' => $tour->destinations->map(function ($destination) {
@@ -226,14 +245,7 @@ class TourController extends Controller
                 'seasons' => config('tour.seasons'),
                 'categories' => config('tour.categories'),
             ],
-            'seo' => [
-                'title' => $tour->seo_title,
-                'description' => $tour->seo_description,
-                'og_title' => $tour->og_title,
-                'og_description' => $tour->og_description,
-                'og_image' => $tour->og_image,
-                'og_url' => $tour->og_url,
-            ],
+            'seo' => $seoService->generateForModel($tour),
         ]);
     }
 }
