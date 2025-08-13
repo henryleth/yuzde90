@@ -30,10 +30,13 @@ export default defineConfig(({ ssrBuild }) => ({
                 manualChunks: ssrBuild
                     ? undefined
                     : (id) => {
-                          // Tüm node_modules bağımlılıklarını tek bir 'vendor' paketinde toplar.
-                          // Bu, SSR'nin harici modül mantığıyla çakışmayı önler ve daha istikrarlı bir derleme sağlar.
+                          // node_modules bağımlılıklarını daha küçük, yönetilebilir parçalara ayırır.
+                          // Bu, tarayıcının büyük bir vendor dosyasını tek seferde indirmesini ve işlemesini önleyerek
+                          // sayfa yükleme süresini ve "Zorunlu yeniden düzenleme" gibi performans sorunlarını azaltır.
+                          // Her bir kütüphane kendi chunk dosyasına ayrılır, bu da daha verimli bir önbellekleme sağlar.
                           if (id.includes('node_modules')) {
-                              return 'vendor';
+                              const packageName = id.toString().split('node_modules/')[1].split('/')[0];
+                              return `vendor-${packageName}`;
                           }
                       },
             },
