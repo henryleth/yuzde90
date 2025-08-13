@@ -420,7 +420,12 @@ export default function Tours({ tours: initialTours, allDestinations, filters, s
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {tours.map((tour, index) => (
                         <div key={tour.id} ref={tours.length === index + 1 ? lastTourElementRef : null}>
-                            <TourCard tour={tour} featuredBadge={FeaturedBadge} />
+                            <TourCard 
+                                tour={tour} 
+                                featuredBadge={FeaturedBadge} 
+                                // LCP optimizasyonu: Sadece ilk tur kartının resmini öncelikli yükle.
+                                isLcp={index === 0}
+                            />
                         </div>
                     ))}
                   </div>

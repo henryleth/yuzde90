@@ -130,7 +130,15 @@ export default function Home({ tours, popularDestinations, seo }) {
                     <h2 className="text-4xl font-bold text-center mb-12 font-playfair">{t('home.featured_tours.title', "Öne Çıkan Turlarımız")}</h2>
                     {tours.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {tours.map((tour) => <TourCard key={tour.id} tour={tour} featuredBadge={FeaturedBadge} />)}
+                            {tours.map((tour, index) => (
+                                <TourCard 
+                                    key={tour.id} 
+                                    tour={tour} 
+                                    featuredBadge={FeaturedBadge} 
+                                    // LCP optimizasyonu: Sadece ilk tur kartının resmini öncelikli yükle.
+                                    isLcp={index === 0} 
+                                />
+                            ))}
                         </div>
                     ) : (
                         <p className="text-center text-muted-foreground">{t('home.featured_tours.no_tours', "Şu anda öne çıkan tur bulunmamaktadır.")}</p>

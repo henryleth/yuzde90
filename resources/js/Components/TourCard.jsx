@@ -7,8 +7,9 @@ import LazyImage from './LazyImage'; // Yeni merkezi LazyImage bileşenimizi imp
 import { useTranslation } from '@/hooks/useTranslation';
 
 // Merkezi ve Yeniden Kullanılabilir Tur Kartı Bileşeni
-export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
+export default function TourCard({ tour, featuredBadge: FeaturedBadge, isLcp = false }) {
   const { t } = useTranslation();
+  const imageUrl = tour.image?.thumbnail_url || `https://placehold.co/400x200?text=${encodeURIComponent(t('tour_card.image_not_found', 'Görsel Bulunamadı'))}`;
 
   return (
     <Card className="w-full h-full flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative">
@@ -19,13 +20,26 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
 
       <Link href={route('tour.show', tour.slug)} className="block">
         <div className="relative overflow-hidden h-48">
-          <LazyImage
-            src={tour.image?.thumbnail_url || `https://placehold.co/400x200?text=${encodeURIComponent(t('tour_card.image_not_found', 'Görsel Bulunamadı'))}`}
-            alt={tour.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            wrapperClassName="w-full h-full"
-            effect="blur" // Resim yüklenirken bulanıklaştırma efekti uygula
-          />
+          {isLcp ? (
+            // LCP (Largest Contentful Paint) optimizasyonu için
+            // Bu resim "above the fold" ise, lazy loading olmadan ve yüksek öncelikle yüklenir.
+            <img
+              src={imageUrl}
+              alt={tour.title}
+              fetchpriority="high"
+              loading="eager"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            // Diğer tüm resimler için lazy loading kullanılır.
+            <LazyImage
+              src={imageUrl}
+              alt={tour.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              wrapperClassName="w-full h-full"
+              effect="blur" // Resim yüklenirken bulanıklaştırma efekti uygula
+            />
+          )}
           <div className="absolute top-4 right-4">
             <div className="inline-flex items-center rounded-full bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
               <span>{t('tour_card.days', '{count} Gün', { count: tour.duration_days })}</span>

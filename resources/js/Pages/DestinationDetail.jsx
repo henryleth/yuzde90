@@ -138,8 +138,15 @@ export default function DestinationDetail({ seo }) {
         {/* Hero Section */}
         <section 
           ref={heroRef} // Ref hero bölümüne eklendi
-          className="hero-section relative h-[50vh] flex items-center justify-center text-center bg-cover bg-center" 
-          style={{ backgroundImage: `url(${destination.image?.original_url || 'https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'})` }}>
+          className="hero-section relative h-[50vh] flex items-center justify-center text-center">
+          {/* LCP Optimizasyonu: Arka plan resmi yerine yüksek öncelikli bir <img> etiketi kullanılıyor. */}
+          <img
+            src={destination.image?.original_url || 'https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'}
+            alt={destination.name}
+            fetchpriority="high"
+            loading="eager"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-black/60 hero-overlay"></div>
           <div className="relative z-10 text-white p-4 max-w-4xl mx-auto hero-content">
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 font-playfair animate-fade-in-up">
@@ -209,8 +216,13 @@ export default function DestinationDetail({ seo }) {
                   <CardContent>
                     {destination.tours.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-4">
-                        {destination.tours.slice(0, 3).map(tour => (
-                          <TourCard key={tour.id} tour={tour} />
+                        {destination.tours.slice(0, 3).map((tour, index) => (
+                          <TourCard 
+                            key={tour.id} 
+                            tour={tour} 
+                            // LCP optimizasyonu: Sadece ilk tur kartının resmini öncelikli yükle.
+                            isLcp={index === 0}
+                          />
                         ))}
                       </div>
                     ) : (
