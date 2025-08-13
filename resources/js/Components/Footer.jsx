@@ -20,10 +20,11 @@ export default function Footer() {
               {t('footer.about_text', "Türkiye'nin eşsiz güzelliklerini keşfetmeniz için unutulmaz seyahat deneyimleri tasarlıyoruz. Bizimle keşfedin, anı biriktirin.")}
             </p>
             <div className="flex space-x-4 mt-6">
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Facebook size={20} /></a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Twitter size={20} /></a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Instagram size={20} /></a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin size={20} /></a>
+                {/* Erişilebilirlik için aria-label eklendi */}
+                <a href="#" aria-label={t('footer.social.facebook', 'Facebook')} className="text-muted-foreground hover:text-primary transition-colors"><Facebook size={20} /></a>
+                <a href="#" aria-label={t('footer.social.twitter', 'Twitter')} className="text-muted-foreground hover:text-primary transition-colors"><Twitter size={20} /></a>
+                <a href="#" aria-label={t('footer.social.instagram', 'Instagram')} className="text-muted-foreground hover:text-primary transition-colors"><Instagram size={20} /></a>
+                <a href="#" aria-label={t('footer.social.linkedin', 'Linkedin')} className="text-muted-foreground hover:text-primary transition-colors"><Linkedin size={20} /></a>
             </div>
           </div>
 

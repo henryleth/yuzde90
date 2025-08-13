@@ -15,7 +15,7 @@ export default function DestinationCardV1({ destination }) {
       <Card className="destination-card-v1 w-full overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out">
         <div className="relative aspect-video w-full"> {/* aspect-video ile yatay oran sağlandı */}
           <LazyLoadImage
-            src={destination.image?.thumbnail_url || 'https://via.placeholder.com/400x225?text=Görsel+Yok'}
+            src={destination.image?.thumbnail_url || 'https://placehold.co/400x225?text=Görsel+Yok'}
             alt={destination.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             effect="blur"

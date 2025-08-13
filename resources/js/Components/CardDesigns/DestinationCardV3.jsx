@@ -11,7 +11,7 @@ export default function DestinationCardV3({ destination }) {
       <Card className="destination-card-v3 w-full h-full flex flex-col items-center text-center overflow-hidden rounded-lg bg-card shadow-lg hover:shadow-2xl transition-shadow duration-300 p-6">
         <div className="relative h-48 w-48 rounded-full overflow-hidden border-4 border-secondary group-hover:border-primary transition-all duration-300 mb-4">
           <img 
-            src={destination.image?.thumbnail_url || 'https://via.placeholder.com/200x200?text=Görsel+Yok'} 
+            src={destination.image?.thumbnail_url || 'https://placehold.co/200x200?text=Görsel+Yok'} 
             alt={destination.name} 
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"

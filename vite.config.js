@@ -21,6 +21,9 @@ export default defineConfig(({ ssrBuild }) => ({
         noExternal: ['@inertiajs/server', 'ziggy-js'],
     },
     build: {
+        // Modern tarayıcıları hedefleyerek gereksiz transpilation'ı ve polyfill'leri azaltır.
+        // 'esnext', en son JavaScript özelliklerini destekleyen tarayıcıları hedefler.
+        target: 'esnext',
         rollupOptions: {
             output: {
                 // SSR derlemesi sırasında manualChunks uygulamıyoruz.

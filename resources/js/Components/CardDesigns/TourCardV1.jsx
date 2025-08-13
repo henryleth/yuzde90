@@ -12,7 +12,7 @@ export default function TourCardV1({ tour }) {
       <Card className="tour-card-v1 w-full h-full flex flex-col overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
         <div className="relative overflow-hidden">
           <img 
-            src={tour.image?.thumbnail_url || 'https://via.placeholder.com/400x250?text=Görsel+Yok'} 
+            src={tour.image?.thumbnail_url || 'https://placehold.co/400x250?text=Görsel+Yok'} 
             alt={tour.title} 
             className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"

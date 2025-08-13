@@ -20,7 +20,7 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge }) {
       <Link href={route('tour.show', tour.slug)} className="block">
         <div className="relative overflow-hidden h-48">
           <LazyImage
-            src={tour.image?.thumbnail_url || `https://via.placeholder.com/400x200?text=${encodeURIComponent(t('tour_card.image_not_found', 'Görsel Bulunamadı'))}`}
+            src={tour.image?.thumbnail_url || `https://placehold.co/400x200?text=${encodeURIComponent(t('tour_card.image_not_found', 'Görsel Bulunamadı'))}`}
             alt={tour.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             wrapperClassName="w-full h-full"

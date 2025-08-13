@@ -21,7 +21,7 @@ export default function TourCardV3({ tour, featuredBadge: FeaturedBadge }) {
         <div className="flex flex-col flex-grow">
           <div className="relative h-64 w-full">
             <img 
-              src={tour.image?.thumbnail_url || 'https://via.placeholder.com/400x260?text=Görsel+Yok'} 
+              src={tour.image?.thumbnail_url || 'https://placehold.co/400x260?text=Görsel+Yok'} 
               alt={tour.title} 
               className="w-full h-full object-cover"
               loading="lazy"

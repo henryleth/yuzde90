@@ -22,7 +22,7 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
             <li key={post.id} className="sidebar-post-item flex items-center">
               <Link href={route('contents.show', { slug: post.slug })} className="flex items-center group">
                 <LazyImage 
-                  src={post.image_thumbnail_url || 'https://via.placeholder.com/80'} 
+                  src={post.image_thumbnail_url || 'https://placehold.co/80'} 
                   alt={post.title} 
                   className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
                   wrapperClassName="w-16 h-16"
@@ -45,7 +45,7 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
             <li key={tour.id} className="sidebar-post-item flex items-center">
               <Link href={route('tour.show', { slug: tour.slug })} className="flex items-center group">
                 <LazyImage 
-                  src={tour.image_thumbnail || 'https://via.placeholder.com/80'} 
+                  src={tour.image_thumbnail || 'https://placehold.co/80'} 
                   alt={tour.title} 
                   className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
                   wrapperClassName="w-16 h-16"
@@ -68,7 +68,7 @@ const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, r
             <li key={content.id} className="sidebar-post-item flex items-center">
               <Link href={route('contents.show', { slug: content.slug })} className="flex items-center group">
                 <LazyImage 
-                  src={content.image_thumbnail || 'https://via.placeholder.com/80'} 
+                  src={content.image_thumbnail || 'https://placehold.co/80'} 
                   alt={content.title} 
                   className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
                   wrapperClassName="w-16 h-16"
@@ -150,10 +150,14 @@ export default function ContentDetail({ seo }) {
       <div className={`content-detail-page bg-background text-foreground`}>
         
         {/* Hero Section: İçeriğin başlığını ve öne çıkan görselini gösterir. */}
-        <section 
-          className="content-hero-section relative bg-cover bg-center h-[50vh] flex items-end p-8 text-white"
-          style={{ backgroundImage: `url(${post.image_original_url || 'https://via.placeholder.com/1200x600'})` }}
-        >
+        <section className="content-hero-section relative h-[50vh] flex items-end p-8 text-white">
+          {/* LCP Optimizasyonu: Arka plan resmi yerine yüksek öncelikli bir <img> etiketi kullanılıyor. */}
+          <img
+            src={post.image_original_url || 'https://placehold.co/1200x600'}
+            alt={post.title}
+            fetchpriority="high"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
           <div className="relative z-10 max-w-6xl mx-auto w-full">
             <h1 className="content-title text-4xl md:text-6xl font-extrabold leading-tight mb-2 font-playfair">

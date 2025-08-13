@@ -149,7 +149,7 @@ export default function Home({ tours, popularDestinations, seo }) {
                                     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 relative group">
                                         <div className="relative w-full h-64"> {/* Görsel boyutu artırıldı */}
                                             <LazyImage
-                                                src={destination.image?.thumbnail_url || 'https://via.placeholder.com/400x200?text=Görsel+Bulunamadı'}
+                                                src={destination.image?.thumbnail_url || 'https://placehold.co/400x200?text=Görsel+Bulunamadı'}
                                                 alt={destination.name}
                                                 className="w-full h-full object-cover"
                                                 wrapperClassName="w-full h-full"

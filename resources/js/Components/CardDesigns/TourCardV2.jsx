@@ -23,7 +23,7 @@ export default function TourCardV2({ tour }) {
         </CardHeader>
         <div className="relative h-48 w-full overflow-hidden">
           <img 
-            src={tour.image?.thumbnail_url || 'https://via.placeholder.com/400x200?text=Görsel+Yok'} 
+            src={tour.image?.thumbnail_url || 'https://placehold.co/400x200?text=Görsel+Yok'} 
             alt={tour.title} 
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
