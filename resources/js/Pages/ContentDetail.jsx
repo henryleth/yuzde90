@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePage, Link } from '@inertiajs/react';
 import { useTranslation } from '@/hooks/useTranslation'; // Çeviri hook'u eklendi
 import GuestLayout from '@/Layouts/GuestLayout';
@@ -144,6 +144,72 @@ export default function ContentDetail({ seo }) {
       </GuestLayout>
     );
   }
+
+  // Erişilebilirlik ve performans için dinamik içerik manipülasyonu
+  useEffect(() => {
+    const contentArea = document.querySelector('.content-body');
+    if (contentArea) {
+      // YouTube iframe'lerini tembel yükleme (lazy loading) ile optimize et
+      const iframes = contentArea.querySelectorAll('iframe[src*="youtube.com"]');
+      iframes.forEach(iframe => {
+        const videoIdMatch = iframe.src.match(/embed\/(.*?)\?/);
+        if (videoIdMatch && videoIdMatch[1]) {
+          const videoId = videoIdMatch[1];
+          const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'youtube-lazy-load relative cursor-pointer';
+          wrapper.style.backgroundImage = `url(${thumbnailUrl})`;
+          wrapper.style.backgroundSize = 'cover';
+          wrapper.style.backgroundPosition = 'center';
+          wrapper.style.height = iframe.style.height || '315px';
+          wrapper.style.width = iframe.style.width || '560px';
+          
+          const playButton = document.createElement('div');
+          playButton.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-black/50 rounded-full flex items-center justify-center';
+          playButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>';
+          
+          wrapper.appendChild(playButton);
+          iframe.parentNode.replaceChild(wrapper, iframe);
+
+          wrapper.addEventListener('click', () => {
+            iframe.setAttribute('src', `${iframe.src}&autoplay=1`);
+            wrapper.parentNode.replaceChild(iframe, wrapper);
+          });
+        }
+        
+        if (!iframe.title) {
+          iframe.title = t('content_detail.embedded_video', 'Gömülü YouTube Videosu');
+        }
+      });
+
+      // Diğer iframe'lere başlık ekle
+      const otherIframes = contentArea.querySelectorAll('iframe:not([src*="youtube.com"])');
+      otherIframes.forEach(iframe => {
+        if (!iframe.title) {
+          iframe.title = t('content_detail.embedded_content', 'Gömülü İçerik');
+        }
+      });
+
+      // Ayırt edilebilir olmayan bağlantılara aria-label ekle
+      const links = contentArea.querySelectorAll('a');
+      links.forEach(link => {
+        // Eğer bağlantının metni yoksa veya çok genel bir metin içeriyorsa
+        const linkText = link.textContent.trim().toLowerCase();
+        if (!linkText || linkText === 'buraya tıklayın' || linkText === 'daha fazla bilgi') {
+          // href'den anlamlı bir etiket oluşturmaya çalış
+          try {
+            const url = new URL(link.href);
+            const hostname = url.hostname.replace('www.', '');
+            link.setAttribute('aria-label', t('content_detail.link_to', '{hostname} adresine bağlantı', { hostname }));
+          } catch (e) {
+            // Geçersiz URL durumunda genel bir etiket ata
+            link.setAttribute('aria-label', t('content_detail.external_link', 'Dış bağlantı'));
+          }
+        }
+      });
+    }
+  }, [post, t]);
 
   return (
     <GuestLayout seo={seo}>

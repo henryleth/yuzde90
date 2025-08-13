@@ -57,12 +57,7 @@ export default {
     		},
     		fontFamily: {
     			sans: [
-    				'Inter',
     				...defaultTheme.fontFamily.sans
-    			],
-    			inter: [
-    				'Inter',
-    				'sans-serif'
     			],
     			playfair: ['Playfair Display', 'serif'],
     		},
