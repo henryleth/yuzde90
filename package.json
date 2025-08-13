@@ -23,6 +23,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "@fontsource/inter": "^5.2.6",
         "@hello-pangea/dnd": "^18.0.1",
         "@hookform/resolvers": "^5.2.1",
         "@inertiajs/server": "^0.1.0",

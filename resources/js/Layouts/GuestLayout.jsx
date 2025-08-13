@@ -26,10 +26,6 @@ export default function Guest({ children, seo = {} }) {
                 <meta property="twitter:title" content={seo.og_title} />
                 <meta property="twitter:description" content={seo.og_description} />
                 {seo.og_image && <meta property="twitter:image" content={seo.og_image} />}
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
             </Head>
             
             <Header />
