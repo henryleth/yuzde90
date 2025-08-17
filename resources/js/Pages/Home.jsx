@@ -58,7 +58,7 @@ export default function Home({ tours, popularDestinations, seo }) {
                             left: '-127.77%',
                             top: iframeTop,
                         }}
-                        src="https://www.youtube.com/embed/oe_kmwcO1ag?autoplay=1&mute=1&loop=1&playlist=oe_kmwcO1ag&controls=0&modestbranding=1&rel=0"
+                        src="https://www.youtube.com/embed/oe_kmwcO1ag?autoplay=1&mute=1&loop=1&playlist=oe_kmwcO1ag&controls=0&modestbranding=1&rel=0&vq=hd1080&hd=1"
                         frameBorder="0"
                         allow="autoplay; encrypted-media"
                         allowFullScreen
