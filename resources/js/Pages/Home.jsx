@@ -3,9 +3,11 @@ import { useTranslation } from '@/hooks/useTranslation'; // Çeviri hook'u eklen
 import { Button } from '@/Components/ui/button';
 import { Card } from '@/Components/ui/card';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { useState, useEffect } from 'react';
-import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
+import { useState, useEffect, lazy, Suspense } from 'react'; // lazy ve Suspense eklendi
 import { Globe, Star, Wallet } from 'lucide-react';
+
+// LazyImage bileşenini dinamik olarak import et
+const LazyImage = lazy(() => import('@/Components/LazyImage'));
 
 // Merkezi Kart Bileşenlerini ve Etiketi İçe Aktarma
 import TourCard from '@/Components/TourCard';
@@ -33,6 +35,13 @@ export default function Home({ tours, popularDestinations, seo }) {
       return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+    // Resim yüklenirken gösterilecek yer tutucu bileşeni
+    const ImagePlaceholder = ({ className, wrapperClassName }) => (
+        <div className={wrapperClassName}>
+            <div className={`w-full h-full bg-gray-200 rounded-md animate-pulse ${className}`}></div>
+        </div>
+    );
+
      return (
          <GuestLayout seo={seo}>
             {/* Hero Section */}
@@ -41,13 +50,15 @@ export default function Home({ tours, popularDestinations, seo }) {
                 <div className="absolute inset-0 w-full h-full">
                     {/* Video hazır olana kadar kapak görseli gösterilir */}
                     {!isVideoReady && (
-                        <LazyImage
-                            src="https://img.youtube.com/vi/oe_kmwcO1ag/maxresdefault.jpg"
-                            alt="Video Thumbnail"
-                            className="w-full h-full object-cover"
-                            wrapperClassName="w-full h-full"
-                            effect="blur"
-                        />
+                        <Suspense fallback={<ImagePlaceholder wrapperClassName="w-full h-full" />}>
+                            <LazyImage
+                                src="https://img.youtube.com/vi/oe_kmwcO1ag/maxresdefault.jpg"
+                                alt="Video Thumbnail"
+                                className="w-full h-full object-cover"
+                                wrapperClassName="w-full h-full"
+                                effect="blur"
+                            />
+                        </Suspense>
                     )}
                     {/* Video iframe'i her zaman DOM'da bulunur ancak sadece hazır olduğunda görünür olur */}
                     <iframe
@@ -109,7 +120,9 @@ export default function Home({ tours, popularDestinations, seo }) {
                         {/* Sağ Taraf: Sosyal Kanıt ve Güven Simgeleri */}
                         <div className="flex flex-col items-center space-y-6">
                             <a href="https://www.tripadvisor.es/Attraction_Review-g293974-d13153444-Reviews-Pride_Travel-Istanbul.html" target="_blank" rel="noopener noreferrer" className="transition-transform hover:scale-110">
-                                <LazyImage src="https://logodix.com/logo/464050.png" alt="TripAdvisor" className="h-48" wrapperClassName="h-48" effect="blur"/>
+                                <Suspense fallback={<ImagePlaceholder wrapperClassName="h-48" />}>
+                                    <LazyImage src="https://logodix.com/logo/464050.png" alt="TripAdvisor" className="h-48" wrapperClassName="h-48" effect="blur"/>
+                                </Suspense>
                             </a>
                             <div className="border p-4 rounded-lg text-center bg-card shadow-lg w-full">
                                 <a href="https://www.tursab.org.tr/tr/dd-acente-sorgulama" target="_blank" rel="noopener noreferrer" className="group">
@@ -156,13 +169,15 @@ export default function Home({ tours, popularDestinations, seo }) {
                                 <Link key={destination.id} href={route('destinations.show', { slug: destination.slug })} className="block">
                                     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 relative group">
                                         <div className="relative w-full h-64"> {/* Görsel boyutu artırıldı */}
-                                            <LazyImage
-                                                src={destination.image?.thumbnail_url || 'https://placehold.co/400x200?text=Görsel+Bulunamadı'}
-                                                alt={destination.name}
-                                                className="w-full h-full object-cover"
-                                                wrapperClassName="w-full h-full"
-                                                effect="blur"
-                                            />
+                                            <Suspense fallback={<ImagePlaceholder wrapperClassName="w-full h-full" />}>
+                                                <LazyImage
+                                                    src={destination.image?.thumbnail_url || 'https://placehold.co/400x200?text=Görsel+Bulunamadı'}
+                                                    alt={destination.name}
+                                                    className="w-full h-full object-cover"
+                                                    wrapperClassName="w-full h-full"
+                                                    effect="blur"
+                                                />
+                                            </Suspense>
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-4 transition-opacity duration-300 group-hover:from-black/50">
                                                 <div className="text-white">
                                                     <h3 className="text-2xl font-bold mb-1 destinasyon-baslik">{destination.name}</h3>
