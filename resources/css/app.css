@@ -339,3 +339,27 @@ html {
     position: relative;
     padding-left: 1em;
 }
+
+/* Rezervasyon Formu Gece Modu Stilleri */
+.dark .reservation-form label {
+    color: hsl(var(--foreground));
+}
+
+.dark .reservation-form input,
+.dark .reservation-form textarea,
+.dark .reservation-form [role="combobox"] { /* ShadCN Select Trigger için */
+    background-color: hsl(var(--input));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+}
+
+.dark .reservation-form input::placeholder,
+.dark .reservation-form textarea::placeholder {
+    color: hsl(var(--muted-foreground));
+}
+
+.dark .reservation-form .select-trigger-class { /* Select Trigger için özel bir sınıf gerekirse */
+    background-color: hsl(var(--input));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+}

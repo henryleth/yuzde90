@@ -2,6 +2,7 @@ import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Label } from '@/Components/ui/label';
+import { Textarea } from '@/Components/ui/textarea';
 import { useState, useEffect, useRef, Fragment } from 'react';
 import {
   Accordion,
@@ -73,8 +74,9 @@ export default function TourDetail({ tour, config, seo }) {
     }));
 
     pricingData.push({
-      // Görüntülenecek metni birleştiriyoruz.
-      season: `${translatedSeasonName} (${translatedMonths})`,
+      // Sezon adı ve ayları ayrı ayrı saklıyoruz.
+      seasonName: translatedSeasonName,
+      seasonMonths: translatedMonths,
       icon: getSeasonIcon(seasonName),
       categories: categoriesForSeason,
     });
@@ -316,7 +318,7 @@ export default function TourDetail({ tour, config, seo }) {
 
               {/* Itinerary Section */}
               <section id="itinerary" className="space-y-6">
-                <div className="bg-card rounded-lg border border-border p-6">
+                <div className="bg-card rounded-lg border border-border p-4 lg:p-6">
                   <h2 className="text-2xl font-bold mb-4">{t('tour_detail.itinerary.title', 'Günlük Program')}</h2>
                   <Accordion type="multiple" defaultValue={itineraryData.map(item => `item-${item.day_number}`)} className="w-full"> 
                     {itineraryData.map((item) => (
@@ -324,7 +326,7 @@ export default function TourDetail({ tour, config, seo }) {
                         <AccordionTrigger className="px-2 lg:px-6 py-4 hover:no-underline">
                           <div className="flex flex-col items-start text-left"><h3 className="font-bold lg:text-xl text-lg text-foreground mb-1">{item.title}</h3></div>
                         </AccordionTrigger>
-                        <AccordionContent className="px-6 pb-4 pt-0">
+                        <AccordionContent className="px-4 lg:px-6 pb-4 pt-0">
                           {(item.activities || []).map((activity, activityIndex) => (
                             <div key={`activity-${item.day_number}-${activityIndex}`} className={`mb-2 ${activity.is_highlight ? 'bg-orange-100 dark:bg-orange-900/50 p-3 rounded-md' : ''}`}>
                               {/* 
@@ -349,14 +351,29 @@ export default function TourDetail({ tour, config, seo }) {
                   <h2 className="text-2xl font-bold mb-6">{t('tour_detail.pricing.title', 'Sezon Fiyatları')}</h2>
                   {pricingData.map((seasonItem, index) => (
                     <div key={index} className="mb-8">
-                      <h3 className="text-lg font-semibold mb-4 flex items-center">{seasonItem.icon}{seasonItem.season}</h3>
-                      <div className="overflow-x-auto">
+                      <div className="flex items-center mb-4">
+                        {seasonItem.icon}
+                        <div className="flex flex-col md:flex-row md:items-baseline md:gap-x-2">
+                          <h3 className="text-lg font-semibold">{seasonItem.seasonName}</h3>
+                          <span className="text-s font-normal text-gray-500 dark:text-gray-400">({seasonItem.seasonMonths})</span>
+                        </div>
+                      </div>
+
+                      {/* Masaüstü için Tablo (md ve üzeri) */}
+                      <div className="hidden md:block overflow-x-auto">
                         <table className="w-full border-collapse">
-                          <thead><tr className="border-b border-border"><th className="text-left p-3">{t('tour_detail.pricing.category', 'Kategori')}</th><th className="text-left p-3">{t('tour_detail.pricing.single', 'Tek Kişilik')}</th><th className="text-left p-3">{t('tour_detail.pricing.double', 'Çift Kişilik')}</th><th className="text-left p-3">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}</th></tr></thead>
+                          <thead>
+                            <tr className="border-b border-border">
+                              <th className="text-left p-3">{t('tour_detail.pricing.category', 'Kategori')}</th>
+                              <th className="text-left p-3">{t('tour_detail.pricing.single', 'Tek Kişilik')}</th>
+                              <th className="text-left p-3">{t('tour_detail.pricing.double', 'Çift Kişilik')}</th>
+                              <th className="text-left p-3">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}</th>
+                            </tr>
+                          </thead>
                           <tbody>
                             {seasonItem.categories.map((category, catIndex) => (
                               <tr key={catIndex} className="border-b border-border last:border-b-0">
-                                <td className="p-3 font-medium">{category.name}</td>
+                                <td className="p-3 font-medium">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</td>
                                 <td className="p-3">{category.single || '-'}</td>
                                 <td className="p-3">{category.double || '-'}</td>
                                 <td className="p-3">{category.triple || '-'}</td>
@@ -364,6 +381,82 @@ export default function TourDetail({ tour, config, seo }) {
                             ))}
                           </tbody>
                         </table>
+                      </div>
+
+                      {/* Mobil için Alternatif Tasarımlar (md'den küçük) */}
+                      <div className="md:hidden space-y-6">
+                        {/* Tasarım 1: Kategori Kartları */}
+                        <div className="space-y-4">
+                          <h4 className="font-bold text-center text-sm uppercase tracking-wider text-muted-foreground">Tasarım 1: Kartlar</h4>
+                          {seasonItem.categories.map((category, catIndex) => (
+                            <div key={`design1-${catIndex}`} className="bg-muted/50 rounded-lg border border-border p-4">
+                              <h5 className="font-bold text-lg text-primary mb-3">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</h5>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between items-center border-b border-border/50 pb-2"><span className="text-muted-foreground">{t('tour_detail.pricing.single', 'Tek Kişilik')}</span><span className="font-semibold">{category.single}</span></div>
+                                <div className="flex justify-between items-center border-b border-border/50 pb-2"><span className="text-muted-foreground">{t('tour_detail.pricing.double', 'Çift Kişilik')}</span><span className="font-semibold">{category.double}</span></div>
+                                <div className="flex justify-between items-center"><span className="text-muted-foreground">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}</span><span className="font-semibold">{category.triple}</span></div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Tasarım 2: Akordiyon */}
+                        <div className="space-y-2">
+                          <h4 className="font-bold text-center text-sm uppercase tracking-wider text-muted-foreground mt-8">Tasarım 2: Akordiyon</h4>
+                          <Accordion type="single" collapsible className="w-full">
+                            {seasonItem.categories.map((category, catIndex) => (
+                              <AccordionItem key={`design2-${catIndex}`} value={`item-${catIndex}`} className="bg-muted/50 border border-border rounded-lg mb-2">
+                                <AccordionTrigger className="px-4 py-3 font-bold text-primary">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</AccordionTrigger>
+                                <AccordionContent className="px-4 pb-4">
+                                  <div className="space-y-2 text-sm">
+                                    <p><span className="font-semibold">{t('tour_detail.pricing.single', 'Tek Kişilik')}:</span> {category.single}</p>
+                                    <p><span className="font-semibold">{t('tour_detail.pricing.double', 'Çift Kişilik')}:</span> {category.double}</p>
+                                    <p><span className="font-semibold">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}:</span> {category.triple}</p>
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            ))}
+                          </Accordion>
+                        </div>
+
+                        {/* Tasarım 3: Dikey Liste */}
+                        <div className="space-y-4">
+                          <h4 className="font-bold text-center text-sm uppercase tracking-wider text-muted-foreground mt-8">Tasarım 3: Dikey Liste</h4>
+                          {seasonItem.categories.map((category, catIndex) => (
+                            <div key={`design3-${catIndex}`} className="p-4 border-l-4 border-primary bg-muted/50 rounded-r-lg">
+                              <h5 className="font-bold text-lg mb-2">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</h5>
+                              <ul className="list-disc list-inside text-sm space-y-1 text-muted-foreground">
+                                <li>{t('tour_detail.pricing.single', 'Tek Kişilik')}: <span className="font-semibold text-foreground">{category.single}</span></li>
+                                <li>{t('tour_detail.pricing.double', 'Çift Kişilik')}: <span className="font-semibold text-foreground">{category.double}</span></li>
+                                <li>{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}: <span className="font-semibold text-foreground">{category.triple}</span></li>
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Tasarım 4: Grid */}
+                        <div className="space-y-4">
+                          <h4 className="font-bold text-center text-sm uppercase tracking-wider text-muted-foreground mt-8">Tasarım 4: Grid</h4>
+                          {seasonItem.categories.map((category, catIndex) => (
+                            <div key={`design4-${catIndex}`} className="bg-card border border-border rounded-lg p-4">
+                               <h5 className="font-bold text-lg text-center mb-3 text-primary">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</h5>
+                               <div className="grid grid-cols-3 text-center gap-2">
+                                  <div>
+                                    <div className="text-xs text-muted-foreground">{t('tour_detail.pricing.single', 'Tek Kişilik')}</div>
+                                    <div className="font-bold text-lg">{category.single}</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-xs text-muted-foreground">{t('tour_detail.pricing.double', 'Çift Kişilik')}</div>
+                                    <div className="font-bold text-lg">{category.double}</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-xs text-muted-foreground">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}</div>
+                                    <div className="font-bold text-lg">{category.triple}</div>
+                                  </div>
+                               </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -373,7 +466,7 @@ export default function TourDetail({ tour, config, seo }) {
 
               {/* Hotels Section */}
               <section id="hotels" className="space-y-6 ">
-                  <div className="bg-card rounded-lg border border-border p-6">
+                  <div className="bg-card rounded-lg border border-border p-4">
                   <h2 className="text-2xl font-bold mb-4">{t('tour_detail.hotels.title', 'Konaklama Seçenekleri')}</h2>
                   {processedHotelData.length > 0 ? (
                     processedHotelData.map((cityData, cityIndex) => (
@@ -437,47 +530,73 @@ export default function TourDetail({ tour, config, seo }) {
               </section>
             </div>
 
-            {/* Sidebar */}
+            {/* Kenar Çubuğu - Rezervasyon Formu */}
             <div className="lg:col-span-1">
               <div ref={bookingFormRef} className="sticky top-32">
-                <div className="bg-card rounded-lg border border-border p-6">
-                  <h3 className="text-xl font-semibold mb-6">{t('tour_detail.booking.title', 'Hızlı Rezervasyon')}</h3>
+                <div className="bg-card rounded-lg border border-border p-6 reservation-form">
+                  {/* Form başlığı ve bilgilendirme metinleri */}
+                  <h3 className="text-2xl font-bold text-center mb-2 font-playfair">Başvuru ve Rezervasyon Formu</h3>
+                  <p className="text-center text-sm text-muted-foreground mb-1">*Tüm Alanlar Zorunludur</p>
+                  <p className="text-center text-sm text-muted-foreground mb-6">* ile işaretli alanlar zorunludur</p>
+                  
+                  {/* Rezervasyon formu */}
                   <form className="space-y-4">
-                    <div className="space-y-2"><Label htmlFor="date">{t('tour_detail.booking.date', 'Tarih')}</Label><Input id="date" type="date" /></div>
+                    {/* İsim alanı */}
                     <div className="space-y-2">
-                      <Label id="people-label" htmlFor="people">{t('tour_detail.booking.people', 'Kişi Sayısı')}</Label>
+                      <Label htmlFor="name">İsim: <span className="text-red-500">*</span></Label>
+                      <Input id="name" type="text" required className="dark:bg-gray-800 dark:text-white" />
+                    </div>
+                    
+                    {/* E-posta alanı */}
+                    <div className="space-y-2">
+                      <Label htmlFor="email">E-posta: <span className="text-red-500">*</span></Label>
+                      <Input id="email" type="email" required className="dark:bg-gray-800 dark:text-white" />
+                    </div>
+                    
+                    {/* Tur tarihi alanı */}
+                    <div className="space-y-2">
+                      <Label htmlFor="tour_date">Talep Edilen Tur Tarihi - Kesin veya yaklaşık tarih: <span className="text-red-500">*</span></Label>
+                      <Input id="tour_date" type="text" required className="dark:bg-gray-800 dark:text-white" />
+                    </div>
+                    
+                    {/* Katılımcı sayısı alanı */}
+                    <div className="space-y-2">
+                      <Label htmlFor="participants">Katılımcı sayısı: <span className="text-red-500">*</span></Label>
+                      <Input id="participants" type="number" required className="dark:bg-gray-800 dark:text-white" />
+                    </div>
+                    
+                    {/* Mesaj alanı */}
+                    <div className="space-y-2">
+                      <Label htmlFor="message">İlgilendiğiniz tur ve Mesajınız: <span className="text-red-500">*</span></Label>
+                      <Textarea id="message" rows="5" placeholder="Lütfen talebinizin ayrıntılarını buraya yazın. Planladığınız seyahat tarihini, seyahat edecek kişi sayısını, ziyaret etmek istediğiniz yerleri, ilgilendiğiniz tur paketini vb. eklerseniz çok yardımcı oluruz. Daha fazla bilgi verebilirseniz, ilk e-postada mümkün olduğunca fazla bilgi sağlayabiliriz." required className="dark:bg-gray-800 dark:text-white" />
+                    </div>
+                    
+                    {/* Ülke seçim alanı */}
+                    <div className="space-y-2">
+                      <Label htmlFor="country">Ülke <span className="text-red-500">*</span></Label>
                       <Select>
-                        <SelectTrigger id="people" aria-labelledby="people-label">
-                          <SelectValue placeholder={t('tour_detail.booking.people_placeholder', 'Kişi sayısı seçin')} />
+                        <SelectTrigger id="country" className="dark:bg-gray-800 dark:text-white">
+                          <SelectValue placeholder="Amerika" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1">{t('tour_detail.booking.person', '1 Kişi', { count: 1 })}</SelectItem>
-                          <SelectItem value="2">{t('tour_detail.booking.person', '{count} Kişi', { count: 2 })}</SelectItem>
-                          <SelectItem value="3">{t('tour_detail.booking.person', '{count} Kişi', { count: 3 })}</SelectItem>
-                          <SelectItem value="4">{t('tour_detail.booking.person', '{count} Kişi', { count: 4 })}</SelectItem>
-                          <SelectItem value="5+">{t('tour_detail.booking.person_plus', '5+ Kişi')}</SelectItem>
+                          {/* Ülke listesi, daha sonra dinamik olarak doldurulabilir */}
+                          <SelectItem value="us">Amerika</SelectItem>
+                          <SelectItem value="tr">Türkiye</SelectItem>
+                          <SelectItem value="de">Almanya</SelectItem>
+                          <SelectItem value="gb">İngiltere</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
+                    
+                    {/* Whatsapp numarası alanı */}
                     <div className="space-y-2">
-                      <Label id="category-label" htmlFor="category">{t('tour_detail.booking.category', 'Kategori')}</Label>
-                      <Select>
-                        <SelectTrigger id="category" aria-labelledby="category-label">
-                          <SelectValue placeholder={t('tour_detail.booking.category_placeholder', 'Kategori seçin')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="category_a_code">{t('tour_detail.hotels.category_a', 'Kategori A')}</SelectItem>
-                          <SelectItem value="category_b_code">{t('tour_detail.hotels.category_b', 'Kategori B')}</SelectItem>
-                          <SelectItem value="category_c_code">{t('tour_detail.hotels.category_c', 'Kategori C')}</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="whatsapp">Whatsapp numarası:</Label>
+                      <Input id="whatsapp" type="tel" placeholder="İzniniz olmadan arama yapmıyoruz. Daha hızlı..." className="dark:bg-gray-800 dark:text-white" />
                     </div>
-                    <div className="space-y-2"><Label htmlFor="fullname">{t('tour_detail.booking.fullname', 'Ad Soyad')}</Label><Input id="fullname" type="text" placeholder={t('tour_detail.booking.fullname_placeholder', 'Adınız ve soyadınız')} /></div>
-                    <div className="space-y-2"><Label htmlFor="email">{t('tour_detail.booking.email', 'E-posta')}</Label><Input id="email" type="email" placeholder={t('tour_detail.booking.email_placeholder', 'ornek@email.com')} /></div>
-                    <div className="space-y-2"><Label htmlFor="phone">{t('tour_detail.booking.phone', 'Telefon')}</Label><Input id="phone" type="tel" placeholder="+90 5XX XXX XX XX" /></div>
-                    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">{t('tour_detail.booking.submit_button', 'Rezervasyon Yap')}</Button>
+                    
+                    {/* Gönderme butonu */}
+                    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Göndermek</Button>
                   </form>
-                  <div className="mt-6 p-4 bg-muted rounded-lg"><h4 className="font-semibold mb-2">{t('tour_detail.booking.contact_title', 'İletişim')}</h4><div className="space-y-2 text-sm"><div className="flex items-center"><Phone className="h-4 w-4 mr-2 text-primary" />+90 212 123 45 67</div><div className="flex items-center"><Mail className="h-4 w-4 mr-2 text-primary" />info@turkiyetours.com</div></div></div>
                 </div>
               </div>
             </div>

@@ -315,7 +315,7 @@ return [
         ],
     ],
     'tour_card' => [
-        'image_not_found' => 'Imagen No Encontrada',
+        'image_not_found' => 'Imagen no encontrada',
         'days' => '{count} Días',
         'people' => '{min}-{max} Personas',
         'per_person' => 'por persona',

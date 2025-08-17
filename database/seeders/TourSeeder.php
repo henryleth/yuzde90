@@ -35,6 +35,9 @@ class TourSeeder extends Seeder
 
         Schema::enableForeignKeyConstraints();
 
+        $seasons = config('tour.seasons', ['low_season', 'mid_season', 'high_season']);
+        $categories = config('tour.categories', ['Category A', 'Category B', 'Category C']);
+
         $toursData = [
             // Tur 1
             [
@@ -82,15 +85,15 @@ class TourSeeder extends Seeder
                     ]
                 ],
                 "pricing_tiers_data" => [
-                    ["season_name" => "Düşük Sezon", "category" => "Category A", "price_per_person_1" => 1299.00, "price_per_person_2" => 1199.00, "price_per_person_3" => 1099.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category B", "price_per_person_1" => 1199.00, "price_per_person_2" => 1099.00, "price_per_person_3" => 999.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category C", "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category A", "price_per_person_1" => 1399.00, "price_per_person_2" => 1299.00, "price_per_person_3" => 1199.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category B", "price_per_person_1" => 1299.00, "price_per_person_2" => 1199.00, "price_per_person_3" => 1099.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category C", "price_per_person_1" => 1199.00, "price_per_person_2" => 1099.00, "price_per_person_3" => 999.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category A", "price_per_person_1" => 1499.00, "price_per_person_2" => 1399.00, "price_per_person_3" => 1299.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category B", "price_per_person_1" => 1399.00, "price_per_person_2" => 1299.00, "price_per_person_3" => 1199.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category C", "price_per_person_1" => 1299.00, "price_per_person_2" => 1199.00, "price_per_person_3" => 1099.00],
+                    ["season_name" => $seasons[0], "category" => $categories[0], "price_per_person_1" => 1299.00, "price_per_person_2" => 1199.00, "price_per_person_3" => 1099.00],
+                    ["season_name" => $seasons[0], "category" => $categories[1], "price_per_person_1" => 1199.00, "price_per_person_2" => 1099.00, "price_per_person_3" => 999.00],
+                    ["season_name" => $seasons[0], "category" => $categories[2], "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
+                    ["season_name" => $seasons[1], "category" => $categories[0], "price_per_person_1" => 1399.00, "price_per_person_2" => 1299.00, "price_per_person_3" => 1199.00],
+                    ["season_name" => $seasons[1], "category" => $categories[1], "price_per_person_1" => 1299.00, "price_per_person_2" => 1199.00, "price_per_person_3" => 1099.00],
+                    ["season_name" => $seasons[1], "category" => $categories[2], "price_per_person_1" => 1199.00, "price_per_person_2" => 1099.00, "price_per_person_3" => 999.00],
+                    ["season_name" => $seasons[2], "category" => $categories[0], "price_per_person_1" => 1499.00, "price_per_person_2" => 1399.00, "price_per_person_3" => 1299.00],
+                    ["season_name" => $seasons[2], "category" => $categories[1], "price_per_person_1" => 1399.00, "price_per_person_2" => 1299.00, "price_per_person_3" => 1199.00],
+                    ["season_name" => $seasons[2], "category" => $categories[2], "price_per_person_1" => 1299.00, "price_per_person_2" => 1199.00, "price_per_person_3" => 1099.00],
                 ],
                 "gallery_image_urls" => [
                     "https://images.pexels.com/photos/1549326/pexels-photo-1549326.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -152,15 +155,15 @@ class TourSeeder extends Seeder
                     ]
                 ],
                 "pricing_tiers_data" => [
-                    ["season_name" => "Düşük Sezon", "category" => "Category A", "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category B", "price_per_person_1" => 899.00, "price_per_person_2" => 799.00, "price_per_person_3" => 699.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category C", "price_per_person_1" => 799.00, "price_per_person_2" => 699.00, "price_per_person_3" => 599.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category A", "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category B", "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category C", "price_per_person_1" => 899.00, "price_per_person_2" => 799.00, "price_per_person_3" => 699.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category A", "price_per_person_1" => 1199.00, "price_per_person_2" => 1099.00, "price_per_person_3" => 999.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category B", "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category C", "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
+                    ["season_name" => $seasons[0], "category" => $categories[0], "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
+                    ["season_name" => $seasons[0], "category" => $categories[1], "price_per_person_1" => 899.00, "price_per_person_2" => 799.00, "price_per_person_3" => 699.00],
+                    ["season_name" => $seasons[0], "category" => $categories[2], "price_per_person_1" => 799.00, "price_per_person_2" => 699.00, "price_per_person_3" => 599.00],
+                    ["season_name" => $seasons[1], "category" => $categories[0], "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
+                    ["season_name" => $seasons[1], "category" => $categories[1], "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
+                    ["season_name" => $seasons[1], "category" => $categories[2], "price_per_person_1" => 899.00, "price_per_person_2" => 799.00, "price_per_person_3" => 699.00],
+                    ["season_name" => $seasons[2], "category" => $categories[0], "price_per_person_1" => 1199.00, "price_per_person_2" => 1099.00, "price_per_person_3" => 999.00],
+                    ["season_name" => $seasons[2], "category" => $categories[1], "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
+                    ["season_name" => $seasons[2], "category" => $categories[2], "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
                 ],
                 "gallery_image_urls" => [
                     "https://images.pexels.com/photos/3644742/pexels-photo-3644742.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -221,15 +224,15 @@ class TourSeeder extends Seeder
                     ]
                 ],
                 "pricing_tiers_data" => [
-                    ["season_name" => "Düşük Sezon", "category" => "Category A", "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category B", "price_per_person_1" => 899.00, "price_per_person_2" => 799.00, "price_per_person_3" => 699.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category C", "price_per_person_1" => 799.00, "price_per_person_2" => 699.00, "price_per_person_3" => 599.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category A", "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category B", "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category C", "price_per_person_1" => 899.00, "price_per_person_2" => 799.00, "price_per_person_3" => 699.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category A", "price_per_person_1" => 1199.00, "price_per_person_2" => 1099.00, "price_per_person_3" => 999.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category B", "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category C", "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
+                    ["season_name" => $seasons[0], "category" => $categories[0], "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
+                    ["season_name" => $seasons[0], "category" => $categories[1], "price_per_person_1" => 899.00, "price_per_person_2" => 799.00, "price_per_person_3" => 699.00],
+                    ["season_name" => $seasons[0], "category" => $categories[2], "price_per_person_1" => 799.00, "price_per_person_2" => 699.00, "price_per_person_3" => 599.00],
+                    ["season_name" => $seasons[1], "category" => $categories[0], "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
+                    ["season_name" => $seasons[1], "category" => $categories[1], "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
+                    ["season_name" => $seasons[1], "category" => $categories[2], "price_per_person_1" => 899.00, "price_per_person_2" => 799.00, "price_per_person_3" => 699.00],
+                    ["season_name" => $seasons[2], "category" => $categories[0], "price_per_person_1" => 1199.00, "price_per_person_2" => 1099.00, "price_per_person_3" => 999.00],
+                    ["season_name" => $seasons[2], "category" => $categories[1], "price_per_person_1" => 1099.00, "price_per_person_2" => 999.00, "price_per_person_3" => 899.00],
+                    ["season_name" => $seasons[2], "category" => $categories[2], "price_per_person_1" => 999.00, "price_per_person_2" => 899.00, "price_per_person_3" => 799.00],
                 ],
                 "gallery_image_urls" => [
                     "https://images.pexels.com/photos/1631664/pexels-photo-1631664.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -278,15 +281,15 @@ class TourSeeder extends Seeder
                     ]
                 ],
                 "pricing_tiers_data" => [
-                    ["season_name" => "Düşük Sezon", "category" => "Category A", "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category B", "price_per_person_1" => 750.00, "price_per_person_2" => 700.00, "price_per_person_3" => 650.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category C", "price_per_person_1" => 650.00, "price_per_person_2" => 600.00, "price_per_person_3" => 550.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category A", "price_per_person_1" => 950.00, "price_per_person_2" => 900.00, "price_per_person_3" => 850.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category B", "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category C", "price_per_person_1" => 750.00, "price_per_person_2" => 700.00, "price_per_person_3" => 650.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category A", "price_per_person_1" => 1050.00, "price_per_person_2" => 1000.00, "price_per_person_3" => 950.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category B", "price_per_person_1" => 950.00, "price_per_person_2" => 900.00, "price_per_person_3" => 850.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category C", "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
+                    ["season_name" => $seasons[0], "category" => $categories[0], "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
+                    ["season_name" => $seasons[0], "category" => $categories[1], "price_per_person_1" => 750.00, "price_per_person_2" => 700.00, "price_per_person_3" => 650.00],
+                    ["season_name" => $seasons[0], "category" => $categories[2], "price_per_person_1" => 650.00, "price_per_person_2" => 600.00, "price_per_person_3" => 550.00],
+                    ["season_name" => $seasons[1], "category" => $categories[0], "price_per_person_1" => 950.00, "price_per_person_2" => 900.00, "price_per_person_3" => 850.00],
+                    ["season_name" => $seasons[1], "category" => $categories[1], "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
+                    ["season_name" => $seasons[1], "category" => $categories[2], "price_per_person_1" => 750.00, "price_per_person_2" => 700.00, "price_per_person_3" => 650.00],
+                    ["season_name" => $seasons[2], "category" => $categories[0], "price_per_person_1" => 1050.00, "price_per_person_2" => 1000.00, "price_per_person_3" => 950.00],
+                    ["season_name" => $seasons[2], "category" => $categories[1], "price_per_person_1" => 950.00, "price_per_person_2" => 900.00, "price_per_person_3" => 850.00],
+                    ["season_name" => $seasons[2], "category" => $categories[2], "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
                 ],
                 "gallery_image_urls" => [
                     "https://images.pexels.com/photos/13689233/pexels-photo-13689233.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -335,15 +338,15 @@ class TourSeeder extends Seeder
                     ]
                 ],
                 "pricing_tiers_data" => [
-                    ["season_name" => "Düşük Sezon", "category" => "Category A", "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category B", "price_per_person_1" => 750.00, "price_per_person_2" => 700.00, "price_per_person_3" => 650.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category C", "price_per_person_1" => 650.00, "price_per_person_2" => 600.00, "price_per_person_3" => 550.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category A", "price_per_person_1" => 950.00, "price_per_person_2" => 900.00, "price_per_person_3" => 850.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category B", "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category C", "price_per_person_1" => 750.00, "price_per_person_2" => 700.00, "price_per_person_3" => 650.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category A", "price_per_person_1" => 1050.00, "price_per_person_2" => 1000.00, "price_per_person_3" => 950.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category B", "price_per_person_1" => 950.00, "price_per_person_2" => 900.00, "price_per_person_3" => 850.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category C", "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
+                    ["season_name" => $seasons[0], "category" => $categories[0], "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
+                    ["season_name" => $seasons[0], "category" => $categories[1], "price_per_person_1" => 750.00, "price_per_person_2" => 700.00, "price_per_person_3" => 650.00],
+                    ["season_name" => $seasons[0], "category" => $categories[2], "price_per_person_1" => 650.00, "price_per_person_2" => 600.00, "price_per_person_3" => 550.00],
+                    ["season_name" => $seasons[1], "category" => $categories[0], "price_per_person_1" => 950.00, "price_per_person_2" => 900.00, "price_per_person_3" => 850.00],
+                    ["season_name" => $seasons[1], "category" => $categories[1], "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
+                    ["season_name" => $seasons[1], "category" => $categories[2], "price_per_person_1" => 750.00, "price_per_person_2" => 700.00, "price_per_person_3" => 650.00],
+                    ["season_name" => $seasons[2], "category" => $categories[0], "price_per_person_1" => 1050.00, "price_per_person_2" => 1000.00, "price_per_person_3" => 950.00],
+                    ["season_name" => $seasons[2], "category" => $categories[1], "price_per_person_1" => 950.00, "price_per_person_2" => 900.00, "price_per_person_3" => 850.00],
+                    ["season_name" => $seasons[2], "category" => $categories[2], "price_per_person_1" => 850.00, "price_per_person_2" => 800.00, "price_per_person_3" => 750.00],
                 ],
                 "gallery_image_urls" => [
                     "https://images.pexels.com/photos/2161467/pexels-photo-2161467.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -399,15 +402,15 @@ class TourSeeder extends Seeder
                     ]
                 ],
                 "pricing_tiers_data" => [
-                    ["season_name" => "Düşük Sezon", "category" => "Category A", "price_per_person_1" => 1000.00, "price_per_person_2" => 900.00, "price_per_person_3" => 800.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category B", "price_per_person_1" => 900.00, "price_per_person_2" => 800.00, "price_per_person_3" => 700.00],
-                    ["season_name" => "Düşük Sezon", "category" => "Category C", "price_per_person_1" => 800.00, "price_per_person_2" => 700.00, "price_per_person_3" => 600.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category A", "price_per_person_1" => 1100.00, "price_per_person_2" => 1000.00, "price_per_person_3" => 900.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category B", "price_per_person_1" => 1000.00, "price_per_person_2" => 900.00, "price_per_person_3" => 800.00],
-                    ["season_name" => "Orta Sezon", "category" => "Category C", "price_per_person_1" => 900.00, "price_per_person_2" => 800.00, "price_per_person_3" => 700.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category A", "price_per_person_1" => 1200.00, "price_per_person_2" => 1100.00, "price_per_person_3" => 1000.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category B", "price_per_person_1" => 1100.00, "price_per_person_2" => 1000.00, "price_per_person_3" => 900.00],
-                    ["season_name" => "Yüksek Sezon", "category" => "Category C", "price_per_person_1" => 1000.00, "price_per_person_2" => 900.00, "price_per_person_3" => 800.00],
+                    ["season_name" => $seasons[0], "category" => $categories[0], "price_per_person_1" => 1000.00, "price_per_person_2" => 900.00, "price_per_person_3" => 800.00],
+                    ["season_name" => $seasons[0], "category" => $categories[1], "price_per_person_1" => 900.00, "price_per_person_2" => 800.00, "price_per_person_3" => 700.00],
+                    ["season_name" => $seasons[0], "category" => $categories[2], "price_per_person_1" => 800.00, "price_per_person_2" => 700.00, "price_per_person_3" => 600.00],
+                    ["season_name" => $seasons[1], "category" => $categories[0], "price_per_person_1" => 1100.00, "price_per_person_2" => 1000.00, "price_per_person_3" => 900.00],
+                    ["season_name" => $seasons[1], "category" => $categories[1], "price_per_person_1" => 1000.00, "price_per_person_2" => 900.00, "price_per_person_3" => 800.00],
+                    ["season_name" => $seasons[1], "category" => $categories[2], "price_per_person_1" => 900.00, "price_per_person_2" => 800.00, "price_per_person_3" => 700.00],
+                    ["season_name" => $seasons[2], "category" => $categories[0], "price_per_person_1" => 1200.00, "price_per_person_2" => 1100.00, "price_per_person_3" => 1000.00],
+                    ["season_name" => $seasons[2], "category" => $categories[1], "price_per_person_1" => 1100.00, "price_per_person_2" => 1000.00, "price_per_person_3" => 900.00],
+                    ["season_name" => $seasons[2], "category" => $categories[2], "price_per_person_1" => 1000.00, "price_per_person_2" => 900.00, "price_per_person_3" => 800.00],
                 ],
                 "gallery_image_urls" => [
                     "https://images.pexels.com/photos/1578997/pexels-photo-1578997.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",

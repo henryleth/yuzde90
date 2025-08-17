@@ -102,7 +102,7 @@ trait HandlesMediaUploads
 
             // Orijinal görseli kaydet (WebP olarak %90 kalite)
             $image = Image::read($tempPath);
-            $encodedImage = $image->encode(new WebpEncoder(quality: 85));
+            $encodedImage = $image->encode(new WebpEncoder(quality: 80));
             Storage::disk('public')->put($fullPath, $encodedImage);
 
             // Thumbnail oluştur ve kaydet (%75 kalite WebP)
