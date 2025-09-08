@@ -272,8 +272,6 @@ return [
             'error' => 'Ocurrió un error. Por favor, inténtelo de nuevo.',
             'contact_info' => 'Para respuesta rápida, contacto directo:',
             'recaptcha_required' => 'Por favor, complete la verificación reCAPTCHA.',
-            'contact_info' => 'Para respuesta rápida, contacto directo:',
-            'recaptcha_required' => 'Por favor, complete la verificación reCAPTCHA.',
         ],
         'hero' => [
             'duration' => '{days} Días {nights} Noches',

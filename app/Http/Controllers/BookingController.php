@@ -148,13 +148,22 @@ class BookingController extends Controller
         // Email gönder (birden fazla adrese gönderilebilir)
         $bookingEmails = explode(',', env('BOOKING_EMAILS', 'info@turquiana.com'));
         
+        // Güvenlik kontrolü - boş email'leri filtrele
+        $bookingEmails = array_filter(array_map('trim', $bookingEmails), function($email) {
+            return !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
+        });
+        
+        if (empty($bookingEmails)) {
+            $bookingEmails = ['info@turquiana.com']; // Fallback
+        }
+        
         Mail::html($emailContent, function ($message) use ($data, $bookingEmails) {
             foreach ($bookingEmails as $email) {
                 $message->to(trim($email));
             }
             $message->subject('🎯 Nueva Solicitud de Reserva - ' . $data['tour_title'])
-                    ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))
-                    ->replyTo($data['email'], $data['name']);
+                    ->from(env('MAIL_FROM_ADDRESS', 'info@turquiana.com'), env('MAIL_FROM_NAME', 'Turquiana'))
+                    ->replyTo($data['email'] ?: 'noreply@turquiana.com', $data['name'] ?: 'Cliente');
         });
 
         // Müşteriye otomatik yanıt gönder (şimdilik disabled)
