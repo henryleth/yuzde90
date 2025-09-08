@@ -75,7 +75,9 @@ return [
         ],
     ],
     'about_us' => [
-        'head_title' => "About Us",
+        'head_title' => "About Us - TUR10",
+        'meta_description' => 'The spirit of discovering Turkey\'s hidden beauties. Our story, values and authentic travel experiences offered with passion.',
+        'meta_keywords' => 'about us, travel agency, tour company, Turkey tours, authentic experience, our story',
         'hero' => [
             'title' => "The Spirit of Discovery",
             'subtitle' => "We are not just a travel agency; we are storytellers who arrange journeys to the heart of Turkey.",
@@ -107,7 +109,9 @@ return [
         ],
     ],
     'contact_us' => [
-        'head_title' => "Contact",
+        'head_title' => "Contact - TUR10",
+        'meta_description' => 'Your dream vacation is just a message away. Contact us and let\'s start your journey. Phone, email and office information.',
+        'meta_keywords' => 'contact, tour booking, travel agency, phone, email, office',
         'hero' => [
             'title' => "Ready for an Adventure?",
             'subtitle' => "Your dream vacation is just a message away. Contact us, and let's start your journey.",

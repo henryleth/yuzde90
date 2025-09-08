@@ -75,7 +75,9 @@ return [
         ],
     ],
     'about_us' => [
-        'head_title' => "Sobre Nosotros",
+        'head_title' => "Sobre Nosotros - Turquiana",
+        'meta_description' => 'El espíritu del descubrimiento de las bellezas ocultas de Turquía. Nuestra historia, valores y experiencias de viaje auténticas ofrecidas con pasión.',
+        'meta_keywords' => 'sobre nosotros, agencia de viajes, empresa de tours, tours de Turquía, experiencia auténtica, nuestra historia',
         'hero' => [
             'title' => "El Espíritu del Descubrimiento",
             'subtitle' => "No somos solo una agencia de viajes; somos contadores de historias que organizan viajes al corazón de Turquía.",
@@ -107,7 +109,9 @@ return [
         ],
     ],
     'contact_us' => [
-        'head_title' => "Contacto",
+        'head_title' => "Contacto - Turquiana",
+        'meta_description' => 'Las vacaciones de tus sueños están a solo un mensaje de distancia. Contáctanos y comencemos tu viaje. Teléfono, correo electrónico e información de oficina.',
+        'meta_keywords' => 'contacto, reserva de tours, agencia de viajes, teléfono, correo electrónico, oficina',
         'hero' => [
             'title' => "¿Listo para una Aventura?",
             'subtitle' => "Las vacaciones de tus sueños están a solo un mensaje de distancia. Contáctanos y comencemos tu viaje.",

@@ -75,7 +75,9 @@ return [
         ],
     ],
     'about_us' => [
-        'head_title' => "Hakkımızda",
+        'head_title' => "Hakkımızda - TUR10",
+        'meta_description' => 'Türkiye\'nin saklı güzelliklerini keşfetmenin ruhu. Bizim hikayemiz, değerlerimiz ve tutkuyla sunduğumuz otantik seyahat deneyimleri.',
+        'meta_keywords' => 'hakkımızda, seyahat acentesi, tur şirketi, Türkiye turları, otantik deneyim, hikayemiz',
         'hero' => [
             'title' => "Keşfetmenin Ruhu",
             'subtitle' => "Biz sadece bir seyahat acentesi değiliz; bizler, Türkiye'nin kalbine yolculuk düzenleyen hikaye anlatıcılarıyız.",
@@ -107,7 +109,9 @@ return [
         ],
     ],
     'contact_us' => [
-        'head_title' => "İletişim",
+        'head_title' => "İletişim - TUR10",
+        'meta_description' => 'Hayalinizdeki tatil bir mesaj uzağınızda. Bize ulaşın, yolculuğunuza başlayalım. Telefon, e-posta ve ofis bilgilerimiz.',
+        'meta_keywords' => 'iletişim, tur rezervasyon, seyahat acentesi, telefon, e-posta, ofis',
         'hero' => [
             'title' => "Maceraya Hazır mısınız?",
             'subtitle' => "Hayalinizdeki tatil bir mesaj uzağınızda. Bize ulaşın, yolculuğunuza başlayalım.",

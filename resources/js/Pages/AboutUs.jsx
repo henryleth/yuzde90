@@ -12,7 +12,45 @@ export default function AboutUs() {
 
     return (
         <GuestLayout>
-            <Head title={t('about_us.head_title', "Hakkımızda")} />
+            <Head 
+                title={t('about_us.head_title', "Hakkımızda - TUR10")}
+                meta={[
+                    {
+                        name: 'description',
+                        content: t('about_us.meta_description', 'Türkiye\'nin saklı güzelliklerini keşfetmenin ruhu. Bizim hikayemiz, değerlerimiz ve tutkuyla sunduğumuz otantik seyahat deneyimleri.')
+                    },
+                    {
+                        name: 'keywords',
+                        content: t('about_us.meta_keywords', 'hakkımızda, seyahat acentesi, tur şirketi, Türkiye turları, otantik deneyim, hikayemiz')
+                    },
+                    // Open Graph Meta Tags
+                    {
+                        property: 'og:title',
+                        content: t('about_us.head_title', "Hakkımızda - TUR10")
+                    },
+                    {
+                        property: 'og:description',
+                        content: t('about_us.meta_description', 'Türkiye\'nin saklı güzelliklerini keşfetmenin ruhu. Bizim hikayemiz, değerlerimiz ve otantik seyahat deneyimleri.')
+                    },
+                    {
+                        property: 'og:type',
+                        content: 'website'
+                    },
+                    // Twitter Card Meta Tags
+                    {
+                        name: 'twitter:card',
+                        content: 'summary'
+                    },
+                    {
+                        name: 'twitter:title',
+                        content: t('about_us.head_title', "Hakkımızda - TUR10")
+                    },
+                    {
+                        name: 'twitter:description',
+                        content: t('about_us.meta_description', 'Türkiye\'nin saklı güzelliklerini keşfetmenin ruhu. Bizim hikayemiz ve otantik seyahat deneyimleri.')
+                    }
+                ]}
+            />
 
             {/* Hero Section */}
             <section className="relative h-[50vh] md:h-[60vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: `url('https://images.pexels.com/photos/3278215/pexels-photo-3278215.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')` }}>

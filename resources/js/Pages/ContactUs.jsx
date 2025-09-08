@@ -21,7 +21,45 @@ export default function ContactUs() {
 
     return (
         <GuestLayout>
-            <Head title={t('contact_us.head_title', "İletişim")} />
+            <Head 
+                title={t('contact_us.head_title', "İletişim - TUR10")}
+                meta={[
+                    {
+                        name: 'description',
+                        content: t('contact_us.meta_description', 'Hayalinizdeki tatil bir mesaj uzağınızda. Bize ulaşın, yolculuğunuza başlayalım. Telefon, e-posta ve ofis bilgilerimiz.')
+                    },
+                    {
+                        name: 'keywords',
+                        content: t('contact_us.meta_keywords', 'iletişim, tur rezervasyon, seyahat acentesi, telefon, e-posta, ofis')
+                    },
+                    // Open Graph Meta Tags
+                    {
+                        property: 'og:title',
+                        content: t('contact_us.head_title', "İletişim - TUR10")
+                    },
+                    {
+                        property: 'og:description',
+                        content: t('contact_us.meta_description', 'Hayalinizdeki tatil bir mesaj uzağınızda. Bize ulaşın, yolculuğunuza başlayalım.')
+                    },
+                    {
+                        property: 'og:type',
+                        content: 'website'
+                    },
+                    // Twitter Card Meta Tags
+                    {
+                        name: 'twitter:card',
+                        content: 'summary'
+                    },
+                    {
+                        name: 'twitter:title',
+                        content: t('contact_us.head_title', "İletişim - TUR10")
+                    },
+                    {
+                        name: 'twitter:description',
+                        content: t('contact_us.meta_description', 'Hayalinizdeki tatil bir mesaj uzağınızda. Bize ulaşın, yolculuğunuza başlayalım.')
+                    }
+                ]}
+            />
 
             {/* Hero Section */}
             <section className="relative h-[40vh] md:h-[50vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: `url('https://images.pexels.com/photos/1583339/pexels-photo-1583339.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')` }}>
@@ -52,7 +90,7 @@ export default function ContactUs() {
                                 <div>
                                     <h3 className="text-xl font-semibold">{t('contact_us.info.email_title', "E-posta")}</h3>
                                     <p className="text-muted-foreground">{t('contact_us.info.email_text', "Tüm sorularınız için 24 saat içinde yanıt veriyoruz.")}</p>
-                                    <a href="mailto:info@tur10.com" className="text-primary font-bold hover:underline">info@tur10.com</a>
+                                    <a href="mailto:info@turquiana.com" className="text-primary font-bold hover:underline">info@tur10.com</a>
                                 </div>
                             </Card>
                              <Card className="contact-info-card p-6 bg-card shadow-lg border-none flex items-start space-x-4 transform hover:-translate-y-2 transition-transform duration-300">
