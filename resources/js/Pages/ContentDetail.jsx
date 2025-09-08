@@ -6,127 +6,158 @@ import { useTheme } from '@/Context/ThemeContext';
 import moment from 'moment';
 import 'moment/locale/tr';
 import LazyImage from '@/Components/LazyImage'; // LazyImage bileşenini import et
-import { ChevronRight, Calendar, Tag } from 'lucide-react';
+import { ChevronRight, Calendar, Tag, Clock, ArrowRight, MapPin } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Badge } from '@/Components/ui/badge';
+import { Separator } from '@/Components/ui/separator';
 
 // Kenar çubuğu için bir bileşen
-const Sidebar = ({ relatedPosts, allCategories, allDestinations, relatedTours, recentContents }) => {
+const Sidebar = ({ post, relatedPosts, allCategories, allDestinations, relatedTours, recentContents, destinationTours, destinationPosts }) => {
   const { t } = useTranslation();
+  
+  // İlgili destinasyon (post'un ilk destinasyonu)
+  const relatedDestination = post?.destinations?.[0];
+  
   return (
-  <aside className="sidebar w-full lg:w-1/3 lg:pl-8">
-    {/* İlgili Yazılar */}
-    {relatedPosts && relatedPosts.length > 0 && (
-      <div className="sidebar-widget mb-8 bg-card p-4 rounded-lg border border-border shadow-sm">
-        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.related_posts', 'İlgili Yazılar')}</h3>
-        <ul className="sidebar-post-list space-y-4">
-          {relatedPosts.map(post => (
-            <li key={post.id} className="sidebar-post-item flex items-center">
-              <Link href={route('contents.show', { slug: post.slug })} className="flex items-center group">
-                <LazyImage 
-                  src={post.image_thumbnail_url || 'https://placehold.co/80'} 
-                  alt={post.title} 
-                  className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
-                  wrapperClassName="w-16 h-16"
-                  effect="blur"
-                />
-                <span className="font-semibold text-muted-foreground group-hover:text-primary transition-colors">{post.title}</span>
+    <aside className="sidebar w-full lg:w-1/3 lg:pl-8 space-y-6">
+      {/* İlgili Destinasyon */}
+      {relatedDestination && (
+        <div className="space-y-6">
+          {/* Destinasyon Kartı */}
+          <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <CardContent className="p-0">
+              <Link href={route('destinations.show', { slug: relatedDestination.slug })} className="group block">
+                <div className="space-y-0">
+                  {/* Destinasyon Görseli */}
+                  <div className="relative overflow-hidden h-48">
+                    <LazyImage 
+                      src={relatedDestination.image?.original_url || relatedDestination.image_url || 'https://images.pexels.com/photos/3418464/pexels-photo-3418464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'} 
+                      alt={relatedDestination.name} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      wrapperClassName="w-full h-full block"
+                      effect="blur"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-foreground transition-colors">
+                        {relatedDestination.name}
+                      </h3>
+                      {relatedDestination.summary && (
+                        <p className="text-sm text-white/90">
+                          {relatedDestination.summary}
+                        </p>
+                      )}
+                    </div>
+                    <div className="absolute top-4 right-4">
+                      <ArrowRight className="h-5 w-5 text-white group-hover:text-primary-foreground transition-colors" />
+                    </div>
+                  </div>
+                </div>
               </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+            </CardContent>
+          </Card>
 
-    {/* İlgili Turlar */}
-    {relatedTours && relatedTours.length > 0 && (
-      <div className="sidebar-widget mb-8 bg-card p-4 rounded-lg border border-border shadow-sm">
-        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.related_tours', 'İlgili Turlar')}</h3>
-        <ul className="sidebar-post-list space-y-4">
-          {relatedTours.map(tour => (
-            <li key={tour.id} className="sidebar-post-item flex items-center">
-              <Link href={route('tour.show', { slug: tour.slug })} className="flex items-center group">
-                <LazyImage 
-                  src={tour.image_thumbnail || 'https://placehold.co/80'} 
-                  alt={tour.title} 
-                  className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
-                  wrapperClassName="w-16 h-16"
-                  effect="blur"
-                />
-                <span className="font-semibold text-muted-foreground group-hover:text-primary transition-colors">{tour.title}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+          {/* Bu Destinasyondaki Turlar */}
+          {destinationTours && destinationTours.length > 0 && (
+            <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <CardHeader className="pb-3 px-3 pt-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  {t('content_detail.sidebar.destination_tours', '{destination} Turları', { destination: relatedDestination.name })}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 px-3 pb-3">
+                <div className="space-y-4">
+                  {destinationTours.slice(0, 4).map((tour, index, array) => (
+                    <div key={tour.id}>
+                      <Link href={route('tour.show', { slug: tour.slug })} className="group block">
+                        <div className="flex items-start gap-3">
+                          <div className="relative overflow-hidden rounded-lg flex-shrink-0 w-16 h-16">
+                            <LazyImage 
+                              src={tour.image_thumbnail || 'https://placehold.co/80'} 
+                              alt={tour.title} 
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              wrapperClassName="w-full h-full block"
+                              effect="blur"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-sm leading-tight text-foreground group-hover:text-primary transition-colors">
+                              {tour.title}
+                            </h4>
+                            {tour.duration && (
+                              <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                                <Clock className="h-3 w-3" />
+                                <span>{tour.duration} gün</span>
+                              </div>
+                            )}
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                        </div>
+                      </Link>
+                      {index < array.length - 1 && <Separator className="mt-4" />}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-    {/* Son İçerikler */}
-    {recentContents && recentContents.length > 0 && (
-      <div className="sidebar-widget mb-8 bg-card p-4 rounded-lg border border-border shadow-sm">
-        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.recent_contents', 'Son İçerikler')}</h3>
-        <ul className="sidebar-post-list space-y-4">
-          {recentContents.map(content => (
-            <li key={content.id} className="sidebar-post-item flex items-center">
-              <Link href={route('contents.show', { slug: content.slug })} className="flex items-center group">
-                <LazyImage 
-                  src={content.image_thumbnail || 'https://placehold.co/80'} 
-                  alt={content.title} 
-                  className="w-16 h-16 object-cover rounded-md mr-4 group-hover:opacity-80 transition-opacity"
-                  wrapperClassName="w-16 h-16"
-                  effect="blur"
-                />
-                <span className="font-semibold text-muted-foreground group-hover:text-primary transition-colors">{content.title}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
-
-    {/* Kategoriler */}
-    {allCategories && allCategories.length > 0 && (
-      <div className="sidebar-widget mb-8 bg-card p-4 rounded-lg border border-border shadow-sm">
-        <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.categories', 'Kategoriler')}</h3>
-        <ul className="sidebar-category-list space-y-2">
-          {allCategories.map(category => (
-            <li key={category.id}>
-              <Link 
-                href={route('contents.index', { category: category.slug })}
-                className="sidebar-category-link text-muted-foreground hover:text-primary transition-colors flex justify-between items-center"
-              >
-                {category.name}
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
-
-    {/* Destinasyonlar */}
-    {allDestinations && allDestinations.length > 0 && (
-        <div className="sidebar-widget bg-card p-4 rounded-lg border border-border shadow-sm">
-            <h3 className="sidebar-widget-title text-xl font-bold mb-4 text-foreground">{t('content_detail.sidebar.destinations', 'Destinasyonlar')}</h3>
-            <div className="flex flex-wrap gap-2">
-                {allDestinations.map(destination => (
-                    <Link 
-                        key={destination.id}
-                        href={route('destinations.show', { slug: destination.slug })}
-                        className="sidebar-destination-tag bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground px-3 py-1 rounded-full text-sm transition-colors"
-                    >
-                        {destination.name}
-                    </Link>
-                ))}
-            </div>
+          {/* Bu Destinasyondaki Blog Yazıları */}
+          {destinationPosts && destinationPosts.length > 0 && (
+            <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <CardHeader className="pb-3 px-3 pt-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Tag className="h-5 w-5 text-primary" />
+                  {t('content_detail.sidebar.destination_posts', '{destination} ile İlgili Yazılar', { destination: relatedDestination.name })}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 px-3 pb-3">
+                <div className="space-y-4">
+                  {destinationPosts.filter(p => p.id !== post.id).slice(0, 4).map((destPost, index, array) => (
+                    <div key={destPost.id}>
+                      <Link href={route('contents.show', { slug: destPost.slug })} className="group block">
+                        <div className="flex items-start gap-3">
+                          <div className="relative overflow-hidden rounded-lg flex-shrink-0 w-16 h-16">
+                            <LazyImage 
+                              src={destPost.image_thumbnail_url || 'https://placehold.co/80'} 
+                              alt={destPost.title} 
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              wrapperClassName="w-full h-full block"
+                              effect="blur"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-sm leading-tight text-foreground group-hover:text-primary transition-colors">
+                              {destPost.title}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                              <Clock className="h-3 w-3" />
+                              <span>{moment(destPost.published_at).locale('tr').format('DD MMM')}</span>
+                            </div>
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                        </div>
+                      </Link>
+                      {index < array.length - 1 && <Separator className="mt-4" />}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
-    )}
-  </aside>
-)};
+      )}
+    </aside>
+  );
+};
 
 
 export default function ContentDetail({ seo }) {
   const { t } = useTranslation();
   // Gerekli propları usePage'den alıyoruz.
-  const { post, relatedPosts, allCategories, allDestinations, relatedTours, recentContents } = usePage().props;
+  const { post, relatedPosts, allCategories, allDestinations, relatedTours, recentContents, destinationTours, destinationPosts } = usePage().props;
 
   // Eğer post verisi yoksa, kullanıcıya bir bilgilendirme mesajı gösteriyoruz.
   if (!post) {
@@ -168,6 +199,12 @@ export default function ContentDetail({ seo }) {
                 <Calendar className="h-4 w-4 mr-2" />
                 {moment(post.published_at).locale('tr').format('DD MMMM YYYY')}
               </span>
+              {post.destinations?.map(destination => (
+                <Link key={destination.id} href={route('destinations.show', { slug: destination.slug })} className="meta-destination-tag hover:text-primary transition-colors flex items-center">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  {destination.name}
+                </Link>
+              ))}
               {post.content_categories?.map(cat => (
                 <Link key={cat.id} href={route('contents.index', { category: cat.slug })} className="meta-category-tag hover:text-primary transition-colors flex items-center">
                   <Tag className="h-4 w-4 mr-1" />
@@ -180,7 +217,7 @@ export default function ContentDetail({ seo }) {
 
         {/* Ana İçerik ve Kenar Çubuğu */}
         <div className="main-content-area max-w-6xl mx-auto px-4 py-12">
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-3">
             
             {/* Makale İçeriği */}
             <main className="content-body w-full lg:w-3/4">
@@ -199,11 +236,14 @@ export default function ContentDetail({ seo }) {
             
             {/* Kenar Çubuğu */}
             <Sidebar 
+              post={post}
               relatedPosts={relatedPosts}
               allCategories={allCategories}
               allDestinations={allDestinations}
               relatedTours={relatedTours}
               recentContents={recentContents}
+              destinationTours={destinationTours}
+              destinationPosts={destinationPosts}
             />
           </div>
         </div>

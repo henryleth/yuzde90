@@ -44,6 +44,9 @@ Route::get(config('dynamic_routes.contact_us', 'contact'), function () {
     return Inertia::render('ContactUs');
 })->name('contact.us');
 
+// Rezervasyon talebi rotası
+Route::post('api/booking-request', [App\Http\Controllers\BookingController::class, 'store']);
+
 // Destinasyon Rotaları
 Route::get(config('dynamic_routes.destination_index', 'destinations'), [DestinationController::class, 'index'])->name('destinations.index');
 Route::get(config('dynamic_routes.destination_show', 'destinations/{slug}'), [DestinationController::class, 'show'])->name('destinations.show');

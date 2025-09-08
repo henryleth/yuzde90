@@ -90,7 +90,8 @@ class ContentController extends Controller
         $content = Content::where('slug', $slug)
             ->with([
                 'contentCategories:id,name,slug', 
-                'destinations:id,name,slug', 
+                'destinations:id,name,slug,summary,image_id', 
+                'destinations.image:id,disk,file_name,path',
                 'image:id,disk,file_name,path'
             ])
             ->first();
@@ -123,8 +124,11 @@ class ContentController extends Controller
             ]);
 
         $relatedTours = collect();
+        $destinationTours = collect();
+        $destinationPosts = collect();
+        
         if ($destinationIds->isNotEmpty()) {
-            $relatedTours = \App\Models\Tour::select(['id', 'title', 'slug', 'featured_media_id'])
+            $relatedTours = \App\Models\Tour::select(['id', 'title', 'slug', 'featured_media_id', 'duration_days', 'duration_nights'])
                 ->whereHas('destinations', fn($q) => $q->whereIn('id', $destinationIds))
                 ->with('featuredMedia:id,disk,file_name,path')
                 ->where('is_published', true)
@@ -135,7 +139,45 @@ class ContentController extends Controller
                     'id' => $tour->id,
                     'title' => $tour->title,
                     'slug' => $tour->slug,
+                    'duration' => $tour->duration_days,
+                    'duration_days' => $tour->duration_days,
+                    'duration_nights' => $tour->duration_nights,
                     'image_thumbnail' => $tour->featuredMedia->thumbnail_url ?? null,
+                ]);
+
+            // İlk destinasyon için özel turlar ve yazılar
+            $firstDestinationId = $destinationIds->first();
+            
+            $destinationTours = \App\Models\Tour::select(['id', 'title', 'slug', 'featured_media_id', 'duration_days', 'duration_nights'])
+                ->whereHas('destinations', fn($q) => $q->where('id', $firstDestinationId))
+                ->with('featuredMedia:id,disk,file_name,path')
+                ->where('is_published', true)
+                ->orderByDesc('created_at')
+                ->limit(6)
+                ->get()
+                ->map(fn ($tour) => [
+                    'id' => $tour->id,
+                    'title' => $tour->title,
+                    'slug' => $tour->slug,
+                    'duration' => $tour->duration_days,
+                    'duration_days' => $tour->duration_days,
+                    'duration_nights' => $tour->duration_nights,
+                    'image_thumbnail' => $tour->featuredMedia->thumbnail_url ?? null,
+                ]);
+
+            $destinationPosts = Content::select(['id', 'title', 'slug', 'published_at', 'image_id'])
+                ->where('id', '!=', $content->id)
+                ->whereHas('destinations', fn($q) => $q->where('id', $firstDestinationId))
+                ->with('image:id,disk,file_name,path')
+                ->orderByDesc('published_at')
+                ->limit(6)
+                ->get()
+                ->map(fn ($post) => [
+                    'id' => $post->id,
+                    'title' => $post->title,
+                    'slug' => $post->slug,
+                    'published_at' => $post->published_at,
+                    'image_thumbnail_url' => $post->image->thumbnail_url ?? null,
                 ]);
         }
 
@@ -168,11 +210,22 @@ class ContentController extends Controller
                 'image_original_url' => $content->image->original_url ?? null,
                 'image_thumbnail_url' => $content->image->thumbnail_url ?? null,
                 'content_categories' => $content->contentCategories->map(fn($cat) => ['id' => $cat->id, 'name' => $cat->name, 'slug' => $cat->slug]),
-                'destinations' => $content->destinations->map(fn($dest) => ['id' => $dest->id, 'name' => $dest->name, 'slug' => $dest->slug]),
+                'destinations' => $content->destinations->map(fn($dest) => [
+                    'id' => $dest->id, 
+                    'name' => $dest->name, 
+                    'slug' => $dest->slug,
+                    'summary' => $dest->summary,
+                    'image' => $dest->image ? [
+                        'original_url' => $dest->image->original_url,
+                        'thumbnail_url' => $dest->image->thumbnail_url,
+                    ] : null,
+                ]),
             ],
             'relatedPosts' => $relatedContents,
             'relatedTours' => $relatedTours,
             'recentContents' => $recentContents,
+            'destinationTours' => $destinationTours,
+            'destinationPosts' => $destinationPosts,
             'allCategories' => ContentCategory::select(['id', 'name', 'slug'])->get(),
             'allDestinations' => Destination::select(['id', 'name', 'slug'])->get(),
         ]);

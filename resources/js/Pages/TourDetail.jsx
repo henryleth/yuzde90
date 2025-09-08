@@ -35,6 +35,7 @@ export default function TourDetail({ tour, config, seo }) {
   const [lightboxIndex, setLightboxIndex] = useState(-1);
   const [isNavSticky, setNavSticky] = useState(false);
   const [navTop, setNavTop] = useState(64); // Alt menünün 'top' pozisyonu için state
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { darkMode, setHeaderShrunk } = useTheme();
   const tourNavRef = useRef(null);
   const bookingFormRef = useRef(null);
@@ -42,32 +43,95 @@ export default function TourDetail({ tour, config, seo }) {
 
   // İspanyolca konuşulan ülkelerin listesi
   const spanishSpeakingCountries = [
-    { value: 'ar', name: 'Arjantin' },
-    { value: 'bo', name: 'Bolivya' },
-    { value: 'cl', name: 'Şili' },
-    { value: 'co', name: 'Kolombiya' },
-    { value: 'cr', name: 'Kosta Rika' },
-    { value: 'cu', name: 'Küba' },
-    { value: 'do', name: 'Dominik Cumhuriyeti' },
-    { value: 'ec', name: 'Ekvador' },
+    { value: 'ar', name: 'Argentina' },
+    { value: 'bo', name: 'Bolivia' },
+    { value: 'cl', name: 'Chile' },
+    { value: 'co', name: 'Colombia' },
+    { value: 'cr', name: 'Costa Rica' },
+    { value: 'cu', name: 'Cuba' },
+    { value: 'do', name: 'República Dominicana' },
+    { value: 'ec', name: 'Ecuador' },
     { value: 'sv', name: 'El Salvador' },
-    { value: 'gq', name: 'Ekvator Ginesi' },
+    { value: 'gq', name: 'Guinea Ecuatorial' },
     { value: 'gt', name: 'Guatemala' },
     { value: 'hn', name: 'Honduras' },
-    { value: 'mx', name: 'Meksika' },
-    { value: 'ni', name: 'Nikaragua' },
-    { value: 'pa', name: 'Panama' },
+    { value: 'mx', name: 'México' },
+    { value: 'ni', name: 'Nicaragua' },
+    { value: 'pa', name: 'Panamá' },
     { value: 'py', name: 'Paraguay' },
-    { value: 'pe', name: 'Peru' },
-    { value: 'es', name: 'İspanya' },
+    { value: 'pe', name: 'Perú' },
+    { value: 'es', name: 'España' },
     { value: 'uy', name: 'Uruguay' },
     { value: 've', name: 'Venezuela' },
-    { value: 'pr', name: 'Porto Riko' }
+    { value: 'pr', name: 'Puerto Rico' },
+    { value: 'us', name: 'Estados Unidos' },
+    { value: 'ca', name: 'Canadá' },
+    { value: 'other', name: 'Otro' }
   ];
 
   const itineraryData = tour.itinerary || [];
   const galleryImages = tour.gallery_images_urls || [];
   const featuredImageUrl = tour.image?.original_url;
+
+  // reCAPTCHA script'ini yükle
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js?render=6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg';
+    script.async = true;
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup: script'i kaldır
+      const existingScript = document.querySelector('script[src*="recaptcha"]');
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
+    };
+  }, []);
+
+  // Form submit fonksiyonu
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // reCAPTCHA token'ını al
+      let token;
+      if (window.grecaptcha && window.grecaptcha.execute) {
+        token = await window.grecaptcha.execute('6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg', { action: 'booking_form' });
+      } else {
+        console.warn('reCAPTCHA not loaded, using development bypass');
+        token = 'development_bypass';
+      }
+      
+      const formData = new FormData(e.target);
+      formData.append('recaptcha_token', token);
+      formData.append('tour_id', tour.id);
+      formData.append('tour_title', tour.title);
+
+      // Form verilerini backend'e gönder
+      const response = await fetch('/api/booking-request', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        // Başarılı gönderim
+        alert(t('tour_detail.booking.success', 'Talebiniz başarıyla gönderildi. En kısa sürede size dönüş yapacağız.'));
+        e.target.reset(); // Formu temizle
+      } else {
+        throw new Error('Form gönderimi başarısız');
+      }
+    } catch (error) {
+      console.error('Form gönderim hatası:', error);
+      alert(t('tour_detail.booking.error', 'Bir hata oluştu. Lütfen tekrar deneyin.'));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const getSeasonIcon = (seasonName) => {
     const commonClasses = "mr-2 h-5 w-5";
@@ -178,14 +242,21 @@ export default function TourDetail({ tour, config, seo }) {
       
       if (scrollPosition > stickyThreshold) {
         setNavSticky(true);
-        const bookingFormTop = bookingFormRef.current.offsetTop;
-        const unstickyThreshold = bookingFormTop - navHeight - effectiveHeaderHeight;
+        
+        // Rezervasyon formuna gelince sticky kaldırma mantığı sadece mobilde çalışsın
+        if (isMobile) {
+          const bookingFormTop = bookingFormRef.current.offsetTop;
+          const unstickyThreshold = bookingFormTop - navHeight - effectiveHeaderHeight;
 
-        if (scrollPosition < unstickyThreshold) {
-          setNavTop(effectiveHeaderHeight);
+          if (scrollPosition < unstickyThreshold) {
+            setNavTop(effectiveHeaderHeight);
+          } else {
+            const newTop = unstickyThreshold - scrollPosition + effectiveHeaderHeight;
+            setNavTop(newTop);
+          }
         } else {
-          const newTop = unstickyThreshold - scrollPosition + effectiveHeaderHeight;
-          setNavTop(newTop);
+          // Masaüstünde sticky menu her zaman sabit kalır
+          setNavTop(effectiveHeaderHeight);
         }
       } else {
         setNavSticky(false);
@@ -558,72 +629,104 @@ export default function TourDetail({ tour, config, seo }) {
             {/* Kenar Çubuğu - Rezervasyon Formu */}
             <div className="lg:col-span-1">
               <div ref={bookingFormRef} className="sticky top-32">
-                <div className="bg-card rounded-lg border border-border p-6 reservation-form">
-                  {/* Form başlığı ve bilgilendirme metinleri */}
-                  <h3 className="text-2xl font-bold text-center mb-2">Başvuru ve Rezervasyon Formu</h3>
-                  <p className="text-center text-sm text-muted-foreground mb-1">*Tüm Alanlar Zorunludur</p>
-                  <p className="text-center text-sm text-muted-foreground mb-6">* ile işaretli alanlar zorunludur</p>
-                  
-                  {/* Rezervasyon formu */}
-                  <form className="space-y-4">
-                    {/* İsim alanı */}
-                    <div className="space-y-2">
-                      <Label htmlFor="name">İsim: <span className="text-red-500">*</span></Label>
-                      <Input id="name" type="text" required className="dark:bg-gray-800 dark:text-white" />
+                <Card className="overflow-hidden shadow-lg">
+                  <CardContent className="p-6">
+                    {/* Form başlığı */}
+                    <div className="text-center mb-6">
+                      <h3 className="text-xl font-semibold mb-2">{t('tour_detail.booking.title', 'Rezervasyon Talebi')}</h3>
+                      <p className="text-sm text-muted-foreground">{t('tour_detail.booking.subtitle', 'Ücretsiz fiyat teklifi ve danışmanlık alın')}</p>
                     </div>
                     
-                    {/* E-posta alanı */}
-                    <div className="space-y-2">
-                      <Label htmlFor="email">E-posta: <span className="text-red-500">*</span></Label>
-                      <Input id="email" type="email" required className="dark:bg-gray-800 dark:text-white" />
-                    </div>
-                    
-                    {/* Tur tarihi alanı */}
-                    <div className="space-y-2">
-                      <Label htmlFor="tour_date">Talep Edilen Tur Tarihi - Kesin veya yaklaşık tarih: <span className="text-red-500">*</span></Label>
-                      <Input id="tour_date" type="text" required className="dark:bg-gray-800 dark:text-white" />
-                    </div>
-                    
-                    {/* Katılımcı sayısı alanı */}
-                    <div className="space-y-2">
-                      <Label htmlFor="participants">Katılımcı sayısı: <span className="text-red-500">*</span></Label>
-                      <Input id="participants" type="number" required className="dark:bg-gray-800 dark:text-white" />
-                    </div>
-                    
-                    {/* Mesaj alanı */}
-                    <div className="space-y-2">
-                      <Label htmlFor="message">İlgilendiğiniz tur ve Mesajınız: <span className="text-red-500">*</span></Label>
-                      <Textarea id="message" rows="5" placeholder="Lütfen talebinizin ayrıntılarını buraya yazın. Planladığınız seyahat tarihini, seyahat edecek kişi sayısını, ziyaret etmek istediğiniz yerleri, ilgilendiğiniz tur paketini vb. eklerseniz çok yardımcı oluruz. Daha fazla bilgi verebilirseniz, ilk e-postada mümkün olduğunca fazla bilgi sağlayabiliriz." required className="dark:bg-gray-800 dark:text-white" />
-                    </div>
-                    
-                    {/* Ülke seçim alanı */}
-                    <div className="space-y-2">
-                      <Label htmlFor="country">Ülke <span className="text-red-500">*</span></Label>
-                      <Select>
-                        <SelectTrigger id="country" className="dark:bg-gray-800 dark:text-white">
-                          <SelectValue placeholder="Ülke Seçiniz" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {/* İspanyolca konuşulan ülkeler dinamik olarak listeleniyor */}
-                          {spanishSpeakingCountries.map((country) => (
-                            <SelectItem key={country.value} value={country.value}>
-                              {country.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    {/* Whatsapp numarası alanı */}
-                    <div className="space-y-2">
-                      <Label htmlFor="whatsapp">Whatsapp numarası:</Label>
-                      <Input id="whatsapp" type="tel" placeholder="İzniniz olmadan arama yapmıyoruz. Daha hızlı..." className="dark:bg-gray-800 dark:text-white" />
-                    </div>
-                    
-                    {/* Gönderme butonu */}
-                    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Göndermek</Button>
-                  </form>
-                </div>
+                    {/* Rezervasyon formu */}
+                    <form className="space-y-4" onSubmit={handleFormSubmit}>
+                      {/* İsim ve E-posta - Yan yana */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-sm font-medium">{t('tour_detail.booking.name', 'İsim')} <span className="text-destructive">*</span></Label>
+                          <Input id="name" name="name" type="text" required placeholder={t('tour_detail.booking.name_placeholder', 'Adınız')} />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="text-sm font-medium">{t('tour_detail.booking.email', 'E-posta')} <span className="text-destructive">*</span></Label>
+                          <Input id="email" name="email" type="email" required placeholder={t('tour_detail.booking.email_placeholder', 'ornek@email.com')} />
+                        </div>
+                      </div>
+                      
+                      {/* Tarih ve Katılımcı - Yan yana */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="tour_date" className="text-sm font-medium">{t('tour_detail.booking.date', 'Tur Tarihi')} <span className="text-destructive">*</span></Label>
+                          <Input id="tour_date" name="tour_date" type="text" required placeholder={t('tour_detail.booking.date_placeholder', 'Planlanan seyahat tarihi')} />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="participants" className="text-sm font-medium">{t('tour_detail.booking.participants', 'Katılımcı')} <span className="text-destructive">*</span></Label>
+                          <Input id="participants" name="participants" type="number" min="1" required placeholder="2" />
+                        </div>
+                      </div>
+                      
+                      {/* Ülke seçimi */}
+                      <div className="space-y-2">
+                        <Label htmlFor="country" className="text-sm font-medium">{t('tour_detail.booking.country', 'Ülke')} <span className="text-destructive">*</span></Label>
+                        <Select name="country">
+                          <SelectTrigger id="country">
+                            <SelectValue placeholder={t('tour_detail.booking.country_placeholder', 'Ülkenizi seçin')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {spanishSpeakingCountries.map((country) => (
+                              <SelectItem key={country.value} value={country.name}>
+                                {country.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {/* WhatsApp numarası */}
+                      <div className="space-y-2">
+                        <Label htmlFor="whatsapp" className="text-sm font-medium">{t('tour_detail.booking.whatsapp', 'WhatsApp')} {t('tour_detail.booking.whatsapp_note', '(izinsiz arama yapılmayacak)')}</Label>
+                        <Input 
+                          id="whatsapp" 
+                          name="whatsapp"
+                          type="tel" 
+                          placeholder={t('tour_detail.booking.whatsapp_placeholder', '+90 555 123 45 67')} 
+                        />
+                      </div>
+                      
+                      {/* Mesaj alanı */}
+                      <div className="space-y-2">
+                        <Label htmlFor="message" className="text-sm font-medium">{t('tour_detail.booking.message', 'Mesajınız')}</Label>
+                        <Textarea 
+                          id="message" 
+                          name="message"
+                          rows="4" 
+                          placeholder={t('tour_detail.booking.message_placeholder', 'Özel istekleriniz, sorularınız...')} 
+                        />
+                      </div>
+                      
+                      {/* Gönderme butonu */}
+                      <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+                        <Mail className="w-4 h-4 mr-2" />
+                        {isSubmitting ? t('tour_detail.booking.submitting', 'Gönderiliyor...') : t('tour_detail.booking.submit', 'Teklif İste')}
+                      </Button>
+                      
+                      {/* İletişim bilgileri */}
+                      <div className="pt-4 border-t border-border">
+                        <p className="text-xs text-muted-foreground text-center mb-3">
+                          {t('tour_detail.booking.contact_info', 'Hızlı yanıt için direkt iletişim:')}
+                        </p>
+                        <div className="flex justify-center">
+                          <Button variant="outline" size="sm" className="w-full">
+                            <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.787"/>
+                            </svg>
+                            WhatsApp
+                          </Button>
+                        </div>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>

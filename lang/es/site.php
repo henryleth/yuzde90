@@ -341,4 +341,204 @@ return [
         'mid_season' => 'Abril - Mayo / Septiembre - Octubre',
         'high_season' => 'Junio - Agosto',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Home Page
+    |--------------------------------------------------------------------------
+    */
+    'home' => [
+        // Hero Section
+        'hero' => [
+            'title' => 'Los Paraísos de Turquía Esperan a Ser Descubiertos',
+            'subtitle' => 'Descubre las bellezas mágicas de Turquía con tours inolvidables y experiencias únicas.',
+            'button' => 'Descubre Todos Nuestros Tours',
+        ],
+
+        // Marketing Section
+        'marketing' => [
+            'title' => 'Tu Tour Soñado por Turquía se Hace Realidad con un Toque Profesional',
+            'subtitle1' => 'Desde la fascinante Estambul hasta la mágica Capadocia, desde la antigua Éfeso hasta la blanca Pamukkale, acumula recuerdos inolvidables en estas tierras con guías profesionales que hablan exclusivamente en español, preparados especialmente para ti.',
+            'title2' => 'Una Experiencia de Vacaciones Todo Incluido, Libre de Estrés',
+            'subtitle2' => 'Nosotros nos encargamos de todos los detalles excepto tus vuelos internacionales. Solo te queda disfrutar de Turquía. Con alojamiento cómodo, sabores locales y un plan de viaje perfecto, cada momento de tu viaje será memorable.',
+            'tursab_title' => 'Verificación de Agencia Oficial',
+            'tursab_text' => 'Tu seguridad es nuestra prioridad. <br/> Verifica nuestro registro con el número de licencia <span class="font-bold">A-5240</span>.',
+        ],
+
+        // Featured Tours
+        'featured_tours' => [
+            'title' => 'Nuestros Tours Destacados',
+            'no_tours' => 'Actualmente no hay tours destacados disponibles.',
+        ],
+
+        // Popular Destinations
+        'popular_destinations' => [
+            'title' => 'Destinos Populares',
+            'button' => 'Ver Tours',
+            'no_destinations' => 'Actualmente no hay destinos populares disponibles.',
+        ],
+
+        // Why Us
+        'why_us' => [
+            'title' => '¿Por Qué Elegirnos?',
+            'subtitle' => 'Con años de experiencia y un enfoque de servicio centrado en la satisfacción del cliente, estamos aquí para ofrecerte la mejor experiencia de viaje.',
+            'item1_title' => 'Amplia Selección de Destinos',
+            'item1_text' => 'Tours únicos desde cada rincón de Turquía.',
+            'item2_title' => 'Satisfacción del Cliente',
+            'item2_text' => 'Miles de comentarios de clientes satisfechos.',
+            'item3_title' => 'Precios Asequibles',
+            'item3_text' => 'Garantía del mejor precio.',
+        ],
+
+        // CTA
+        'cta' => [
+            'title' => 'Planifica el Tour de tus Sueños',
+            'subtitle' => '¿Qué esperas para descubrir los paisajes fascinantes de Turquía? ¡Contáctanos ahora!',
+            'button' => 'Contáctanos',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | About Us Page
+    |--------------------------------------------------------------------------
+    */
+    'about_us' => [
+        'head_title' => "Sobre Nosotros - Turquiana",
+        'meta_description' => 'Agencia de viajes local especializada en organizar paquetes turísticos para visitantes hispanohablantes en Turquía. Servicio boutique.',
+        'meta_keywords' => 'sobre nosotros, agencia de viajes, guía español, TURSAB A-5240, tour boutique, tours de Turquía',
+        
+        // Hero Section
+        'hero' => [
+            'title' => 'Turquiana - La Mejor Agencia de Viajes',
+            'subtitle' => 'Agencia de viajes local especializada en organizar paquetes turísticos para visitantes hispanohablantes en Turquía.',
+            'tripadvisor' => 'Certificado de Excelencia TripAdvisor',
+            'guarantee' => 'Mejor Precio Garantizado',
+            'support' => 'Soporte 7/24',
+        ],
+
+        // ¿Quiénes Somos?
+        'who_we_are' => [
+            'title' => '¿Quiénes Somos?',
+            'intro' => 'Entre tantas agencias de viajes ofreciendo itinerarios iguales o similares, es difícil tomar una decisión. Contratar un servicio online desde un país tan lejano y tener confianza es aún más difícil.',
+            'description' => 'Conocer bien el equipo, las experiencias, las diferencias en el sistema de trabajar de la empresa, puede ayudarle a hacer su elección para disfrutar al máximo de su viaje en Turquía sin decepciones.',
+        ],
+
+        // Marca
+        'brand' => [
+            'description' => 'Turquiana es una marca de Pride Travel y se especializa en brindar servicios exclusivos a visitantes hispanohablantes.',
+        ],
+
+        // Especialidad
+        'specialty' => [
+            'title' => 'Agencia Local Especializada para Visitantes Hispanohablantes',
+            'qualified_staff' => 'Personal Cualificado',
+            'qualified_text' => 'La empresa tiene personal cualificado con años de experiencia en turismo y conoce bien a sus clientes y puede atenderlos de la mejor manera posible.',
+            'spanish_native' => 'Servicio en Idioma Nativo',
+            'spanish_text' => 'El personal habla bien el idioma español y atiende a los correos y llamadas telefónicas en su lengua materna.',
+            'time_importance' => 'Importancia de su Tiempo',
+            'time_text' => 'Turquiana sabe bien la importancia de su tiempo en Turquía y hace todo lo posible para que los visitantes disfruten de su tiempo.',
+            'tripadvisor' => 'Reconocimiento TripAdvisor',
+            'tripadvisor_text' => 'Turquiana es una de las mejores agencias de viajes en Turquía con el certificado de excelencia y Travellers\' Choice en TripAdvisor.',
+        ],
+
+        // TURSAB
+        'tursab' => [
+            'description' => 'Asociación de Agencias de Viajes de Turquía - Miembro Oficial',
+            'footnote' => '* TURSAB (Türkiye Seyahat Acenteleri Birliği) es la Asociación de Agencias de Viajes de Turquía, organización oficial que regula y supervisa todas las agencias de viajes en Turquía, garantizando servicios de calidad y protección al consumidor.',
+        ],
+
+        // ¿Por Qué Elegirnos?
+        'why_choose' => [
+            'title' => '¿Cuál es la Diferencia de Turquiana? ¿Por Qué Elegirnos?',
+            'guarantee_title' => 'MEJOR PRECIO GARANTIZADO EN RELACIÓN CALIDAD-PRECIO',
+            'guarantee_subtitle' => 'Compre con total tranquilidad...',
+            
+            'official_agency' => 'Agencia Oficial',
+            'official_text' => 'Turquiana, siendo una agencia oficial con certificados completos de TURSAB A-5240, ofrece un servicio de alta calidad.',
+            
+            'support_247' => 'Soporte Especial 7/24',
+            'support_text' => 'Dándoles soporte especial durante 7/24 a todos sus clientes antes y después de la compra de los servicios y durante el tour por Turquía.',
+            
+            'quality_hotels' => 'Hoteles de Buena Ubicación y Calidad',
+            'hotels_text' => 'Trabaja con hoteles bien ubicados y de buena calidad.',
+            
+            'spanish_only' => 'Tours Guiados Exclusivamente en Español',
+            'spanish_text' => 'Ofrece los tours guiados exclusivamente en español (no con un guía que habla dos idiomas en el mismo grupo).',
+            
+            'certified_guides' => 'Guías Profesionales y Certificados',
+            'guides_text' => 'Trabaja con guías profesionales y certificados del Ministerio de Turismo y con personal altamente cualificado y dedicado.',
+            
+            'small_groups' => 'Tours Compartidos en Grupos Pequeños',
+            'groups_text' => 'Ofrece los tours compartidos en grupos de número reducido y hace todo lo posible no sólo para vender sino también para satisfacer las expectativas.',
+            
+            'packages_title' => 'En Los Paquetes Ofrecidos por Turquiana',
+            'clear_details' => 'Todas las inclusiones y exclusiones se detallan con mucha claridad.',
+            'complete_packages' => 'Los paquetes ofrecidos son muy completos sin ofrecer las principales e importantes excursiones como opcional.',
+            'no_hidden_costs' => 'No hay pagos escondidos a solicitar a clientes como sorpresa cuando lleguen al destino.',
+            'reasonable_prices' => 'Nuestros precios son súper razonables manteniendo un buen equilibrio entre la relación calidad-precio.',
+            
+            'price_warning' => 'Nota Importante',
+            'price_text' => 'En el mercado libre siempre es posible encontrar precios más económicos, pero en última instancia ¡lo barato sale más caro!',
+        ],
+
+        // Credenciales
+        'credentials' => [
+            'tursab_full' => 'Asociación de Agencias de Viajes de Turquía - Miembro Oficial',
+            'verify' => 'Verificar Licencia',
+            'tripadvisor_full' => 'Certificado de Excelencia & Travellers\' Choice',
+            'view_reviews' => 'Ver Comentarios',
+        ],
+
+        // CTA
+        'cta' => [
+            'title' => '¿Listo para tu Aventura en Turquía?',
+            'subtitle' => 'Contáctanos hoy y comencemos a planificar el viaje de tus sueños por Turquía.',
+            'contact_button' => 'Formulario de Contacto',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Content Detail Page
+    |--------------------------------------------------------------------------
+    */
+    'content_detail' => [
+        'sidebar' => [
+            'related_destination' => 'Destino Relacionado',
+            'destination_tours' => 'Tours de {destination}',
+            'destination_posts' => 'Artículos Relacionados con {destination}',
+        ],
+        'not_found' => [
+            'title' => 'Contenido no Encontrado',
+            'text' => 'El contenido que buscas no existe o ha sido eliminado.',
+            'go_home' => 'Volver al Inicio',
+        ],
+    ],
+    
+    'tour_detail' => [
+        'booking' => [
+            'title' => 'Solicitud de Reserva',
+            'subtitle' => 'Obtenga cotización gratuita y asesoramiento',
+            'name' => 'Nombre',
+            'name_placeholder' => 'Su nombre',
+            'email' => 'Correo Electrónico',
+            'email_placeholder' => 'ejemplo@email.com',
+            'date' => 'Fecha del Tour',
+            'date_placeholder' => 'Fecha de viaje planificada',
+            'participants' => 'Participantes',
+            'country' => 'País',
+            'country_placeholder' => 'Seleccione su país',
+            'whatsapp' => 'WhatsApp',
+            'whatsapp_note' => '(no llamaremos sin permiso)',
+            'whatsapp_placeholder' => '+34 600 123 456',
+            'message' => 'Su Mensaje',
+            'message_placeholder' => 'Sus solicitudes especiales, preguntas...',
+            'submit' => 'Solicitar Cotización',
+            'submitting' => 'Enviando...',
+            'success' => 'Su solicitud ha sido enviada exitosamente. Le responderemos lo antes posible.',
+            'error' => 'Ocurrió un error. Por favor, inténtelo de nuevo.',
+            'contact_info' => 'Para respuesta rápida, contacto directo:',
+        ],
+    ],
 ];

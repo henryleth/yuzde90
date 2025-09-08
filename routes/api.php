@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MediaController; // MediaController'ı import et
 use App\Http\Controllers\DestinationController; // DestinationController'ı import et
+use App\Http\Controllers\BookingController; // BookingController'ı import et
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,8 @@ Route::prefix('admin')->group(function () { // auth:sanctum middleware kaldırı
 
 // Destinasyonlar için API rotası (Admin paneli için gerekli olmayabilir ama genel kullanım için)
 Route::get('destinations', [DestinationController::class, 'apiIndex']);
+
+// Rezervasyon talebi API rotası (web.php'ye taşındı)
 
 // Test rotası - Laravel'in api.php dosyasını yükleyip yüklemediğini kontrol etmek için
 // Route::get('test-api-route', function () {
