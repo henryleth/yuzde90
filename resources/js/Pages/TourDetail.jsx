@@ -40,6 +40,9 @@ export default function TourDetail({ tour, config, seo }) {
   const tourNavRef = useRef(null);
   const bookingFormRef = useRef(null);
   const heroRef = useRef(null);
+  
+  // reCAPTCHA seviyesi (0: kapalı, 1: görünmez v3, 2: tıklamalı v2)
+  const recaptchaLevel = config?.recaptchaLevel || window.recaptchaLevel || 0;
 
   // İspanyolca konuşulan ülkelerin listesi
   const spanishSpeakingCountries = [
@@ -73,21 +76,24 @@ export default function TourDetail({ tour, config, seo }) {
   const galleryImages = tour.gallery_images_urls || [];
   const featuredImageUrl = tour.image?.original_url;
 
-  // reCAPTCHA script'ini yükle
+  // reCAPTCHA script'ini yükle (seviyeye göre)
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js?render=6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg';
-    script.async = true;
-    document.head.appendChild(script);
+    if (recaptchaLevel > 0) {
+      const script = document.createElement('script');
+      // Level 1 ve 2 için aynı v2 checkbox script
+      script.src = 'https://www.google.com/recaptcha/api.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
 
-    return () => {
-      // Cleanup: script'i kaldır
-      const existingScript = document.querySelector('script[src*="recaptcha"]');
-      if (existingScript) {
-        document.head.removeChild(existingScript);
-      }
-    };
-  }, []);
+      return () => {
+        const existingScript = document.querySelector('script[src*="recaptcha"]');
+        if (existingScript) {
+          document.head.removeChild(existingScript);
+        }
+      };
+    }
+  }, [recaptchaLevel]);
 
   // Form submit fonksiyonu
   const handleFormSubmit = async (e) => {
@@ -95,17 +101,31 @@ export default function TourDetail({ tour, config, seo }) {
     setIsSubmitting(true);
 
     try {
-      // reCAPTCHA token'ını al
-      let token;
-      if (window.grecaptcha && window.grecaptcha.execute) {
-        token = await window.grecaptcha.execute('6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg', { action: 'booking_form' });
-      } else {
-        console.warn('reCAPTCHA not loaded, using development bypass');
-        token = 'development_bypass';
+      let recaptchaToken = 'no_recaptcha';
+      
+      // Seviyeye göre reCAPTCHA token al
+      if (recaptchaLevel === 1) {
+        // v1 basit checkbox - grecaptcha.getResponse() kullan
+        if (window.grecaptcha && window.grecaptcha.getResponse) {
+          recaptchaToken = window.grecaptcha.getResponse();
+          if (!recaptchaToken) {
+            alert(t('tour_detail.booking.recaptcha_required', 'Lütfen "Ben robot değilim" kutucuğunu işaretleyin.'));
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      } else if (recaptchaLevel === 2) {
+        // v2 tıklamalı (aynı)
+        recaptchaToken = document.querySelector('[name="g-recaptcha-response"]')?.value || window.grecaptcha?.getResponse();
+        if (!recaptchaToken) {
+          alert(t('tour_detail.booking.recaptcha_required', 'Lütfen "Ben robot değilim" kutucuğunu işaretleyin.'));
+          setIsSubmitting(false);
+          return;
+        }
       }
       
       const formData = new FormData(e.target);
-      formData.append('recaptcha_token', token);
+      formData.append('recaptcha_token', recaptchaToken);
       formData.append('tour_id', tour.id);
       formData.append('tour_title', tour.title);
 
@@ -703,6 +723,17 @@ export default function TourDetail({ tour, config, seo }) {
                           placeholder={t('tour_detail.booking.message_placeholder', 'Özel istekleriniz, sorularınız...')} 
                         />
                       </div>
+                      
+                      {/* reCAPTCHA Widget (seviye 1 ve 2 için) */}
+                      {(recaptchaLevel === 1 || recaptchaLevel === 2) && (
+                        <div className="flex justify-center mb-4">
+                          <div 
+                            className="g-recaptcha" 
+                            data-sitekey="6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg"
+                            data-theme="light"
+                          ></div>
+                        </div>
+                      )}
                       
                       {/* Gönderme butonu */}
                       <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>

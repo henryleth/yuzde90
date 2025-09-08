@@ -37,12 +37,16 @@ class BookingController extends Controller
             ], 422);
         }
 
-        // reCAPTCHA doğrulaması
-        if (!$this->verifyRecaptcha($request->recaptcha_token)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'reCAPTCHA doğrulaması başarısız.'
-            ], 422);
+        // reCAPTCHA kontrolü (seviyeye göre)
+        $recaptchaLevel = env('RECAPTCHA_LEVEL', 0);
+        
+        if ($recaptchaLevel > 0) {
+            if (!$this->verifyRecaptcha($request->recaptcha_token, $recaptchaLevel)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'reCAPTCHA doğrulaması başarısız.'
+                ], 422);
+            }
         }
 
         try {
@@ -80,24 +84,29 @@ class BookingController extends Controller
 
     /**
      * reCAPTCHA token'ını doğrula
+     * @param string $token
+     * @param int $level (1: görünmez v3, 2: tıklamalı v2)
      */
-    private function verifyRecaptcha($token)
+    private function verifyRecaptcha($token, $level = 1)
     {
-        // Development ortamında bypass (opsiyonel)
-        if (app()->environment('local') && $token === 'development_bypass') {
+        // Bypass token kontrolü
+        if ($token === 'no_recaptcha' || $token === 'development_bypass') {
             return true;
         }
         
         try {
+            // Tek secret key kullan (hem level 1 hem 2 için aynı)
+            $secretKey = env('RECAPTCHA_SECRET_KEY');
+            
             $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret' => env('RECAPTCHA_SECRET_KEY'),
+                'secret' => $secretKey,
                 'response' => $token
             ]);
 
             $result = $response->json();
             
-            // Score kontrolü (0.5'ten yüksek olmalı)
-            return ($result['success'] ?? false) && ($result['score'] ?? 0) >= 0.5;
+            // Level 1 ve 2 için sadece success kontrolü (v2 checkbox)
+            return ($result['success'] ?? false);
             
         } catch (\Exception $e) {
             Log::error('reCAPTCHA verification failed', ['error' => $e->getMessage()]);

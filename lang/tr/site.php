@@ -365,5 +365,6 @@ return [
         'success' => 'Talebiniz başarıyla gönderildi. En kısa sürede size dönüş yapacağız.',
         'error' => 'Bir hata oluştu. Lütfen tekrar deneyin.',
         'contact_info' => 'Hızlı yanıt için direkt iletişim:',
+        'recaptcha_required' => 'Lütfen reCAPTCHA doğrulamasını tamamlayın.',
     ],
 ];

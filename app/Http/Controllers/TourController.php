@@ -244,6 +244,7 @@ class TourController extends Controller
             'config' => [
                 'seasons' => config('tour.seasons'),
                 'categories' => config('tour.categories'),
+                'recaptchaLevel' => (int)env('RECAPTCHA_LEVEL', 0),
             ],
             'seo' => $seoService->generateForModel($tour),
         ]);
