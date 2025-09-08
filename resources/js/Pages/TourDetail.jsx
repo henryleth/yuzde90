@@ -40,6 +40,31 @@ export default function TourDetail({ tour, config, seo }) {
   const bookingFormRef = useRef(null);
   const heroRef = useRef(null);
 
+  // İspanyolca konuşulan ülkelerin listesi
+  const spanishSpeakingCountries = [
+    { value: 'ar', name: 'Arjantin' },
+    { value: 'bo', name: 'Bolivya' },
+    { value: 'cl', name: 'Şili' },
+    { value: 'co', name: 'Kolombiya' },
+    { value: 'cr', name: 'Kosta Rika' },
+    { value: 'cu', name: 'Küba' },
+    { value: 'do', name: 'Dominik Cumhuriyeti' },
+    { value: 'ec', name: 'Ekvador' },
+    { value: 'sv', name: 'El Salvador' },
+    { value: 'gq', name: 'Ekvator Ginesi' },
+    { value: 'gt', name: 'Guatemala' },
+    { value: 'hn', name: 'Honduras' },
+    { value: 'mx', name: 'Meksika' },
+    { value: 'ni', name: 'Nikaragua' },
+    { value: 'pa', name: 'Panama' },
+    { value: 'py', name: 'Paraguay' },
+    { value: 'pe', name: 'Peru' },
+    { value: 'es', name: 'İspanya' },
+    { value: 'uy', name: 'Uruguay' },
+    { value: 've', name: 'Venezuela' },
+    { value: 'pr', name: 'Porto Riko' }
+  ];
+
   const itineraryData = tour.itinerary || [];
   const galleryImages = tour.gallery_images_urls || [];
   const featuredImageUrl = tour.image?.original_url;
@@ -535,7 +560,7 @@ export default function TourDetail({ tour, config, seo }) {
               <div ref={bookingFormRef} className="sticky top-32">
                 <div className="bg-card rounded-lg border border-border p-6 reservation-form">
                   {/* Form başlığı ve bilgilendirme metinleri */}
-                  <h3 className="text-2xl font-bold text-center mb-2 font-playfair">Başvuru ve Rezervasyon Formu</h3>
+                  <h3 className="text-2xl font-bold text-center mb-2">Başvuru ve Rezervasyon Formu</h3>
                   <p className="text-center text-sm text-muted-foreground mb-1">*Tüm Alanlar Zorunludur</p>
                   <p className="text-center text-sm text-muted-foreground mb-6">* ile işaretli alanlar zorunludur</p>
                   
@@ -576,14 +601,15 @@ export default function TourDetail({ tour, config, seo }) {
                       <Label htmlFor="country">Ülke <span className="text-red-500">*</span></Label>
                       <Select>
                         <SelectTrigger id="country" className="dark:bg-gray-800 dark:text-white">
-                          <SelectValue placeholder="Amerika" />
+                          <SelectValue placeholder="Ülke Seçiniz" />
                         </SelectTrigger>
                         <SelectContent>
-                          {/* Ülke listesi, daha sonra dinamik olarak doldurulabilir */}
-                          <SelectItem value="us">Amerika</SelectItem>
-                          <SelectItem value="tr">Türkiye</SelectItem>
-                          <SelectItem value="de">Almanya</SelectItem>
-                          <SelectItem value="gb">İngiltere</SelectItem>
+                          {/* İspanyolca konuşulan ülkeler dinamik olarak listeleniyor */}
+                          {spanishSpeakingCountries.map((country) => (
+                            <SelectItem key={country.value} value={country.value}>
+                              {country.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
