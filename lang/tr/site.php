@@ -15,6 +15,7 @@ return [
     ],
     'footer' => [
         'rights_reserved' => 'Tüm Hakları Saklıdır.',
+        'brand_info' => "'Turquiana' ve 'Pride Travel Agency', 'BHN MAVI TURIZM'in resmi markalarıdır.",
         'about_text' => "Türkiye'nin eşsiz güzelliklerini keşfetmeniz için unutulmaz seyahat deneyimleri tasarlıyoruz. Bizimle keşfedin, anı biriktirin.",
         'quick_links' => [
             'title' => 'Hızlı Bağlantılar',
@@ -30,6 +31,10 @@ return [
             'subtitle' => 'Yeni turlarımızdan ve özel indirimlerden ilk siz haberdar olun.',
             'placeholder' => 'E-posta adresiniz',
             'subscribe_button' => 'Abone Ol',
+        ],
+        'recent_posts' => [
+            'title' => 'Son Blog Yazıları',
+            'no_posts' => 'Blog yazısı bulunamadı.',
         ],
     ],
     'destinations' => [
@@ -366,5 +371,8 @@ return [
         'error' => 'Bir hata oluştu. Lütfen tekrar deneyin.',
         'contact_info' => 'Hızlı yanıt için direkt iletişim:',
         'recaptcha_required' => 'Lütfen reCAPTCHA doğrulamasını tamamlayın.',
+    ],
+    'whatsapp' => [
+        'message_template' => 'Merhaba, sitenizdeki bu tur hakkında bilgi almak istiyorum: {url}',
     ],
 ];

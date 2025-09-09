@@ -15,6 +15,7 @@ return [
     ],
     'footer' => [
         'rights_reserved' => 'Todos los derechos reservados.',
+        'brand_info' => "Turquiana y Pride Travel Agency son marcas oficiales de 'BHN MAVI TURIZM'",
         'about_text' => "Diseñamos experiencias de viaje inolvidables para que descubras las bellezas únicas de Turquía. Descubre con nosotros, colecciona recuerdos.",
         'quick_links' => [
             'title' => 'Enlaces Rápidos',
@@ -30,6 +31,10 @@ return [
             'subtitle' => 'Sé el primero en enterarte de nuestros nuevos tours y descuentos especiales.',
             'placeholder' => 'Tu dirección de correo electrónico',
             'subscribe_button' => 'Suscribirse',
+        ],
+        'recent_posts' => [
+            'title' => 'Últimas Publicaciones',
+            'no_posts' => 'No se encontraron publicaciones de blog.',
         ],
     ],
     'destinations' => [
@@ -521,6 +526,11 @@ return [
             'text' => 'El contenido que buscas no existe o ha sido eliminado.',
             'go_home' => 'Volver al Inicio',
         ],
+    ],
+
+    'whatsapp' => [
+        'message_template' => 'Hola, estoy interesado en este tour que vi en su página web: {url} 
+¿Podría darme más información, por favor?',
     ],
 
 ];
