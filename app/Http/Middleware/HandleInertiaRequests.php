@@ -70,10 +70,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function handle(Request $request, \Closure $next)
     {
-        // Admin paneli rotaları için SSR'ı devre dışı bırak.
+        // Admin paneli rotaları için SSR'ı tamamen devre dışı bırak.
         // Bu, admin panelinde ham JSON çıktısı ve konsol hatalarını önler.
-        if ($request->routeIs('admin.*')) {
+        if ($request->routeIs('admin.*') || $request->is('admin/*')) {
             config(['inertia.ssr.enabled' => false]);
+            // Admin için farklı root view kullan
+            $this->rootView = 'app-no-ssr';
         }
         
         // Önbellekleme ayarını, performansı artırmak için 1 saatliğine önbelleğe al.

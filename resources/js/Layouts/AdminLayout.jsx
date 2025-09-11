@@ -157,7 +157,7 @@ export default function AdminLayout({ header, children, actionButton }) {
                                 <nav className="grid gap-6 text-lg font-medium mt-6">
                                     <Link href={route('admin.dashboard')} className="flex items-center gap-2 font-bold mb-4">
                                         <Package className="h-6 w-6" />
-                                        <span>Tur10 Panel</span>
+                                        <span>Turquiana Panel</span>
                                     </Link>
                                     <NavLinksContent isMobile={true} />
                                 </nav>
