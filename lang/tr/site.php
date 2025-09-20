@@ -112,6 +112,7 @@ return [
             'subtitle' => "Hayalinizdeki yolculuğu tasarlamak için sabırsızlanıyoruz. Maceraya hazır mısınız?",
             'button' => "Maceraya Başla",
         ],
+        'company_info' => 'Turquiana ve Pride Travel, BHN MAVİ TURİZM VE SEYAHAT TİC.LTD.ŞTİ. şirketinin markalarıdır.',
     ],
     'contact_us' => [
         'head_title' => "İletişim - TUR10",
@@ -292,6 +293,8 @@ return [
             'term2' => "• Kalan tutar İstanbul'daki ofisimizde ödenebilir",
             'term3' => '• Visa, MasterCard, Maestro kartları kabul edilir',
             'term4' => '• Online ödeme mümkündür',
+            'group_discount' => '• 4 kişiden fazla katılımlarda ve önceden rezervasyon yaptırılması durumunda, katılımcı sayısına ve tur tarihine göre değişen oranlarda indirim uygulanmaktadır.',
+            'triple_room_note' => '• Üç kişilik odalar standart çift kişilik oda büyüklüğünde olup, ilave bir çekyat veya açılır kapanır yatak içermektedir.',
         ],
         'hotels' => [
             'title' => 'Konaklama Seçenekleri',

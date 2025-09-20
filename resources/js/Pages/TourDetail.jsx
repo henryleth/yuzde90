@@ -529,6 +529,8 @@ export default function TourDetail({ tour, config, seo }) {
                       <li>{t('tour_detail.pricing.term2', '• Kalan tutar İstanbul\'daki ofisimizde ödenebilir')}</li>
                       <li>{t('tour_detail.pricing.term3', '• Visa, MasterCard, Maestro kartları kabul edilir')}</li>
                       <li>{t('tour_detail.pricing.term4', '• Online ödeme mümkündür')}</li>
+                      <li>{t('tour_detail.pricing.group_discount', '• 4 kişiden fazla katılımlarda ve önceden rezervasyon yaptırılması durumunda, katılımcı sayısına ve tur tarihine göre değişen oranlarda indirim uygulanmaktadır.')}</li>
+                      <li>{t('tour_detail.pricing.triple_room_note', '• Üç kişilik odalar standart çift kişilik oda büyüklüğünde olup, ilave bir çekyat veya açılır kapanır yatak içermektedir.')}</li>
                     </ul>
                   </div>
                 </div>

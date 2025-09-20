@@ -374,6 +374,15 @@ export default function AboutUs() {
                             </Button>
                         </Card>
                     </div>
+
+                    {/* Şirket Bilgisi */}
+                    <div className="mt-12 text-center">
+                        <Card className="inline-block p-6 bg-muted/50 border-border">
+                            <p className="text-sm text-muted-foreground">
+                                {t('about_us.company_info', 'Turquiana ve Pride Travel, BHN MAVİ TURİZM VE SEYAHAT TİC.LTD.ŞTİ. şirketinin markalarıdır.')}
+                            </p>
+                        </Card>
+                    </div>
                 </div>
             </section>
 

@@ -66,7 +66,7 @@ export default function Footer() {
             <ul className="space-y-3 text-muted-foreground">
               <li className="flex items-start">
                 <span className="font-semibold mr-2">{t('footer.contact.address', 'Adres')}:</span>
-                <span>Kızılay, Ankara, Türkiye</span>
+                <span>Alemdar, İncili Çavuş Sk. No:13, 34110 Fatih/İstanbul, Türkiye</span>
               </li>
               <li className="flex items-start">
                 <span className="font-semibold mr-2">{t('footer.contact.email', 'Email')}:</span>
@@ -74,7 +74,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start">
                 <span className="font-semibold mr-2">{t('footer.contact.phone', 'Telefon')}:</span>
-                <a href={`https://wa.me/905366583468?text=${encodeURIComponent('Hola, me gustaría obtener información.')}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">+90 536 658 34 68</a>
+                <a href={`https://wa.me/905366583468?text=${encodeURIComponent('Hola, me gustaría obtener información.')}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">+90 536 658 3468</a>
               </li>
             </ul>
           </div>

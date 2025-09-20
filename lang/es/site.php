@@ -316,6 +316,8 @@ return [
             'term2' => '• El monto restante se puede pagar en nuestra oficina en Estambul',
             'term3' => '• Se aceptan tarjetas Visa, MasterCard, Maestro',
             'term4' => '• Pago en línea disponible',
+            'group_discount' => '• Para grupos de más de 4 personas y reservas anticipadas, se aplican descuentos según el número de participantes y la fecha del tour.',
+            'triple_room_note' => '• Las habitaciones triples tienen el tamaño de una habitación doble estándar e incluyen una cama adicional o sofá cama.',
         ],
         'hotels' => [
             'title' => 'Opciones de Alojamiento',
@@ -502,6 +504,9 @@ return [
             'tripadvisor_full' => 'Certificado de Excelencia & Travellers\' Choice',
             'view_reviews' => 'Ver Comentarios',
         ],
+        
+        // Company Info
+        'company_info' => 'Turquiana y Pride Travel son marcas de BHN MAVİ TURİZM VE SEYAHAT TİC.LTD.ŞTİ.',
 
         // CTA
         'cta' => [

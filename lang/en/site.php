@@ -107,6 +107,7 @@ return [
             'subtitle' => "We look forward to designing your dream journey. Are you ready for the adventure?",
             'button' => "Start the Adventure",
         ],
+        'company_info' => 'Turquiana and Pride Travel are brands of BHN MAVİ TURİZM VE SEYAHAT TİC.LTD.ŞTİ.',
     ],
     'contact_us' => [
         'head_title' => "Contact - TUR10",
@@ -287,6 +288,8 @@ return [
             'term2' => '• The remaining amount can be paid at our office in Istanbul',
             'term3' => '• Visa, MasterCard, Maestro cards are accepted',
             'term4' => '• Online payment is available',
+            'group_discount' => '• For groups of more than 4 people and advance reservations, discounts are available based on the number of participants and tour date.',
+            'triple_room_note' => '• Triple rooms are standard double room size with an additional rollaway bed or sofa bed.',
         ],
         'hotels' => [
             'title' => 'Accommodation Options',

@@ -179,7 +179,7 @@ export default function ContactUs() {
                     <h2 className="text-4xl font-bold text-center mb-12 text-primary font-playfair">{t('contact_us.map.title', "Ofisimiz Nerede?")}</h2>
                     <div className="rounded-lg overflow-hidden shadow-2xl contact-map-container">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3060.0000000000005!2d32.859740000000005!3d39.93336!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d34f0c4a4f0001%3A0x7d6c6e7e4a4f0001!2sKızılay%20Meydan%C4%B1!5e0!3m2!1str!2str!4v1678912345678!5m2!1str!2str"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.8963!2d28.9773!3d41.0055!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab9be92011c27%3A0x236e6f6f37444fae!2sAlemdar%2C%20İncili%20Çavuş%20Sk.%20No%3A13%2C%2034110%20Fatih%2FIstanbul!5e0!3m2!1str!2str!4v1678912345678!5m2!1str!2str"
                             width="100%"
                             height="450"
                             style={{ border: 0 }}
