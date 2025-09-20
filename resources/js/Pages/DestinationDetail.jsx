@@ -147,7 +147,7 @@ export default function DestinationDetail({ seo }) {
             loading="eager"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/60 hero-overlay"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative z-10 text-white p-4 max-w-4xl mx-auto hero-content">
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 font-playfair animate-fade-in-up">
               {destination.name}

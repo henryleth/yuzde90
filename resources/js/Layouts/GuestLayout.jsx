@@ -26,6 +26,39 @@ export default function Guest({ children, seo = {} }) {
                 <meta property="twitter:title" content={seo.og_title} />
                 <meta property="twitter:description" content={seo.og_description} />
                 {seo.og_image && <meta property="twitter:image" content={seo.og_image} />}
+                
+                {/* Schema.org Structured Data */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "TravelAgency",
+                        "name": "Turquiana",
+                        "description": "Türkiye'nin en iyi kültür turizmi acentesi",
+                        "url": "https://turquiana.com",
+                        "logo": "https://turquiana.com/images/logo.png",
+                        "image": "https://turquiana.com/images/hero.jpg",
+                        "telephone": "+90 536 658 3468",
+                        "email": "info@turquiana.com",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "Alemdar, İncili Çavuş Sk. No:13",
+                            "addressLocality": "Fatih",
+                            "addressRegion": "İstanbul",
+                            "postalCode": "34110",
+                            "addressCountry": "TR"
+                        },
+                        "sameAs": [
+                            "https://www.facebook.com/turquiana",
+                            "https://www.instagram.com/turquiana",
+                            "https://www.twitter.com/turquiana"
+                        ],
+                        "priceRange": "€€€",
+                        "openingHours": "Mo-Fr 09:00-18:00, Sa 09:00-14:00",
+                        "paymentAccepted": ["Cash", "Credit Card", "Bank Transfer"],
+                        "currenciesAccepted": "EUR,USD,TRY",
+                        "availableLanguage": ["Turkish", "English", "Spanish"]
+                    })}
+                </script>
             </Head>
             
             <Header />

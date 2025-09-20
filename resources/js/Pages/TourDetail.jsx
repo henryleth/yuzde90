@@ -26,7 +26,7 @@ import Lightbox from "yet-another-react-lightbox";
 import LazyImage from '@/Components/LazyImage';
 import "yet-another-react-lightbox/styles.css";
 import { Snowflake, Leaf, Sun, DollarSign, Calendar, Users, Languages, Star, MapPin, CheckCircle, Check, X, Phone, Mail } from 'lucide-react';
-import { Link } from '@inertiajs/react';
+import { Link, Head } from '@inertiajs/react';
 
 
 export default function TourDetail({ tour, config, seo }) {
@@ -318,8 +318,48 @@ export default function TourDetail({ tour, config, seo }) {
     }
   }, [setHeaderShrunk]);
 
+  // Schema.org structured data for Tour
+  const tourSchema = tour ? {
+    "@context": "https://schema.org",
+    "@type": "TouristTrip",
+    "name": tour.title,
+    "description": tour.summary,
+    "url": typeof window !== 'undefined' ? window.location.href : '',
+    "image": featuredImageUrl,
+    "touristType": "Cultural Tourism",
+    "duration": `P${tour.duration_days}D`, // ISO 8601 duration format (P=Period, D=Days)
+    "provider": {
+      "@type": "TravelAgency",
+      "name": "Turquiana",
+      "url": "https://turquiana.com"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "EUR",
+      "lowPrice": tour.price_from,
+      "availability": "https://schema.org/InStock"
+    },
+    "aggregateRating": tour.rating && tour.reviews_count ? {
+      "@type": "AggregateRating",
+      "ratingValue": tour.rating,
+      "reviewCount": tour.reviews_count
+    } : undefined,
+    "itinerary": tour.destinations ? tour.destinations.map(dest => ({
+      "@type": "City",
+      "name": dest.name,
+      "url": route('destinations.show', dest.slug)
+    })) : []
+  } : null;
+
   return (
     <GuestLayout seo={seo}>
+      {tourSchema && (
+        <Head>
+          <script type="application/ld+json">
+            {JSON.stringify(tourSchema)}
+          </script>
+        </Head>
+      )}
       <div className={`bg-background text-foreground min-h-screen`}>
         {/* Hero Section */}
         <div ref={heroRef} className="relative h-[60vh] md:h-[70vh]">
@@ -330,15 +370,15 @@ export default function TourDetail({ tour, config, seo }) {
             fetchpriority="high"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/45"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative max-w-6xl mx-auto px-4 h-full flex flex-col justify-center text-white">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 font-playfair animate-fade-in-up">{tour?.title}</h1>
-            <p className="text-xl md:text-2xl mb-6 opacity-0 animate-fade-in-up animation-delay-300">{tour?.summary}</p>
+            <h1 className="text-2xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 font-playfair animate-fade-in-up">{tour?.title}</h1>
+            <p className="text-l md:text-2xl mb-6 opacity-0 animate-fade-in-up animation-delay-300">{tour?.summary}</p>
             <div className="flex flex-wrap items-center space-x-4 md:space-x-6 text-sm md:text-base opacity-0 animate-fade-in-up animation-delay-600"> 
               <div className="flex items-center"><Calendar className="h-4 w-4 mr-2" /><span>{t('tour_detail.hero.duration', '{days} Gün {nights} Gece', { days: tour?.duration_days, nights: tour?.duration_nights })}</span></div>
               <div className="flex items-center"><Users className="h-4 w-4 mr-2" /><span>{t('tour_detail.hero.participants', '{min}-{max} Kişi', { min: tour?.min_participants, max: tour?.max_participants })}</span></div>
               <div className="flex items-center"><Languages className="h-4 w-4 mr-2" /><span>{tour?.language}</span></div>
-              <div className="flex items-center"><Star className="h-4 w-4 text-yellow-400 mr-2" /><span>{t('tour_detail.hero.rating', '{rating} ({reviews} değerlendirme)', { rating: tour?.rating, reviews: tour?.reviews_count })}</span></div>
+              <div className="flex items-center"><Star className="h-4 w-4 text-yellow-500 fill-yellow-500 mr-2" /><span>{t('tour_detail.hero.rating', '{rating} ({reviews} değerlendirme)', { rating: tour?.rating, reviews: tour?.reviews_count })}</span></div>
             </div>
             <div className="flex items-center mt-4 text-sm md:text-base opacity-0 animate-fade-in-up animation-delay-900">
               <MapPin className="h-4 w-4 mr-2" />

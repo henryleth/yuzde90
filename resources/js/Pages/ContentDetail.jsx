@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePage, Link } from '@inertiajs/react';
+import { usePage, Link, Head } from '@inertiajs/react';
 import { useTranslation } from '@/hooks/useTranslation'; // Çeviri hook'u eklendi
 import GuestLayout from '@/Layouts/GuestLayout';
 import { useTheme } from '@/Context/ThemeContext';
@@ -176,8 +176,42 @@ export default function ContentDetail({ seo }) {
     );
   }
 
+  // Schema.org structured data for BlogPosting
+  const articleSchema = post ? {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.summary,
+    "image": post.image_original_url,
+    "datePublished": post.published_at,
+    "dateModified": post.updated_at || post.published_at,
+    "author": {
+      "@type": "Organization",
+      "name": "Turquiana"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Turquiana",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://turquiana.com/images/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": typeof window !== 'undefined' ? window.location.href : ''
+    }
+  } : null;
+
   return (
     <GuestLayout seo={seo}>
+      {articleSchema && (
+        <Head>
+          <script type="application/ld+json">
+            {JSON.stringify(articleSchema)}
+          </script>
+        </Head>
+      )}
       <div className={`content-detail-page bg-background text-foreground`}>
         
         {/* Hero Section: İçeriğin başlığını ve öne çıkan görselini gösterir. */}
@@ -189,7 +223,7 @@ export default function ContentDetail({ seo }) {
             fetchpriority="high"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative z-10 max-w-6xl mx-auto w-full">
             <h1 className="content-title text-4xl md:text-6xl font-extrabold leading-tight mb-2 font-playfair">
               {post.title}

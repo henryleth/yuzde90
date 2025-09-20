@@ -1,2 +1,18 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Sitemap
+Sitemap: https://turquiana.com/sitemap.xml
+
+# Admin paneli engelle
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /api/
+
+# Medya ve storage klasörleri
+Allow: /storage/
+Allow: /images/
+
+# Crawl-delay (opsiyonel, bot yükünü azaltmak için)
+Crawl-delay: 1

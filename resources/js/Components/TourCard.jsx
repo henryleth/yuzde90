@@ -65,7 +65,7 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge, isLcp = f
               {t('tour_card.people', '{min}-{max} Kişi', { min: tour.min_participants ?? 'N/A', max: tour.max_participants ?? 'N/A' })}
             </span>
             <span className="flex items-center">
-              <Star size={14} className="mr-1.5 text-yellow-500" />
+              <Star size={14} className="mr-1.5 text-yellow-500 fill-yellow-500" />
               {tour.rating !== null && tour.rating !== undefined ? Number(tour.rating).toFixed(1) : 'N/A'}
               <span className="text-xs text-muted-foreground ml-1">({tour.reviews_count || 0})</span>
             </span>

@@ -12,7 +12,7 @@ export default function FeaturedBadgeCorner() {
         className="absolute top-[18px] left-[-30px] w-[150px] transform -rotate-45 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider text-center py-1 shadow-md"
       >
         <div className="flex items-center justify-center">
-          <Star size={12} className="mr-1.5" />
+          <Star size={12} className="mr-1.5 fill-current" />
           <span>Öne Çıkan</span>
         </div>
       </div>

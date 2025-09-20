@@ -74,6 +74,8 @@ Sitenin genel performansını ve özellikle sunucu yanıt süresini (TTFB) iyile
 -   **N+1 Problemlerinin Çözümü (Eager Loading):** İlişkili veriler (`featuredMedia`, `destinations`, `image` vb.), artık `with()` metodu kullanılarak tek bir sorguda verimli bir şekilde yüklenmektedir. Bu, her bir kayıt için ayrı ayrı sorgu yapılmasını (N+1 problemi) önler.
 -   **İlişki Anahtarlarının Seçimi:** `belongsTo` gibi ilişkilerin doğru çalışabilmesi için, `select()` ifadelerine `featured_media_id`, `image_id` gibi yabancı anahtar (foreign key) sütunları dahil edilmiştir.
 -   **Gereksiz Kodların Temizlenmesi:** Performansı olumsuz etkileyebilecek `Log` ifadeleri ve gereksiz veri işleme adımları kaldırılmıştır.
+-   **Fiyat Hesaplama Mantığı:** Tüm controller'larda turların en düşük fiyatı, tüm fiyat katmanlarındaki 1, 2 ve 3 kişilik fiyatlar arasından en düşüğü seçilerek hesaplanmaktadır. Bu sayede gerçek anlamda "en ucuz fiyat" gösterilir.
+-   **Reviews Count Eksikliği Düzeltmesi:** `DestinationController`'da `reviews_count` alanı tur sorgularına eklenerek, destinasyon sayfasında tur kartlarında inceleme sayısının görünmesi sağlandı.
 
 #### Admin Controller'ları (Yeni Eklenenler)
 

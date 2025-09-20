@@ -59,7 +59,7 @@ export default function AboutUs() {
 
             {/* Hero Section */}
             <section className="relative h-[50vh] md:h-[60vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: `url('https://images.pexels.com/photos/1583339/pexels-photo-1583339.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=2')` }}>
-                <div className="absolute inset-0 bg-black/60"></div>
+                <div className="absolute inset-0 bg-black/50"></div>
                 <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 font-playfair leading-tight animate-fade-in-up">
                         {t('about_us.hero.title', "Turquiana - La Mejor Agencia de Viajes")}

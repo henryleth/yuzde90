@@ -23,7 +23,7 @@ return [
         'contact' => [
             'title' => 'Contáctanos',
             'address' => 'Dirección',
-            'email' => 'Correo Electrónico',
+            'email' => 'E-mail',
             'phone' => 'Teléfono',
         ],
         'newsletter' => [
@@ -316,8 +316,8 @@ return [
             'term2' => '• El monto restante se puede pagar en nuestra oficina en Estambul',
             'term3' => '• Se aceptan tarjetas Visa, MasterCard, Maestro',
             'term4' => '• Pago en línea disponible',
-            'group_discount' => '• Para grupos de más de 4 personas y reservas anticipadas, se aplican descuentos según el número de participantes y la fecha del tour.',
-            'triple_room_note' => '• Las habitaciones triples tienen el tamaño de una habitación doble estándar e incluyen una cama adicional o sofá cama.',
+            'group_discount' => 'Para grupos de más de 4 personas y reservas anticipadas, se aplican descuentos según el número de participantes y la fecha del tour.',
+            'triple_room_note' => 'Las habitaciones triples tienen el tamaño de una habitación doble estándar e incluyen una cama adicional o sofá cama.',
         ],
         'hotels' => [
             'title' => 'Opciones de Alojamiento',

@@ -142,7 +142,13 @@ class TourController extends Controller
                     'original_url' => $tour->featuredMedia->original_url,
                     'thumbnail_url' => $tour->featuredMedia->thumbnail_url,
                 ] : null,
-                'price_from' => $tour->pricingTiers->min('price_per_person_1'),
+                'price_from' => $tour->pricingTiers->map(function($tier) {
+                    return collect([
+                        $tier->price_per_person_1,
+                        $tier->price_per_person_2,
+                        $tier->price_per_person_3
+                    ])->min();
+                })->min(),
                 'destinations' => $tour->destinations->map(fn($dest) => ['slug' => $dest->slug, 'name' => $dest->name]),
             ];
         });

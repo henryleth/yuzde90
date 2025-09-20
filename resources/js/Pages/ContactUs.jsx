@@ -63,7 +63,7 @@ export default function ContactUs() {
 
             {/* Hero Section */}
             <section className="relative h-[40vh] md:h-[50vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: `url('https://images.pexels.com/photos/1583339/pexels-photo-1583339.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')` }}>
-                <div className="absolute inset-0 bg-black/50 contact-us-hero-overlay"></div>
+                <div className="absolute inset-0 bg-black/50"></div>
                 <div className="relative z-10 text-center px-4">
                     <h1 className="text-5xl md:text-6xl font-bold mb-4 font-playfair animate-fade-in-up">{t('contact_us.hero.title', "Maceraya Hazır mısınız?")}</h1>
                     <p className="text-lg md:text-xl max-w-2xl mx-auto opacity-0 animate-fade-in-up animation-delay-300">{t('contact_us.hero.subtitle', "Hayalinizdeki tatil bir mesaj uzağınızda. Bize ulaşın, yolculuğunuza başlayalım.")}</p>

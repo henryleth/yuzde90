@@ -54,9 +54,8 @@ class DestinationController extends Controller
                 'image:id,disk,file_name,path', // model_id ve model_type kaldırıldı, path eklendi
                 // galleryImages accessor'ı kullanılacağı için with'den kaldırıldı
                 'tours' => function ($query) {
-                    $query->select(['tours.id', 'title', 'slug', 'summary', 'min_participants', 'max_participants', 'duration_days', 'duration_nights', 'rating', 'featured_media_id'])
-                          ->withMin('pricingTiers', 'price_per_person_1')
-                          ->with(['featuredMedia:id,disk,file_name,path']); // model_id ve model_type kaldırıldı, path eklendi
+                    $query->select(['tours.id', 'title', 'slug', 'summary', 'min_participants', 'max_participants', 'duration_days', 'duration_nights', 'rating', 'reviews_count', 'featured_media_id'])
+                          ->with(['pricingTiers', 'featuredMedia:id,disk,file_name,path']); // pricingTiers eklendi, en düşük fiyatı bulmak için
                 },
                 'contents' => function ($query) {
                     $query->select(['contents.id', 'title', 'slug', 'summary', 'published_at', 'image_id'])
@@ -89,7 +88,14 @@ class DestinationController extends Controller
                     'max_participants' => $tour->max_participants,
                     'duration_days' => $tour->duration_days,
                     'rating' => (float) $tour->rating,
-                    'price_from' => $tour->pricing_tiers_min_price_per_person_1,
+                    'reviews_count' => $tour->reviews_count,
+                    'price_from' => $tour->pricingTiers->map(function($tier) {
+                        return collect([
+                            $tier->price_per_person_1,
+                            $tier->price_per_person_2,
+                            $tier->price_per_person_3
+                        ])->min();
+                    })->min(),
                 ];
             }),
             'contents' => $destination->contents->map(function ($content) {

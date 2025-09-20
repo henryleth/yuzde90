@@ -58,8 +58,14 @@ class HomeController extends Controller
                     ] : null,
                     'rating' => $tour->rating,
                     'reviews_count' => $tour->reviews_count,
-                    // withMin kaldırıldığı için eski yönteme dönüldü
-                    'price_from' => $tour->pricingTiers->min('price_per_person_1'),
+                    // Tüm fiyat katmanlarından en düşük fiyatı bul (1, 2 veya 3 kişilik)
+                    'price_from' => $tour->pricingTiers->map(function($tier) {
+                        return collect([
+                            $tier->price_per_person_1,
+                            $tier->price_per_person_2,
+                            $tier->price_per_person_3
+                        ])->min();
+                    })->min(),
                     'duration_days' => $tour->duration_days,
                     'min_participants' => $tour->min_participants,
                     'max_participants' => $tour->max_participants,

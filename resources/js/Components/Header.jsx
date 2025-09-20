@@ -40,7 +40,6 @@ export default function Header() {
   // Navigasyon linklerini bir dizi olarak tanımlıyoruz.
   // Linkler artık locale parametresi içermiyor.
   const navLinks = [
-    { href: route('home'), label: t('navbar.home') },
     { href: route('tours.index'), label: t('navbar.tours') },
     { href: route('destinations.index'), label: t('navbar.destinations') },
     { href: route('contents.index'), label: t('navbar.blog') },

@@ -77,7 +77,7 @@ export default function Home({ tours, popularDestinations, seo }) {
                 </div>
 
                 {/* Karartma Katmanı */}
-                <div className="absolute inset-0 bg-black/55"></div>
+                <div className="absolute inset-0 bg-black/50"></div>
 
                 {/* Metin İçeriği Katmanı */}
                 <div className="relative z-10 text-white p-4 max-w-6xl mx-auto">

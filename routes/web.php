@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\DestinationController as AdminDestinationControll
 use App\Http\Controllers\Admin\OptionalActivityController as AdminOptionalActivityController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\SitemapController;
 
 
 /*
@@ -46,6 +47,9 @@ Route::get(config('dynamic_routes.contact_us', 'contact'), function () {
 
 // Rezervasyon talebi rotası
 Route::post('api/booking-request', [App\Http\Controllers\BookingController::class, 'store']);
+
+// Sitemap
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Destinasyon Rotaları
 Route::get(config('dynamic_routes.destination_index', 'destinations'), [DestinationController::class, 'index'])->name('destinations.index');

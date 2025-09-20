@@ -15,7 +15,7 @@ export default function Destinations({ seo }) {
       <div className={`destinations-page bg-background text-foreground min-h-screen`}>
         {/* Hero Section - Genel bir destinasyon başlığı */}
         <section className="hero-section relative h-[40vh] md:h-[50vh] flex items-center justify-center text-center bg-cover bg-center" style={{ backgroundImage: `url(${destinations[0]?.image?.original_url || '/images/hero-destinations.jpg'})` }}>
-          <div className="absolute inset-0 bg-black/60 hero-overlay"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative z-10 text-white p-4 max-w-4xl mx-auto hero-content">
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 font-playfair animate-fade-in-up">
               {t('destinations_page.hero.title', 'Keşfedilecek Destinasyonlar')}
