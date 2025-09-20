@@ -108,7 +108,7 @@ export default function ContentForm({ content, contentCategories, destinations, 
     };
 
     const categoryOptions = contentCategories.map(cat => ({
-        value: cat.id,
+        value: cat.id.toString(), // String'e çevir MultiSelect için
         label: cat.name,
     }));
 
@@ -117,23 +117,11 @@ export default function ContentForm({ content, contentCategories, destinations, 
         label: dest.name,
     }));
 
-    const handleCategorySelect = (categoryId) => {
-        setData(prevData => {
-            const currentCategories = prevData.categories || [];
-            const isSelected = currentCategories.includes(categoryId);
-
-            if (isSelected) {
-                return {
-                    ...prevData,
-                    categories: currentCategories.filter(id => id !== categoryId),
-                };
-            } else {
-                return {
-                    ...prevData,
-                    categories: [...currentCategories, categoryId],
-                };
-            }
-        });
+    const handleCategorySelect = (selectedCategoryIds) => {
+        setData(prevData => ({
+            ...prevData,
+            categories: selectedCategoryIds.map(id => parseInt(id)), // String'den integer'a çevir
+        }));
     };
 
     const handleDestinationSelect = (selectedDestinationIds) => {
@@ -229,7 +217,12 @@ export default function ContentForm({ content, contentCategories, destinations, 
 
                             <div>
                                 <Label htmlFor="categories">Kategoriler</Label>
-                                <MultiSelect options={categoryOptions} selectedValues={data.categories} onSelect={handleCategorySelect} placeholder="Kategori Seç" />
+                                <MultiSelect 
+                                    options={categoryOptions} 
+                                    selectedValues={data.categories.map(id => id.toString())} // Integer'ları string'e çevir
+                                    onSelect={handleCategorySelect} 
+                                    placeholder="Kategori Seç" 
+                                />
                                 <InputError message={errors.categories} className="mt-2" />
                             </div>
 

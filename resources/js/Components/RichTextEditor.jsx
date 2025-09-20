@@ -51,15 +51,33 @@ const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, classNa
   }, []);
 
   const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }, { 'font': [] }],
-      ['bold', 'italic', 'underline', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      [{ 'align': [] }],
-      [{ 'color': [] }, { 'background': [] }],
-      ['link', 'image', 'video'],
-      ['clean']
-    ],
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, false] }, { 'font': [] }],
+        ['bold', 'italic', 'underline', 'blockquote'],
+        [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+        [{ 'align': [] }],
+        [{ 'color': [] }, { 'background': [] }],
+        ['link', 'image', 'video'],
+        ['clean']
+      ],
+      handlers: {
+        link: function(value) {
+          if (value) {
+            const href = prompt('Link URL\'sini girin:');
+            if (href) {
+              // target="_blank" olmadan link ekle
+              const range = this.quill.getSelection();
+              if (range) {
+                this.quill.format('link', href);
+              }
+            }
+          } else {
+            this.quill.format('link', false);
+          }
+        }
+      }
+    }
   };
 
   const formats = [

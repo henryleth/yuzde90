@@ -268,7 +268,28 @@ export default function ContentDetail({ seo }) {
                   </p>
                 )}
                 <div 
-                  className="prose prose-lg dark:prose-invert max-w-none text-foreground/90" 
+                  className="blog-content prose prose-lg dark:prose-invert max-w-none text-foreground/90
+                    prose-headings:font-playfair prose-headings:font-bold prose-headings:text-foreground
+                    prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-8 prose-h1:border-b prose-h1:border-border prose-h1:pb-3
+                    prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8 prose-h2:text-primary prose-h2:border-l-4 prose-h2:border-primary prose-h2:pl-4
+                    prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6 prose-h3:text-secondary-foreground prose-h3:font-semibold
+                    prose-h4:text-xl prose-h4:mb-2 prose-h4:mt-4 prose-h4:text-muted-foreground prose-h4:font-medium
+                    prose-p:text-base prose-p:leading-relaxed prose-p:mb-4 prose-p:text-foreground/90
+                    prose-a:text-primary prose-a:font-medium prose-a:no-underline prose-a:border-b prose-a:border-primary/30 
+                    hover:prose-a:border-primary hover:prose-a:bg-primary/5 prose-a:transition-all prose-a:duration-200 prose-a:px-1 prose-a:py-0.5 prose-a:rounded-sm
+                    prose-strong:text-foreground prose-strong:font-semibold prose-strong:bg-muted/50 prose-strong:px-1 prose-strong:py-0.5 prose-strong:rounded-sm
+                    prose-em:text-muted-foreground prose-em:italic prose-em:font-medium
+                    prose-ul:my-4 prose-ul:space-y-2 prose-li:text-foreground/90 prose-li:leading-relaxed
+                    prose-ol:my-4 prose-ol:space-y-2 prose-ol:list-decimal prose-ol:pl-6
+                    prose-li:marker:text-primary prose-li:marker:font-medium
+                    prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-6 prose-blockquote:py-4 
+                    prose-blockquote:bg-muted/30 prose-blockquote:rounded-r-lg prose-blockquote:my-6 prose-blockquote:italic
+                    prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:font-mono
+                    prose-pre:bg-muted prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:border prose-pre:border-border
+                    prose-table:border-collapse prose-table:border prose-table:border-border prose-table:rounded-lg prose-table:overflow-hidden
+                    prose-th:bg-muted prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:font-semibold prose-th:border-b prose-th:border-border
+                    prose-td:px-4 prose-td:py-3 prose-td:border-b prose-td:border-border/50
+                    prose-hr:border-border prose-hr:my-8 prose-hr:border-t-2" 
                   dangerouslySetInnerHTML={{ __html: post.content }} 
                 />
               </article>

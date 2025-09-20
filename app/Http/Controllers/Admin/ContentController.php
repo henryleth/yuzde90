@@ -129,6 +129,11 @@ class ContentController extends Controller
                 $validated['published_at'] = Carbon::parse($validated['published_at'])->format('Y-m-d H:i:s');
             }
 
+            // İçerikten gereksiz link attribute'larını temizle
+            if (isset($validated['content'])) {
+                $validated['content'] = $this->cleanLinkAttributes($validated['content']);
+            }
+
             $content = Content::create($validated);
 
             if (!empty($validated['categories'])) {
@@ -189,6 +194,11 @@ class ContentController extends Controller
                 $validated['published_at'] = Carbon::parse($validated['published_at'])->format('Y-m-d H:i:s');
             }
 
+            // İçerikten gereksiz link attribute'larını temizle
+            if (isset($validated['content'])) {
+                $validated['content'] = $this->cleanLinkAttributes($validated['content']);
+            }
+
             $content->update($validated);
 
             $content->contentCategories()->sync($validated['categories'] ?? []);
@@ -220,5 +230,30 @@ class ContentController extends Controller
             Log::error('İçerik silme hatası: ' . $e->getMessage());
             return back()->withErrors(['general' => 'İçerik silinirken bir hata oluştu: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Link attribute'larını temizleyen helper fonksiyon
+     * target="_blank" ve rel="noopener noreferrer" attribute'larını kaldırır
+     */
+    private function cleanLinkAttributes($content)
+    {
+        if (empty($content)) {
+            return $content;
+        }
+
+        // target="_blank" attribute'unu kaldır
+        $content = preg_replace('/\s*target\s*=\s*["\'][^"\']*["\']/i', '', $content);
+        
+        // rel="noopener noreferrer" attribute'unu kaldır
+        $content = preg_replace('/\s*rel\s*=\s*["\'][^"\']*["\']/i', '', $content);
+        
+        // Çift boşlukları tek boşluğa çevir
+        $content = preg_replace('/\s+/', ' ', $content);
+        
+        // Link tag'lerindeki fazla boşlukları temizle
+        $content = preg_replace('/<a\s+([^>]+)>/i', '<a $1>', $content);
+        
+        return $content;
     }
 }

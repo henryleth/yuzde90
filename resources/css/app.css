@@ -363,3 +363,170 @@ html {
     border-color: hsl(var(--border));
     color: hsl(var(--foreground));
 }
+
+/* Blog Content Styling - Professional Typography */
+@layer components {
+  .blog-content {
+    /* Genel yazı tipi ve okuma deneyimi */
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    line-height: 1.7;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Başlık stilleri - hiyerarşi ve görsel çekicilik */
+  .blog-content h1, .blog-content h2, .blog-content h3, .blog-content h4 {
+    scroll-margin-top: 2rem;
+    letter-spacing: -0.025em;
+  }
+
+  .blog-content h2 {
+    position: relative;
+  }
+
+  .blog-content h2::before {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--primary) / 0.6));
+    border-radius: 2px;
+  }
+
+  /* Link stilleri - hover efektleri */
+  .blog-content a {
+    position: relative;
+    display: inline;
+    text-decoration: none;
+    background: linear-gradient(to right, hsl(var(--primary) / 0.1), hsl(var(--primary) / 0.1));
+    background-size: 0% 100%;
+    background-repeat: no-repeat;
+    transition: all 0.3s ease;
+  }
+
+  .blog-content a:hover {
+    background-size: 100% 100%;
+    color: hsl(var(--primary));
+    transform: translateY(-1px);
+  }
+
+  .blog-content a:focus {
+    outline: 2px solid hsl(var(--primary) / 0.5);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Strong ve emphasis stilleri */
+  .blog-content strong {
+    font-weight: 600;
+    background: linear-gradient(120deg, hsl(var(--muted) / 0.3) 0%, hsl(var(--muted) / 0.5) 100%);
+    border-radius: 3px;
+    padding: 2px 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .blog-content em {
+    font-style: italic;
+    color: hsl(var(--foreground) / 0.8);
+    position: relative;
+  }
+
+  /* Liste stilleri */
+  .blog-content ul, .blog-content ol {
+    padding-left: 1.5rem;
+  }
+
+  .blog-content li {
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+
+  .blog-content ul li::marker {
+    content: "▸";
+    color: hsl(var(--primary));
+    font-weight: bold;
+  }
+
+  .blog-content ol li::marker {
+    color: hsl(var(--primary));
+    font-weight: 600;
+  }
+
+  /* Paragraf stilleri */
+  .blog-content p {
+    text-align: justify;
+    hyphens: auto;
+    word-break: break-word;
+  }
+
+  .blog-content p:first-of-type {
+    font-size: 1.125rem;
+    color: hsl(var(--foreground) / 0.95);
+    font-weight: 400;
+  }
+
+  /* İçindekiler tablosu stilleri */
+  .blog-content ul:first-of-type {
+    background: hsl(var(--muted) / 0.3);
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .blog-content ul:first-of-type::before {
+    content: "📋 İçindekiler";
+    display: block;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .blog-content ul:first-of-type li {
+    margin-bottom: 0.75rem;
+  }
+
+  .blog-content ul:first-of-type li::marker {
+    content: "→";
+  }
+
+  .blog-content ul:first-of-type a {
+    color: hsl(var(--primary));
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .blog-content ul:first-of-type a:hover {
+    background: hsl(var(--primary) / 0.1);
+    border-bottom-color: hsl(var(--primary));
+  }
+
+  /* Responsive tasarım */
+  @media (max-width: 768px) {
+    .blog-content {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .blog-content h1 { font-size: 2rem; }
+    .blog-content h2 { font-size: 1.75rem; }
+    .blog-content h3 { font-size: 1.5rem; }
+    .blog-content h4 { font-size: 1.25rem; }
+
+    .blog-content p:first-of-type {
+      font-size: 1rem;
+    }
+
+    .blog-content ul, .blog-content ol {
+      padding-left: 1.25rem;
+    }
+  }
+}
