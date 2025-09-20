@@ -100,7 +100,7 @@
                     Total URLs: <xsl:value-of select="count(sitemap:urlset/sitemap:url)"/> |
                     Tours: <xsl:value-of select="count(sitemap:urlset/sitemap:url[contains(sitemap:loc, '/tours/')])"/> |
                     Destinations: <xsl:value-of select="count(sitemap:urlset/sitemap:url[contains(sitemap:loc, '/destinations/')])"/> |
-                    Blog Posts: <xsl:value-of select="count(sitemap:urlset/sitemap:url[contains(sitemap:loc, '/contents/')])"/>
+                    Blog Posts: <xsl:value-of select="count(sitemap:urlset/sitemap:url[contains(sitemap:loc, '/contents/') or contains(sitemap:loc, '/blog/')])"/>
                 </div>
 
                 <!-- Main Pages -->
@@ -115,7 +115,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <xsl:for-each select="sitemap:urlset/sitemap:url[not(contains(sitemap:loc, '/tours/')) and not(contains(sitemap:loc, '/destinations/')) and not(contains(sitemap:loc, '/contents/'))]">
+                        <xsl:for-each select="sitemap:urlset/sitemap:url[not(contains(sitemap:loc, '/tours/')) and not(contains(sitemap:loc, '/destinations/')) and not(contains(sitemap:loc, '/contents/')) and not(contains(sitemap:loc, '/blog/'))]">
                             <tr>
                                 <td>
                                     <a target="_blank">
@@ -228,8 +228,8 @@
                 </xsl:if>
 
                 <!-- Blog Posts -->
-                <xsl:if test="count(sitemap:urlset/sitemap:url[contains(sitemap:loc, '/contents/')]) > 0">
-                    <h2>Blog Posts (<xsl:value-of select="count(sitemap:urlset/sitemap:url[contains(sitemap:loc, '/contents/')])"/> URLs)</h2>
+                <xsl:if test="count(sitemap:urlset/sitemap:url[contains(sitemap:loc, '/contents/') or contains(sitemap:loc, '/blog/')]) > 0">
+                    <h2>Blog Posts (<xsl:value-of select="count(sitemap:urlset/sitemap:url[contains(sitemap:loc, '/contents/') or contains(sitemap:loc, '/blog/')])"/> URLs)</h2>
                     <table>
                         <thead>
                             <tr>
@@ -240,7 +240,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <xsl:for-each select="sitemap:urlset/sitemap:url[contains(sitemap:loc, '/contents/')]">
+                            <xsl:for-each select="sitemap:urlset/sitemap:url[contains(sitemap:loc, '/contents/') or contains(sitemap:loc, '/blog/')]">
                                 <tr>
                                     <td>
                                         <a target="_blank">

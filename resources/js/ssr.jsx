@@ -75,11 +75,20 @@ createServer((page) => {
                 }
             };
 
-            return (
-                <ThemeProvider>
-                    <App {...props} />
-                </ThemeProvider>
-            );
+            // Admin paneli için ThemeProvider kullanma
+            const isAdminRoute = props.initialPage.component.startsWith('Admin/');
+            
+            if (isAdminRoute) {
+                // Admin paneli her zaman light mode
+                return <App {...props} />;
+            } else {
+                // Normal sayfalar için ThemeProvider kullan
+                return (
+                    <ThemeProvider>
+                        <App {...props} />
+                    </ThemeProvider>
+                );
+            }
         },
     });
 });

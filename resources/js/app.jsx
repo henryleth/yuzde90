@@ -23,11 +23,21 @@ createInertiaApp({
      */
     setup({ el, App, props }) {
         const root = createRoot(el);
-        root.render(
-            <ThemeProvider>
-                <App {...props} />
-            </ThemeProvider>
-        );
+        
+        // Admin paneli için ThemeProvider kullanma
+        const isAdminRoute = props.initialPage.component.startsWith('Admin/');
+        
+        if (isAdminRoute) {
+            // Admin paneli her zaman light mode
+            root.render(<App {...props} />);
+        } else {
+            // Normal sayfalar için ThemeProvider kullan
+            root.render(
+                <ThemeProvider>
+                    <App {...props} />
+                </ThemeProvider>
+            );
+        }
     },
     
     progress: {

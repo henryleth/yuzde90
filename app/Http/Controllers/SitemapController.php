@@ -19,7 +19,6 @@ class SitemapController extends Controller
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ';
-        $xml .= 'xmlns:xhtml="http://www.w3.org/1999/xhtml" ';
         $xml .= 'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
         // Ana sayfa
@@ -120,11 +119,6 @@ class SitemapController extends Controller
             $url .= '</image:image>';
         }
         
-        // Çoklu dil desteği için alternatif linkler
-        $supportedLocales = ['tr', 'en', 'es'];
-        foreach ($supportedLocales as $locale) {
-            $url .= '<xhtml:link rel="alternate" hreflang="' . $locale . '" href="' . htmlspecialchars($loc) . '?lang=' . $locale . '"/>';
-        }
         
         $url .= '</url>';
         
