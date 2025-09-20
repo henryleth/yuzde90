@@ -74,7 +74,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start">
                 <span className="font-semibold mr-2">{t('footer.contact.phone', 'Telefon')}:</span>
-                <a href="http://wa.me/905366583468" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">+90 536 658 34 68</a>
+                <a href={`https://wa.me/905366583468?text=${encodeURIComponent('Hola, me gustaría obtener información.')}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">+90 536 658 34 68</a>
               </li>
             </ul>
           </div>
