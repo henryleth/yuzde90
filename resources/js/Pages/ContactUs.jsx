@@ -82,7 +82,7 @@ export default function ContactUs() {
                                 <div>
                                     <h3 className="text-xl font-semibold">{t('contact_us.info.phone_title', "Telefon")}</h3>
                                     <p className="text-muted-foreground">{t('contact_us.info.phone_text', "Hafta içi 09:00 - 18:00 arası bize ulaşabilirsiniz.")}</p>
-                                    <a href="tel:+905551234567" className="text-primary font-bold hover:underline">+90 555 123 45 67</a>
+                                    <a href="tel:+905366583468" className="text-primary font-bold hover:underline">+90 536 658 34 68</a>
                                 </div>
                             </Card>
                              <Card className="contact-info-card p-6 bg-card shadow-lg border-none flex items-start space-x-4 transform hover:-translate-y-2 transition-transform duration-300">
@@ -90,7 +90,7 @@ export default function ContactUs() {
                                 <div>
                                     <h3 className="text-xl font-semibold">{t('contact_us.info.email_title', "E-posta")}</h3>
                                     <p className="text-muted-foreground">{t('contact_us.info.email_text', "Tüm sorularınız için 24 saat içinde yanıt veriyoruz.")}</p>
-                                    <a href="mailto:info@turquiana.com" className="text-primary font-bold hover:underline">info@tur10.com</a>
+                                    <a href="mailto:info@turquiana.com" className="text-primary font-bold hover:underline">info@turquiana.com</a>
                                 </div>
                             </Card>
                              <Card className="contact-info-card p-6 bg-card shadow-lg border-none flex items-start space-x-4 transform hover:-translate-y-2 transition-transform duration-300">
@@ -98,7 +98,7 @@ export default function ContactUs() {
                                 <div>
                                     <h3 className="text-xl font-semibold">{t('contact_us.info.office_title', "Ofisimiz")}</h3>
                                     <p className="text-muted-foreground">{t('contact_us.info.office_text', "Bir kahve içmeye bekleriz!")}</p>
-                                    <p className="font-bold">Kızılay, Ankara, Türkiye</p>
+                                    <p className="font-bold">Alemdar, İncili Çavuş Sk. No:13, 34110 Fatih/İstanbul, Türkiye</p>
                                 </div>
                             </Card>
                         </div>
@@ -179,7 +179,7 @@ export default function ContactUs() {
                     <h2 className="text-4xl font-bold text-center mb-12 text-primary font-playfair">{t('contact_us.map.title', "Ofisimiz Nerede?")}</h2>
                     <div className="rounded-lg overflow-hidden shadow-2xl contact-map-container">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.8963!2d28.9773!3d41.0055!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab9be92011c27%3A0x236e6f6f37444fae!2sAlemdar%2C%20İncili%20Çavuş%20Sk.%20No%3A13%2C%2034110%20Fatih%2FIstanbul!5e0!3m2!1str!2str!4v1678912345678!5m2!1str!2str"
+                            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3010.8963!2d28.9771651!3d41.0083069!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab9bde51bb8b1%3A0x8be980f78eb4ab07!2sPride%20Travel%20Istanbul!5e0!3m2!1str!2str!4v1678912345678!5m2!1str!2str"
                             width="100%"
                             height="450"
                             style={{ border: 0 }}
