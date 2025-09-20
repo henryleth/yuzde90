@@ -522,15 +522,17 @@ export default function TourDetail({ tour, config, seo }) {
                     </div>
                   ))}
                   <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-3 italic">{t('tour_detail.pricing.per_person_note', 'Fiyatlandırma 1 kişi (per person) içindir.')}</p>
+                    <p className="text-sm text-muted-foreground mb-3 italic">
+                      {t('tour_detail.pricing.per_person_note', 'Fiyatlandırma 1 kişi (per person) içindir.')}
+                      {t('tour_detail.pricing.group_discount', '• 4 kişiden fazla katılımlarda ve önceden rezervasyon yaptırılması durumunda, katılımcı sayısına ve tur tarihine göre değişen oranlarda indirim uygulanmaktadır.')}
+                      {t('tour_detail.pricing.triple_room_note', '• Üç kişilik odalar standart çift kişilik oda büyüklüğünde olup, ilave bir çekyat veya açılır kapanır yatak içermektedir.')}
+                      </p>
                     <h4 className="font-semibold mb-2">{t('tour_detail.pricing.payment_terms_title', 'Ödeme Koşulları')}</h4>
                     <ul className="text-sm text-muted-foreground space-y-1">
                       <li>{t('tour_detail.pricing.term1', '• Rezervasyon için %20 avans ödemesi gereklidir')}</li>
                       <li>{t('tour_detail.pricing.term2', '• Kalan tutar İstanbul\'daki ofisimizde ödenebilir')}</li>
                       <li>{t('tour_detail.pricing.term3', '• Visa, MasterCard, Maestro kartları kabul edilir')}</li>
                       <li>{t('tour_detail.pricing.term4', '• Online ödeme mümkündür')}</li>
-                      <li>{t('tour_detail.pricing.group_discount', '• 4 kişiden fazla katılımlarda ve önceden rezervasyon yaptırılması durumunda, katılımcı sayısına ve tur tarihine göre değişen oranlarda indirim uygulanmaktadır.')}</li>
-                      <li>{t('tour_detail.pricing.triple_room_note', '• Üç kişilik odalar standart çift kişilik oda büyüklüğünde olup, ilave bir çekyat veya açılır kapanır yatak içermektedir.')}</li>
                     </ul>
                   </div>
                 </div>
