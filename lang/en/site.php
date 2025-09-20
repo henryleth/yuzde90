@@ -281,6 +281,7 @@ return [
             'single' => 'Single',
             'double' => 'Double',
             'triple' => 'Triple',
+            'per_person_note' => 'Prices are per person.',
             'payment_terms_title' => 'Payment Terms',
             'term1' => '• A 20% down payment is required for reservation',
             'term2' => '• The remaining amount can be paid at our office in Istanbul',

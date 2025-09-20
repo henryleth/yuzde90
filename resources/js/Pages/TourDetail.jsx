@@ -488,102 +488,49 @@ export default function TourDetail({ tour, config, seo }) {
                           <thead>
                             <tr className="border-b border-border">
                               <th className="text-left p-3">{t('tour_detail.pricing.category', 'Kategori')}</th>
-                              <th className="text-left p-3">{t('tour_detail.pricing.single', 'Tek Kişilik')}</th>
-                              <th className="text-left p-3">{t('tour_detail.pricing.double', 'Çift Kişilik')}</th>
                               <th className="text-left p-3">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}</th>
+                              <th className="text-left p-3">{t('tour_detail.pricing.double', 'Çift Kişilik')}</th>
+                              <th className="text-left p-3">{t('tour_detail.pricing.single', 'Tek Kişilik')}</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {seasonItem.categories.map((category, catIndex) => (
+                            {[...seasonItem.categories].reverse().map((category, catIndex) => (
                               <tr key={catIndex} className="border-b border-border last:border-b-0">
                                 <td className="p-3 font-medium">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</td>
-                                <td className="p-3">{category.single || '-'}</td>
-                                <td className="p-3">{category.double || '-'}</td>
                                 <td className="p-3">{category.triple || '-'}</td>
+                                <td className="p-3">{category.double || '-'}</td>
+                                <td className="p-3">{category.single || '-'}</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
 
-                      {/* Mobil için Alternatif Tasarımlar (md'den küçük) */}
-                      <div className="md:hidden space-y-6">
-                        {/* Tasarım 1: Kategori Kartları */}
-                        <div className="space-y-4">
-                          <h4 className="font-bold text-center text-sm uppercase tracking-wider text-muted-foreground">Tasarım 1: Kartlar</h4>
-                          {seasonItem.categories.map((category, catIndex) => (
-                            <div key={`design1-${catIndex}`} className="bg-muted/50 rounded-lg border border-border p-4">
-                              <h5 className="font-bold text-lg text-primary mb-3">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</h5>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between items-center border-b border-border/50 pb-2"><span className="text-muted-foreground">{t('tour_detail.pricing.single', 'Tek Kişilik')}</span><span className="font-semibold">{category.single}</span></div>
-                                <div className="flex justify-between items-center border-b border-border/50 pb-2"><span className="text-muted-foreground">{t('tour_detail.pricing.double', 'Çift Kişilik')}</span><span className="font-semibold">{category.double}</span></div>
-                                <div className="flex justify-between items-center"><span className="text-muted-foreground">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}</span><span className="font-semibold">{category.triple}</span></div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Tasarım 2: Akordiyon */}
-                        <div className="space-y-2">
-                          <h4 className="font-bold text-center text-sm uppercase tracking-wider text-muted-foreground mt-8">Tasarım 2: Akordiyon</h4>
-                          <Accordion type="single" collapsible className="w-full">
-                            {seasonItem.categories.map((category, catIndex) => (
-                              <AccordionItem key={`design2-${catIndex}`} value={`item-${catIndex}`} className="bg-muted/50 border border-border rounded-lg mb-2">
-                                <AccordionTrigger className="px-4 py-3 font-bold text-primary">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</AccordionTrigger>
-                                <AccordionContent className="px-4 pb-4">
-                                  <div className="space-y-2 text-sm">
-                                    <p><span className="font-semibold">{t('tour_detail.pricing.single', 'Tek Kişilik')}:</span> {category.single}</p>
-                                    <p><span className="font-semibold">{t('tour_detail.pricing.double', 'Çift Kişilik')}:</span> {category.double}</p>
-                                    <p><span className="font-semibold">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}:</span> {category.triple}</p>
-                                  </div>
-                                </AccordionContent>
-                              </AccordionItem>
-                            ))}
-                          </Accordion>
-                        </div>
-
-                        {/* Tasarım 3: Dikey Liste */}
-                        <div className="space-y-4">
-                          <h4 className="font-bold text-center text-sm uppercase tracking-wider text-muted-foreground mt-8">Tasarım 3: Dikey Liste</h4>
-                          {seasonItem.categories.map((category, catIndex) => (
-                            <div key={`design3-${catIndex}`} className="p-4 border-l-4 border-primary bg-muted/50 rounded-r-lg">
-                              <h5 className="font-bold text-lg mb-2">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</h5>
-                              <ul className="list-disc list-inside text-sm space-y-1 text-muted-foreground">
-                                <li>{t('tour_detail.pricing.single', 'Tek Kişilik')}: <span className="font-semibold text-foreground">{category.single}</span></li>
-                                <li>{t('tour_detail.pricing.double', 'Çift Kişilik')}: <span className="font-semibold text-foreground">{category.double}</span></li>
-                                <li>{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}: <span className="font-semibold text-foreground">{category.triple}</span></li>
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Tasarım 4: Grid */}
-                        <div className="space-y-4">
-                          <h4 className="font-bold text-center text-sm uppercase tracking-wider text-muted-foreground mt-8">Tasarım 4: Grid</h4>
-                          {seasonItem.categories.map((category, catIndex) => (
-                            <div key={`design4-${catIndex}`} className="bg-card border border-border rounded-lg p-4">
-                               <h5 className="font-bold text-lg text-center mb-3 text-primary">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</h5>
-                               <div className="grid grid-cols-3 text-center gap-2">
-                                  <div>
-                                    <div className="text-xs text-muted-foreground">{t('tour_detail.pricing.single', 'Tek Kişilik')}</div>
-                                    <div className="font-bold text-lg">{category.single}</div>
-                                  </div>
-                                  <div>
-                                    <div className="text-xs text-muted-foreground">{t('tour_detail.pricing.double', 'Çift Kişilik')}</div>
-                                    <div className="font-bold text-lg">{category.double}</div>
-                                  </div>
-                                  <div>
-                                    <div className="text-xs text-muted-foreground">{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}</div>
-                                    <div className="font-bold text-lg">{category.triple}</div>
-                                  </div>
-                               </div>
-                            </div>
-                          ))}
-                        </div>
+                      {/* Mobil için Tasarım 3: Dikey Liste */}
+                      <div className="md:hidden space-y-4">
+                        {[...seasonItem.categories].reverse().map((category, catIndex) => (
+                          <div key={catIndex} className="p-4 border-l-4 border-primary bg-muted/50 rounded-r-lg">
+                            <h5 className="font-bold text-lg mb-2">{t(`tour_detail.hotels.${category.name.toLowerCase().replace(' ', '_')}`, category.name)}</h5>
+                            <ul className="list-disc list-inside text-sm space-y-1 text-muted-foreground">
+                              <li>{t('tour_detail.pricing.triple', 'Üçlü Kişilik')}: <span className="font-semibold text-foreground">{category.triple}</span></li>
+                              <li>{t('tour_detail.pricing.double', 'Çift Kişilik')}: <span className="font-semibold text-foreground">{category.double}</span></li>
+                              <li>{t('tour_detail.pricing.single', 'Tek Kişilik')}: <span className="font-semibold text-foreground">{category.single}</span></li>
+                            </ul>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ))}
-                  <div className="mt-6 p-4 bg-muted/50 rounded-lg"><h4 className="font-semibold mb-2">{t('tour_detail.pricing.payment_terms_title', 'Ödeme Koşulları')}</h4><ul className="text-sm text-muted-foreground space-y-1"><li>{t('tour_detail.pricing.term1', '• Rezervasyon için %20 avans ödemesi gereklidir')}</li><li>{t('tour_detail.pricing.term2', '• Kalan tutar İstanbul\'daki ofisimizde ödenebilir')}</li><li>{t('tour_detail.pricing.term3', '• Visa, MasterCard, Maestro kartları kabul edilir')}</li><li>{t('tour_detail.pricing.term4', '• Online ödeme mümkündür')}</li></ul></div>
+                  <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground mb-3 italic">{t('tour_detail.pricing.per_person_note', 'Fiyatlandırma 1 kişi (per person) içindir.')}</p>
+                    <h4 className="font-semibold mb-2">{t('tour_detail.pricing.payment_terms_title', 'Ödeme Koşulları')}</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>{t('tour_detail.pricing.term1', '• Rezervasyon için %20 avans ödemesi gereklidir')}</li>
+                      <li>{t('tour_detail.pricing.term2', '• Kalan tutar İstanbul\'daki ofisimizde ödenebilir')}</li>
+                      <li>{t('tour_detail.pricing.term3', '• Visa, MasterCard, Maestro kartları kabul edilir')}</li>
+                      <li>{t('tour_detail.pricing.term4', '• Online ödeme mümkündür')}</li>
+                    </ul>
+                  </div>
                 </div>
               </section>
 

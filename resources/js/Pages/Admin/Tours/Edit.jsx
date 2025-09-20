@@ -96,6 +96,7 @@ export default function Edit({ auth, tour, destinations, optionalActivities, med
     const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
     const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
     const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(true);
+    const [showActivityHtml, setShowActivityHtml] = useState({});
 
     const generateSlug = (text) => {
         const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
@@ -665,14 +666,35 @@ export default function Edit({ auth, tour, destinations, optionalActivities, med
                                                                                                                         </div>
                                                                                                                     </div>
                                                                                                                      <div className="space-y-2">
-                                                                                                                         <Label htmlFor={`activity-description-${day.id}-${activity.id}`}>Aktivite Açıklaması</Label>
-                                                                                                                         {isBrowser && (
-                                                                                                                            <Suspense fallback={<div>Yükleniyor...</div>}>
-                                                                                                                                <RichTextEditor value={activity.description || ''} onChange={(value) => handleActivityChange(day.id, activity.id, 'description', value)} className="mt-1 block w-full min-h-[100px]" showHtmlButton={false} />
-                                                                                                                            </Suspense>
+                                                                                                                         <div className="flex items-center justify-between">
+                                                                                                                             <Label htmlFor={`activity-description-${day.id}-${activity.id}`}>Aktivite Açıklaması</Label>
+                                                                                                                             <div className="flex items-center space-x-2">
+                                                                                                                                 <Label htmlFor={`show-html-${day.id}-${activity.id}`} className="text-sm text-muted-foreground">HTML Görüntüle</Label>
+                                                                                                                                 <Checkbox 
+                                                                                                                                     id={`show-html-${day.id}-${activity.id}`}
+                                                                                                                                     checked={showActivityHtml[`${day.id}-${activity.id}`] || false}
+                                                                                                                                     onCheckedChange={(checked) => {
+                                                                                                                                         setShowActivityHtml(prev => ({
+                                                                                                                                             ...prev,
+                                                                                                                                             [`${day.id}-${activity.id}`]: checked
+                                                                                                                                         }));
+                                                                                                                                     }}
+                                                                                                                                 />
+                                                                                                                             </div>
+                                                                                                                         </div>
+                                                                                                                         {showActivityHtml[`${day.id}-${activity.id}`] ? (
+                                                                                                                             <div className="p-4 border rounded-md bg-gray-50 min-h-[100px] overflow-auto">
+                                                                                                                                 <div dangerouslySetInnerHTML={{ __html: activity.description || '<p>İçerik yok</p>' }} />
+                                                                                                                             </div>
+                                                                                                                         ) : (
+                                                                                                                             isBrowser && (
+                                                                                                                                 <Suspense fallback={<div>Yükleniyor...</div>}>
+                                                                                                                                     <RichTextEditor value={activity.description || ''} onChange={(value) => handleActivityChange(day.id, activity.id, 'description', value)} className="mt-1 block w-full min-h-[100px]" showHtmlButton={false} />
+                                                                                                                                 </Suspense>
+                                                                                                                             )
                                                                                                                          )}
-                                                                                                                        <InputError message={errors[`daily_program.${dayIndex}.activities.${activityIndex}.description`]} className="mt-2" />
-                                                                                                                    </div>
+                                                                                                                         <InputError message={errors[`daily_program.${dayIndex}.activities.${activityIndex}.description`]} className="mt-2" />
+                                                                                                                     </div>
                                                                                                                 </div>
                                                                                                             )}
                                                                                                         </Draggable>

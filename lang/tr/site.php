@@ -286,6 +286,7 @@ return [
             'single' => 'Tek Kişilik',
             'double' => 'Çift Kişilik',
             'triple' => 'Üçlü Kişilik',
+            'per_person_note' => 'Fiyatlandırma 1 kişi (per person) içindir.',
             'payment_terms_title' => 'Ödeme Koşulları',
             'term1' => '• Rezervasyon için %20 avans ödemesi gereklidir',
             'term2' => "• Kalan tutar İstanbul'daki ofisimizde ödenebilir",

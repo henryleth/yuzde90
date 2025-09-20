@@ -310,6 +310,7 @@ return [
             'single' => 'Individual',
             'double' => 'Doble',
             'triple' => 'Triple',
+            'per_person_note' => 'Los precios son por persona.',
             'payment_terms_title' => 'Términos de Pago',
             'term1' => '• Se requiere un pago inicial del 20% para la reserva',
             'term2' => '• El monto restante se puede pagar en nuestra oficina en Estambul',
