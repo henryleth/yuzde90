@@ -54,6 +54,8 @@ export default function Create({ auth, destinations, optionalActivities, media_f
         language: 'Türkçe',
         min_participants: 1,
         max_participants: 10,
+        rating: 0,
+        reviews_count: 0,
         is_published: false,
         inclusions_html: '',
         exclusions_html: '',
@@ -208,13 +210,19 @@ export default function Create({ auth, destinations, optionalActivities, media_f
     
     const addHotelToCategory = (cityName, categoryName, hotelName) => {
         if (cityName && categoryName && hotelName) {
-            setCurrentHotels(prev => ({
-                ...prev,
-                [cityName]: {
-                    ...prev[cityName],
-                    [categoryName]: [...(prev[cityName]?.[categoryName] || []), { name: hotelName }]
-                }
-            }));
+            // Virgülle ayrılmış otelleri ayır ve her birini ayrı kayıt olarak ekle
+            const hotelNames = hotelName.split(',').map(name => name.trim()).filter(name => name);
+            
+            setCurrentHotels(prev => {
+                const newHotels = hotelNames.map(name => ({ name }));
+                return {
+                    ...prev,
+                    [cityName]: {
+                        ...prev[cityName],
+                        [categoryName]: [...(prev[cityName]?.[categoryName] || []), ...newHotels]
+                    }
+                };
+            });
         }
     };
     
@@ -497,6 +505,16 @@ export default function Create({ auth, destinations, optionalActivities, media_f
                                             <Input id="max_participants" type="number" name="max_participants" value={data.max_participants} className="mt-1 block w-full" onChange={(e) => setData('max_participants', parseInt(e.target.value))} />
                                             <InputError className="mt-2" message={errors.max_participants} />
                                         </div>
+                                        <div>
+                                            <Label htmlFor="rating">Puan (0-5)</Label>
+                                            <Input id="rating" type="number" name="rating" value={data.rating} className="mt-1 block w-full" onChange={(e) => setData('rating', parseFloat(e.target.value))} min="0" max="5" step="0.1" />
+                                            <InputError className="mt-2" message={errors.rating} />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="reviews_count">Yorum Sayısı</Label>
+                                            <Input id="reviews_count" type="number" name="reviews_count" value={data.reviews_count} className="mt-1 block w-full" onChange={(e) => setData('reviews_count', parseInt(e.target.value))} min="0" />
+                                            <InputError className="mt-2" message={errors.reviews_count} />
+                                        </div>
                                     </div>
                                     <div>
                                         <Label htmlFor="destinations">Destinasyonlar</Label>
@@ -567,7 +585,7 @@ export default function Create({ auth, destinations, optionalActivities, media_f
                                                                         </div>
                                                                     ))}
                                                                 </div>
-                                                                <Input type="text" placeholder="Yeni Otel Adı Ekle" onKeyDown={(e) => { if (e.key === 'Enter') { addHotelToCategory(cityName, categoryName, e.target.value); e.target.value = ''; } }} className="w-full" />
+                                                                <Input type="text" placeholder="Yeni Otel Adı Ekle (virgülle ayırarak çoklu ekleyebilirsiniz)" onKeyDown={(e) => { if (e.key === 'Enter') { addHotelToCategory(cityName, categoryName, e.target.value); e.target.value = ''; } }} className="w-full" />
                                                             </div>
                                                         ))}
                                                     </div>
