@@ -794,9 +794,12 @@ export default function Create({ auth, destinations, optionalActivities, media_f
                                                                                                                             </div>
                                                                                                                         </div>
                                                                                                                         {showActivityHtml[`${day.id}-${activity.id}`] ? (
-                                                                                                                            <div className="p-4 border rounded-md bg-gray-50 min-h-[100px] overflow-auto">
-                                                                                                                                <div dangerouslySetInnerHTML={{ __html: activity.description || '<p>İçerik yok</p>' }} />
-                                                                                                                            </div>
+                                                                                                                            <textarea
+                                                                                                                                value={activity.description || ''}
+                                                                                                                                onChange={(e) => handleActivityChange(day.id, activity.id, 'description', e.target.value)}
+                                                                                                                                className="w-full min-h-[150px] p-3 border rounded-md bg-gray-50 font-mono text-sm"
+                                                                                                                                placeholder="HTML kodu..."
+                                                                                                                            />
                                                                                                                         ) : (
                                                                                                                             <RichTextEditor value={activity.description || ''} onChange={(value) => handleActivityChange(day.id, activity.id, 'description', value)} className="mt-1 block w-full min-h-[100px]" />
                                                                                                                         )}
