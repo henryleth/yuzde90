@@ -288,8 +288,8 @@ return [
             'term2' => '• The remaining amount can be paid at our office in Istanbul',
             'term3' => '• Visa, MasterCard, Maestro cards are accepted',
             'term4' => '• Online payment is available',
-            'group_discount' => '• For groups of more than 4 people and advance reservations, discounts are available based on the number of participants and tour date.',
-            'triple_room_note' => '• Triple rooms are standard double room size with an additional rollaway bed or sofa bed.',
+            'group_discount' => 'For groups of more than 4 people and advance reservations, discounts are available based on the number of participants and tour date.',
+            'triple_room_note' => 'Triple rooms are standard double room size with an additional rollaway bed or sofa bed.',
         ],
         'hotels' => [
             'title' => 'Accommodation Options',

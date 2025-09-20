@@ -83,8 +83,27 @@ class MediaController extends Controller
                 return response()->json(['error' => 'Medya öğesi bulunamadı.'], 404);
             }
 
-            // Medya dosyasını diskten sil
-            $media->delete(); // Spatie MediaLibrary paketi dosyayı otomatik siler
+            // Fiziksel dosyaları silmeyi dene (varsa)
+            try {
+                // Ana dosyayı silmeyi dene
+                if ($media->path && Storage::disk($media->disk ?? 'public')->exists($media->path)) {
+                    Storage::disk($media->disk ?? 'public')->delete($media->path);
+                }
+
+                // Thumbnail dosyasını silmeyi dene
+                $fileNameWithoutExtension = pathinfo($media->file_name, PATHINFO_FILENAME);
+                $thumbnailPath = str_replace($media->file_name, 'thumbnail/' . $fileNameWithoutExtension . '.webp', $media->path);
+                
+                if (Storage::disk($media->disk ?? 'public')->exists($thumbnailPath)) {
+                    Storage::disk($media->disk ?? 'public')->delete($thumbnailPath);
+                }
+            } catch (\Exception $fileException) {
+                // Dosya silme hatası olsa bile devam et
+                Log::warning('Medya dosyası silinemedi (dosya bulunamıyor olabilir): ' . $fileException->getMessage());
+            }
+
+            // Veritabanından her durumda sil
+            $media->delete();
 
             return response()->json(['message' => 'Medya başarıyla silindi.'], 200);
         } catch (\Exception $e) {

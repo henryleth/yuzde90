@@ -90,10 +90,11 @@ return [
 
 ### `App\Http\Controllers\Admin\MediaController.php`
 
-Bu kontrolcü, frontend'den gelen medya ile ilgili API isteklerini (listeleme ve yükleme) yönetir:
+Bu kontrolcü, frontend'den gelen medya ile ilgili API isteklerini (listeleme, yükleme ve silme) yönetir:
 
 *   **`index()` Metodu:** Tüm medya öğelerini listeler. Medya modelinin `original_url`, `thumbnail_url` accessor'larını ve `tags`, `destination` ilişkilerini içeren formatlanmış JSON yanıtı döndürür.
 *   **`store()` Metodu:** Yeni bir görsel yükleme isteğini işler. `file`, `destination_id` ve `tags` verilerini doğrular. `HandlesMediaUploads` trait'indeki `uploadAndSaveMedia` metodunu kullanarak dosyayı yükler ve veritabanına kaydeder.
+*   **`destroy()` Metodu:** Medya öğesini hem veritabanından hem de diskten siler. **Önemli:** Fiziksel dosya bulunamasa bile (örneğin manuel olarak silinmişse), veritabanı kaydı başarıyla silinir. Bu sayede tutarsız veriler önlenir.
 
 ### Diğer Kontrolcüler
 
