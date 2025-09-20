@@ -33,7 +33,7 @@ export default function Guest({ children, seo = {} }) {
                         "@context": "https://schema.org",
                         "@type": "TravelAgency",
                         "name": "Turquiana",
-                        "description": "Türkiye'nin en iyi kültür turizmi acentesi",
+                        "description": "La mejor agencia de turismo cultural en Turquía",
                         "url": "https://turquiana.com",
                         "logo": "https://turquiana.com/images/logo.png",
                         "image": "https://turquiana.com/images/hero.jpg",
@@ -43,7 +43,7 @@ export default function Guest({ children, seo = {} }) {
                             "@type": "PostalAddress",
                             "streetAddress": "Alemdar, İncili Çavuş Sk. No:13",
                             "addressLocality": "Fatih",
-                            "addressRegion": "İstanbul",
+                            "addressRegion": "Estambul",
                             "postalCode": "34110",
                             "addressCountry": "TR"
                         },
@@ -53,10 +53,10 @@ export default function Guest({ children, seo = {} }) {
                             "https://www.twitter.com/turquiana"
                         ],
                         "priceRange": "€€€",
-                        "openingHours": "Mo-Fr 09:00-18:00, Sa 09:00-14:00",
-                        "paymentAccepted": ["Cash", "Credit Card", "Bank Transfer"],
+                        "openingHours": "Lu-Vi 09:00-18:00, Sa 09:00-14:00",
+                        "paymentAccepted": ["Efectivo", "Tarjeta de Crédito", "Transferencia Bancaria"],
                         "currenciesAccepted": "EUR,USD,TRY",
-                        "availableLanguage": ["Turkish", "English", "Spanish"]
+                        "availableLanguage": ["Turco", "Inglés", "Español"]
                     })}
                 </script>
             </Head>

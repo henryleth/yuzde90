@@ -326,7 +326,7 @@ export default function TourDetail({ tour, config, seo }) {
     "description": tour.summary,
     "url": typeof window !== 'undefined' ? window.location.href : '',
     "image": featuredImageUrl,
-    "touristType": "Cultural Tourism",
+    "touristType": "Turismo Cultural",
     "duration": `P${tour.duration_days}D`, // ISO 8601 duration format (P=Period, D=Days)
     "provider": {
       "@type": "TravelAgency",
