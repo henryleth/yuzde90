@@ -25,8 +25,8 @@ export default function ContentForm({ content, contentCategories, destinations, 
         content: content?.content || '',
         published_at: content?.published_at ? new Date(content.published_at) : null,
         image_id: content?.image_id || null,
-        categories: content?.content_categories.map(cat => cat.id) || [],
-        destinations: content?.destinations.map(dest => dest.id) || [],
+        categories: content?.content_categories?.map(cat => cat.id) || [],
+        destinations: content?.destinations?.map(dest => dest.id) || [],
         meta_title: content?.meta_title || '',
         meta_description: content?.meta_description || '',
     });
@@ -45,8 +45,8 @@ export default function ContentForm({ content, contentCategories, destinations, 
                 content: content.content || '',
                 published_at: content.published_at ? new Date(content.published_at) : null,
                 image_id: content.image_id || null,
-                categories: content.content_categories.map(cat => cat.id) || [],
-                destinations: content.destinations.map(dest => dest.id) || [],
+                categories: content.content_categories?.map(cat => cat.id) || [],
+                destinations: content.destinations?.map(dest => dest.id) || [],
                 meta_title: content.meta_title || '',
                 meta_description: content.meta_description || '',
             });
@@ -113,7 +113,7 @@ export default function ContentForm({ content, contentCategories, destinations, 
     }));
 
     const destinationOptions = destinations.map(dest => ({
-        value: dest.id,
+        value: dest.id.toString(), // String'e çevir MultiSelect için
         label: dest.name,
     }));
 
