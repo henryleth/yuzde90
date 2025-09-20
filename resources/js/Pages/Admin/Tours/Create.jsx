@@ -563,9 +563,33 @@ export default function Create({ auth, destinations, optionalActivities, media_f
                                                             <div key={`${cityName}-${categoryName}`} className="border rounded-md p-3">
                                                                 <div className="flex items-center justify-between mb-2">
                                                                     {editingCategory.city === cityName && editingCategory.category === categoryName ? (
-                                                                        <Input type="text" value={tempCategoryName} onChange={(e) => setTempCategoryName(e.target.value)} onBlur={() => { handleCategoryNameChange(cityName, categoryName, tempCategoryName); setEditingCategory({ city: null, category: null }); }} onKeyDown={(e) => { if (e.key === 'Enter') { handleCategoryNameChange(cityName, categoryName, tempCategoryName); setEditingCategory({ city: null, category: null }); } }} autoFocus className="font-semibold text-sm capitalize" />
+                                                                        <Input 
+                                                                            type="text" 
+                                                                            value={tempCategoryName} 
+                                                                            onChange={(e) => setTempCategoryName(e.target.value)} 
+                                                                            onBlur={() => { 
+                                                                                handleCategoryNameChange(cityName, categoryName, tempCategoryName); 
+                                                                                setEditingCategory({ city: null, category: null }); 
+                                                                            }} 
+                                                                            onKeyDown={(e) => { 
+                                                                                if (e.key === 'Enter') { 
+                                                                                    handleCategoryNameChange(cityName, categoryName, tempCategoryName); 
+                                                                                    setEditingCategory({ city: null, category: null }); 
+                                                                                } 
+                                                                            }} 
+                                                                            autoFocus 
+                                                                            className="font-semibold text-sm capitalize" 
+                                                                        />
                                                                     ) : (
-                                                                        <h4 className="font-semibold text-sm capitalize cursor-pointer" onDoubleClick={() => setEditingCategory({ city: cityName, category: categoryName })}>{categoryName}</h4>
+                                                                        <h4 
+                                                                            className="font-semibold text-sm capitalize cursor-pointer hover:bg-gray-100 px-2 py-1 rounded" 
+                                                                            onClick={() => {
+                                                                                setEditingCategory({ city: cityName, category: categoryName });
+                                                                                setTempCategoryName(categoryName);
+                                                                            }}
+                                                                        >
+                                                                            {categoryName}
+                                                                        </h4>
                                                                     )}
                                                                     <div className="p-1 rounded-full hover:bg-red-100 text-red-600 cursor-pointer" onClick={(e) => { e.stopPropagation(); removeCategoryFromCity(cityName, categoryName); }}>
                                                                         <Trash2 className="h-4 w-4" />
