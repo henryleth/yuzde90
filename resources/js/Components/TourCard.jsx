@@ -67,6 +67,9 @@ export default function TourCard({ tour, featuredBadge: FeaturedBadge, isLcp = f
             <span className="flex items-center">
               <Star size={14} className="mr-1.5 text-yellow-500" />
               {typeof tour.rating === 'number' ? tour.rating.toFixed(1) : 'N/A'}
+              {tour.reviews_count > 0 && (
+                <span className="text-xs text-muted-foreground ml-1">({tour.reviews_count})</span>
+              )}
             </span>
           </div>
           <div className="flex items-center justify-between">
