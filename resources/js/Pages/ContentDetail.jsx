@@ -176,10 +176,10 @@ export default function ContentDetail({ seo }) {
     );
   }
 
-  // Schema.org structured data for BlogPosting
+  // Schema.org - Article türü (turistik rehber içerikleri için daha uygun)
   const articleSchema = post ? {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
+    "@type": "Article",
     "headline": post.title,
     "description": post.summary,
     "image": post.image_original_url,
@@ -200,6 +200,12 @@ export default function ContentDetail({ seo }) {
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": typeof window !== 'undefined' ? window.location.href : ''
+    },
+    "articleSection": "Guía de Viaje", // Seyahat Rehberi
+    "about": {
+      "@type": "Place",
+      "name": "Turquía",
+      "description": "Destinos turísticos y lugares históricos en Turquía"
     }
   } : null;
 

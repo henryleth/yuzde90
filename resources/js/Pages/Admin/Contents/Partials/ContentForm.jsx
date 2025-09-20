@@ -136,23 +136,11 @@ export default function ContentForm({ content, contentCategories, destinations, 
         });
     };
 
-    const handleDestinationSelect = (destinationId) => {
-        setData(prevData => {
-            const currentDestinations = prevData.destinations || [];
-            const isSelected = currentDestinations.includes(destinationId);
-
-            if (isSelected) {
-                return {
-                    ...prevData,
-                    destinations: currentDestinations.filter(id => id !== destinationId),
-                };
-            } else {
-                return {
-                    ...prevData,
-                    destinations: [...currentDestinations, destinationId],
-                };
-            }
-        });
+    const handleDestinationSelect = (selectedDestinationIds) => {
+        setData(prevData => ({
+            ...prevData,
+            destinations: selectedDestinationIds.map(id => parseInt(id)), // String'den integer'a çevir
+        }));
     };
 
     return (
@@ -247,7 +235,12 @@ export default function ContentForm({ content, contentCategories, destinations, 
 
                             <div>
                                 <Label htmlFor="destinations">Destinasyonlar</Label>
-                                <MultiSelect options={destinationOptions} selectedValues={data.destinations} onSelect={handleDestinationSelect} placeholder="Destinasyon Seç" />
+                                <MultiSelect 
+                                    options={destinationOptions} 
+                                    selectedValues={data.destinations.map(id => id.toString())} // Integer'ları string'e çevir
+                                    onSelect={handleDestinationSelect} 
+                                    placeholder="Destinasyon Seç" 
+                                />
                                 <InputError message={errors.destinations} className="mt-2" />
                             </div>
                         </TabsContent>

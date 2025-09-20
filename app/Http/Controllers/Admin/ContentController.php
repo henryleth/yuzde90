@@ -117,7 +117,7 @@ class ContentController extends Controller
             'categories' => 'nullable|array',
             'categories.*' => 'exists:content_categories,id',
             'destinations' => 'nullable|array',
-            'destinations.*' => 'exists:destinations,id',
+            'destinations.*' => 'integer|exists:destinations,id',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
         ]);
@@ -135,7 +135,9 @@ class ContentController extends Controller
                 $content->contentCategories()->sync($validated['categories']);
             }
             if (!empty($validated['destinations'])) {
-                $content->destinations()->sync($validated['destinations']);
+                // Frontend'ten gelen nested array'i düzleştir
+                $destinationIds = collect($validated['destinations'])->flatten()->filter()->unique()->values()->toArray();
+                $content->destinations()->sync($destinationIds);
             }
 
             DB::commit();
@@ -175,7 +177,7 @@ class ContentController extends Controller
             'categories' => 'nullable|array',
             'categories.*' => 'exists:content_categories,id',
             'destinations' => 'nullable|array',
-            'destinations.*' => 'exists:destinations,id',
+            'destinations.*' => 'integer|exists:destinations,id',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
         ]);
@@ -190,7 +192,12 @@ class ContentController extends Controller
             $content->update($validated);
 
             $content->contentCategories()->sync($validated['categories'] ?? []);
-            $content->destinations()->sync($validated['destinations'] ?? []);
+            
+            // Frontend'ten gelen nested array'i düzleştir
+            $destinationIds = isset($validated['destinations']) 
+                ? collect($validated['destinations'])->flatten()->filter()->unique()->values()->toArray()
+                : [];
+            $content->destinations()->sync($destinationIds);
 
             DB::commit();
             return redirect()->route('admin.contents.index')->with('success', 'İçerik başarıyla güncellendi.');
