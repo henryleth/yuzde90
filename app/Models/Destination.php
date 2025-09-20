@@ -72,10 +72,12 @@ class Destination extends Model
 
     /**
      * Destinasyonun galeri görselleriyle ilişki.
+     * destination_ids JSON array'ini kullanarak medyaları getirir.
      */
-    public function galleryImages(): HasMany
+    public function getGalleryImagesAttribute()
     {
-        return $this->hasMany(Media::class, 'destination_id');
+        // destination_ids JSON array'inde bu destinasyonun ID'si olan medyaları getir
+        return Media::whereJsonContains('destination_ids', $this->id)->get();
     }
 
     /**

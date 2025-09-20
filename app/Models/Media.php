@@ -21,12 +21,13 @@ class Media extends Model
         'size',
         'disk',
         'tags',
-        'destination_id',
+        'destination_ids', // Birden fazla destinasyon desteği
     ];
 
     // Otomatik olarak diziye dönüştürülecek sütunlar
     protected $casts = [
         'tags' => 'array',
+        'destination_ids' => 'array', // JSON sütununu diziye dönüştür
     ];
 
     // Eklenen (appended) öznitelikler
@@ -53,10 +54,15 @@ class Media extends Model
     }
 
     /**
-     * Medyanın ait olduğu destinasyonu getirir.
+     * Medyanın ait olduğu destinasyonları getirir.
+     * destination_ids JSON array'inden Destination modellerini döndürür.
      */
-    public function destination(): BelongsTo
+    public function destinations()
     {
-        return $this->belongsTo(Destination::class);
+        // destination_ids JSON sütunundaki ID'leri kullanarak destinasyonları getir
+        if (!empty($this->destination_ids)) {
+            return Destination::whereIn('id', $this->destination_ids)->get();
+        }
+        return collect();
     }
 }

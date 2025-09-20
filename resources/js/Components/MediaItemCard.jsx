@@ -18,7 +18,7 @@ const MediaItemCard = React.memo(({ item, selectedMedia, setSelectedMedia, isMul
     return (
         <Card 
             key={item.id} 
-            className={`relative cursor-pointer ${isSelected ? 'border-primary ring-2 ring-primary' : ''} media-item-card`}
+            className={`relative cursor-pointer transition-all ${isSelected ? 'border-primary ring-2 ring-primary bg-primary/5 scale-[0.98]' : 'hover:shadow-md hover:scale-[1.02]'} media-item-card`}
             onClick={handleCardClick} // Card'ın kendisi tıklanabilir
         >
             {/* Checkbox kaldırıldı */}

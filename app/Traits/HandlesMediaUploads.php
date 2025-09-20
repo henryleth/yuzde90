@@ -48,7 +48,7 @@ trait HandlesMediaUploads
                 'size' => $fileSize,
                 'disk' => 'public',
                 'tags' => $options['tags'] ?? null,
-                'destination_id' => $options['destination_id'] ?? null,
+                'destination_ids' => $options['destination_ids'] ?? null, // Birden fazla destinasyon desteği
             ]);
             $media->save();
 
@@ -62,12 +62,17 @@ trait HandlesMediaUploads
                 }
             }
 
-            // Destinasyon slug'ını al (varsa)
-            if (isset($options['destination_id'])) {
-                $destination = Destination::find($options['destination_id']);
-                if ($destination) {
-                    $destinationSlugForFileName = $destination->slug;
-                    $nameParts[] = $destinationSlugForFileName; // Destinasyon slug'ını nameParts'e de ekle
+            // Destinasyon slug'larını al (varsa)
+            if (!empty($options['destination_ids'])) {
+                $destinations = Destination::whereIn('id', $options['destination_ids'])->get();
+                if ($destinations->isNotEmpty()) {
+                    // Birden fazla destinasyon varsa, ilkini dosya adı için kullan
+                    $destinationSlugForFileName = $destinations->first()->slug;
+                    // Tüm destinasyon slug'larını ekle (max 2 tane)
+                    $destinationSlugs = $destinations->take(2)->pluck('slug')->toArray();
+                    foreach ($destinationSlugs as $slug) {
+                        $nameParts[] = $slug;
+                    }
                 }
             }
 

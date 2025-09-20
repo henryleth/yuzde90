@@ -231,6 +231,7 @@ export default function Edit({ auth, destination }) {
                 isOpen={isMediaManagerOpen}
                 onClose={() => setIsMediaManagerOpen(false)}
                 onMediaSelect={handleMediaSelect}
+                initialSelectedMedia={selectedImage}
             />
         </AdminLayout>
     );

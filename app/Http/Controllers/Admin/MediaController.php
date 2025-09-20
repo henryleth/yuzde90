@@ -23,8 +23,8 @@ class MediaController extends Controller
      */
     public function index(Request $request)
     {
-        // destination ilişkisini yüklüyoruz çünkü medya modalında filtreleme için kullanılıyor.
-        $media = MediaModel::with('destination')->get();
+        // destination_ids otomatik olarak model'den gelecek (cast edilmiş olarak)
+        $media = MediaModel::all();
 
         return response()->json([
             'media' => $media,
@@ -36,17 +36,47 @@ class MediaController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'file' => 'sometimes|required|file|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'url' => 'sometimes|required|url',
-            'tags' => 'nullable|string',
-            'destination_id' => 'nullable|exists:destinations,id',
-        ]);
+        // Önce dosya boyutunu kontrol et
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $maxSize = 10240; // 10MB in KB
+            
+            if ($file->getSize() > $maxSize * 1024) {
+                return response()->json([
+                    'error' => 'Dosya boyutu çok büyük. Maksimum dosya boyutu 10MB olmalıdır.'
+                ], 413); // 413: Payload Too Large
+            }
+        }
+        
+        try {
+            $validated = $request->validate([
+                'file' => 'sometimes|required|file|mimes:jpeg,png,jpg,gif,svg,webp|max:10240', // 10MB limit
+                'url' => 'sometimes|required|url',
+                'tags' => 'nullable|string',
+                'destination_ids' => 'nullable|array', // Birden fazla destinasyon desteği
+                'destination_ids.*' => 'exists:destinations,id', // Her bir destinasyon ID'si geçerli olmalı
+            ], [
+                'file.max' => 'Dosya boyutu maksimum 10MB olmalıdır.',
+                'file.mimes' => 'Sadece jpeg, png, jpg, gif, svg, webp formatları kabul edilir.',
+                'file.required' => 'Lütfen bir dosya seçin veya URL girin.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => 'Validasyon hatası',
+                'errors' => $e->errors()
+            ], 422);
+        }
 
         try {
+            // destination_ids'i integer array'e çevir
+            $destinationIds = $request->input('destination_ids');
+            if ($destinationIds && is_array($destinationIds)) {
+                $destinationIds = array_map('intval', $destinationIds);
+            }
+            
             $options = [
                 'tags' => $request->input('tags') ? json_decode($request->input('tags'), true) : [],
-                'destination_id' => $request->input('destination_id'),
+                'destination_ids' => $destinationIds, // Integer array olarak kaydet
             ];
             $source = null;
 
@@ -68,6 +98,49 @@ class MediaController extends Controller
         } catch (\Exception $e) {
             Log::error('Medya yükleme hatası: ' . $e->getMessage());
             return response()->json(['error' => 'Medya yüklenirken bir hata oluştu.', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Medya öğesinin bilgilerini günceller.
+     */
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'tags' => 'nullable|array',
+            'destination_ids' => 'nullable|array',
+            'destination_ids.*' => 'exists:destinations,id',
+        ]);
+
+        try {
+            $media = MediaModel::find($id);
+            
+            if (!$media) {
+                return response()->json(['error' => 'Medya öğesi bulunamadı.'], 404);
+            }
+            
+            // Tags güncelle
+            if (isset($validated['tags'])) {
+                $media->tags = $validated['tags'];
+            }
+            
+            // Destination IDs güncelle (integer array olarak kaydet)
+            if (isset($validated['destination_ids'])) {
+                $media->destination_ids = array_map('intval', $validated['destination_ids']);
+            }
+            
+            $media->save();
+            
+            return response()->json([
+                'message' => 'Medya başarıyla güncellendi.',
+                'media' => $media
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Medya güncelleme hatası: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Medya güncellenirken bir hata oluştu.',
+                'details' => $e->getMessage()
+            ], 500);
         }
     }
 

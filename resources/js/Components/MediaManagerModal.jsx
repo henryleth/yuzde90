@@ -5,11 +5,12 @@ import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { usePage } from '@inertiajs/react';
 import { PlusCircle, Upload, Image as ImageIcon, XCircle } from 'lucide-react';
 import MediaItemCard from './MediaItemCard';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
+import MultiSelect from '@/Components/ui/multi-select';
 
 const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedia = null, isMultiSelect = false }) => { // isMultiSelect prop'u eklendi
     const { toast } = useToast();
@@ -21,23 +22,30 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
     const [isUploading, setIsUploading] = useState(false);
     const [uploadFile, setUploadFile] = useState(null);
     const [uploadTags, setUploadTags] = useState('');
-    const [uploadDestinationId, setUploadDestinationId] = useState('');
+    const [uploadDestinationIds, setUploadDestinationIds] = useState([]); // Çoklu destinasyon seçimi için
     const [uploadUrl, setUploadUrl] = useState(''); // URL'den yükleme için state
     const [uploadType, setUploadType] = useState('file'); // 'file' veya 'url'
     const [filterDestination, setFilterDestination] = useState("all");
     const [filterTags, setFilterTags] = useState('');
     const [destinations, setDestinations] = useState([]);
+    const [isEditingInfo, setIsEditingInfo] = useState(false); // Düzenleme modu
+    const [editTags, setEditTags] = useState(''); // Düzenlenecek etiketler
+    const [editDestinationIds, setEditDestinationIds] = useState([]); // Düzenlenecek destinasyonlar
 
     useEffect(() => {
         if (isOpen) {
             fetchMediaItems();
             fetchDestinations();
+            // Modal açıldığında initialSelectedMedia'yı set et
+            setSelectedMedia(isMultiSelect ? (initialSelectedMedia || []) : initialSelectedMedia);
         }
     }, [isOpen]);
 
     useEffect(() => {
-        // initialSelectedMedia değiştiğinde selectedMedia'yı güncelle
-        setSelectedMedia(isMultiSelect ? (initialSelectedMedia || []) : initialSelectedMedia);
+        // initialSelectedMedia değiştiğinde ve modal açıksa selectedMedia'yı güncelle
+        if (isOpen) {
+            setSelectedMedia(isMultiSelect ? (initialSelectedMedia || []) : initialSelectedMedia);
+        }
     }, [initialSelectedMedia, isMultiSelect]);
 
     const fetchMediaItems = async () => {
@@ -69,7 +77,11 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
 
     const fetchDestinations = async () => {
         try {
-            const response = await fetch('/api/destinations');
+            const response = await fetch('/api/destinations', {
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
             const data = await response.json();
             if (response.ok) {
                 setDestinations(data); 
@@ -131,23 +143,52 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
     const upload = async (formData) => {
         setIsUploading(true);
 
-        if (uploadDestinationId) {
-            formData.append('destination_id', uploadDestinationId);
+        // Çoklu destinasyon desteği
+        if (uploadDestinationIds.length > 0) {
+            // destination_ids'i array olarak gönder (integer olarak)
+            uploadDestinationIds.forEach((id, index) => {
+                formData.append(`destination_ids[${index}]`, parseInt(id));
+            });
         }
+        
         if (uploadTags) {
             formData.append('tags', JSON.stringify(uploadTags.split(',').map(tag => tag.trim())));
         }
 
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+            
+            if (!csrfToken) {
+                throw new Error('CSRF token bulunamadı. Sayfayı yenileyin.');
+            }
+            
             const response = await fetch('/api/admin/media', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
                 },
                 body: formData,
             });
-            const data = await response.json();
+            
+            // Response'un content-type'ını kontrol et
+            const contentType = response.headers.get("content-type");
+            let data;
+            
+            if (contentType && contentType.includes("application/json")) {
+                data = await response.json();
+            } else {
+                // HTML response gelirse hata göster
+                const text = await response.text();
+                console.error("Beklenmeyen response:", text.substring(0, 500));
+                
+                // Muhtemel dosya boyutu hatası
+                if (text.includes("413") || text.includes("Request Entity Too Large")) {
+                    throw new Error("Dosya boyutu çok büyük. Maksimum 10MB dosya yükleyebilirsiniz.");
+                }
+                throw new Error("Sunucu beklenmeyen bir yanıt döndürdü. Lütfen sayfayı yenileyip tekrar deneyin.");
+            }
 
             if (response.ok) {
                 toast({
@@ -158,7 +199,7 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
                 setUploadFile(null);
                 setUploadUrl('');
                 setUploadTags('');
-                setUploadDestinationId('');
+                setUploadDestinationIds([]); // Çoklu destinasyonları temizle
                 fetchMediaItems(); 
 
                 setSelectedMedia(prev => {
@@ -203,8 +244,14 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
                     : [...prev, item]
             );
         } else {
-            // Tekli seçimde direkt ata
-            setSelectedMedia(item);
+            // Tekli seçimde, aynı öğeye tekrar tıklanırsa seçimi kaldır
+            setSelectedMedia(prev => 
+                prev && prev.id === item.id ? null : item
+            );
+            // Eğer seçim kaldırıldıysa, düzenleme modunu da kapat
+            if (selectedMedia && selectedMedia.id === item.id) {
+                setIsEditingInfo(false);
+            }
         }
     };
 
@@ -228,12 +275,94 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
         onClose(); // Her iki durumda da modalı kapat
     };
 
+    const startEditingInfo = () => {
+        if (selectedMedia && !Array.isArray(selectedMedia)) {
+            setEditTags(selectedMedia.tags ? selectedMedia.tags.join(', ') : '');
+            setEditDestinationIds(selectedMedia.destination_ids || []);
+            setIsEditingInfo(true);
+        }
+    };
+
+    const saveEditedInfo = async () => {
+        if (!selectedMedia || Array.isArray(selectedMedia)) return;
+        
+        try {
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+            
+            if (!csrfToken) {
+                throw new Error('CSRF token bulunamadı. Sayfayı yenileyin.');
+            }
+            
+            const newTags = editTags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const newDestinationIds = editDestinationIds.map(id => parseInt(id));
+            
+            const response = await fetch(`/api/admin/media/${selectedMedia.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    tags: newTags,
+                    destination_ids: newDestinationIds
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Güncellenmiş medya bilgilerini selectedMedia'ya yansıt
+                setSelectedMedia(prev => ({
+                    ...prev,
+                    tags: newTags,
+                    destination_ids: newDestinationIds
+                }));
+                
+                // MediaItems listesini de güncelle
+                setMediaItems(prevItems => 
+                    prevItems.map(item => 
+                        item.id === selectedMedia.id 
+                            ? { ...item, tags: newTags, destination_ids: newDestinationIds }
+                            : item
+                    )
+                );
+                
+                toast({
+                    title: "Başarılı",
+                    description: "Medya bilgileri güncellendi.",
+                });
+                setIsEditingInfo(false);
+            } else {
+                const data = await response.json();
+                toast({
+                    title: "Hata",
+                    description: data.error || "Güncelleme başarısız.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Hata",
+                description: "Güncelleme sırasında bir hata oluştu.",
+                variant: "destructive",
+            });
+        }
+    };
+
     const deleteMediaItem = async (idToDelete) => {
         if (!confirm('Bu medya öğesini kalıcı olarak silmek istediğinizden emin misiniz?')) {
             return;
         }
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+            
+            if (!csrfToken) {
+                throw new Error('CSRF token bulunamadı. Sayfayı yenileyin.');
+            }
+            
             const response = await fetch(`/api/admin/media/${idToDelete}`, {
                 method: 'DELETE',
                 headers: {
@@ -275,14 +404,39 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
     };
 
     const filteredMediaItems = mediaItems.filter(item => {
+        // Destinasyon filtreleme - destination_ids array'ini kontrol et
         const matchesDestination = filterDestination === "all" ? true : 
-            (item.destination_id && item.destination_id.toString() === filterDestination); 
+            (item.destination_ids && item.destination_ids.includes(parseInt(filterDestination))); 
 
         const matchesTags = filterTags ? 
             (item.tags && item.tags.some(tag => tag.toLowerCase().includes(filterTags.toLowerCase()))) 
             : true;
 
         return matchesDestination && matchesTags;
+    }).sort((a, b) => {
+        // Seçili medyaları en üste taşı, kendi aralarında seçilme sırasını koru
+        if (isMultiSelect && Array.isArray(selectedMedia)) {
+            const aIndex = selectedMedia.findIndex(m => m.id === a.id);
+            const bIndex = selectedMedia.findIndex(m => m.id === b.id);
+            
+            // İkisi de seçiliyse, seçilme sırasına göre sırala
+            if (aIndex !== -1 && bIndex !== -1) {
+                return aIndex - bIndex;
+            }
+            
+            // Sadece a seçiliyse, a'yı üste al
+            if (aIndex !== -1) return -1;
+            
+            // Sadece b seçiliyse, b'yi üste al
+            if (bIndex !== -1) return 1;
+        } else if (!isMultiSelect && selectedMedia) {
+            // Tekli seçimde
+            if (selectedMedia.id === a.id) return -1;
+            if (selectedMedia.id === b.id) return 1;
+        }
+        
+        // Seçili değillerse ID'ye göre sırala (yeniden eskiye)
+        return b.id - a.id;
     });
 
     return (
@@ -352,7 +506,35 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
                                     <Input 
                                         id="media-file" 
                                         type="file" 
-                                        onChange={(e) => setUploadFile(e.target.files[0])}
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                // Dosya boyutunu kontrol et (10MB = 10 * 1024 * 1024 bytes)
+                                                const maxSize = 10 * 1024 * 1024; // 10MB
+                                                if (file.size > maxSize) {
+                                                    toast({
+                                                        title: "Dosya Çok Büyük",
+                                                        description: `Dosya boyutu ${(file.size / (1024 * 1024)).toFixed(2)}MB. Maksimum 10MB dosya yükleyebilirsiniz.`,
+                                                        variant: "destructive",
+                                                    });
+                                                    e.target.value = ''; // Input'u temizle
+                                                    return;
+                                                }
+                                                
+                                                // Dosya formatını kontrol et
+                                                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp'];
+                                                if (!allowedTypes.includes(file.type)) {
+                                                    toast({
+                                                        title: "Geçersiz Dosya Formatı",
+                                                        description: "Sadece jpeg, png, jpg, gif, svg, webp formatları kabul edilir.",
+                                                        variant: "destructive",
+                                                    });
+                                                    e.target.value = ''; // Input'u temizle
+                                                    return;
+                                                }
+                                            }
+                                            setUploadFile(file);
+                                        }}
                                         className="media-file-input"
                                     />
                                 </div>
@@ -384,27 +566,116 @@ const MediaManagerModal = ({ isOpen, onClose, onMediaSelect, initialSelectedMedi
                             />
                         </div>
                         <div className="grid w-full max-w-sm items-center gap-1.5 media-destination-input-section">
-                            <Label htmlFor="media-destination" className="media-destination-label">Destinasyon</Label>
-                            <select 
-                                id="media-destination" 
-                                value={uploadDestinationId} 
-                                onChange={(e) => setUploadDestinationId(e.target.value)}
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 media-destination-select"
-                            >
-                                <option value="">Seçiniz (Opsiyonel)</option>
-                                {destinations.map(dest => (
-                                    <option key={dest.id} value={dest.id}>{dest.name}</option>
-                                ))}
-                            </select>
+                            <Label htmlFor="media-destination" className="media-destination-label">Destinasyonlar (Birden fazla seçebilirsiniz)</Label>
+                            <MultiSelect
+                                id="media-destination"
+                                selectedValues={uploadDestinationIds}
+                                onSelect={(newValues) => setUploadDestinationIds(newValues)}
+                                options={destinations.map(dest => ({
+                                    value: dest.id.toString(),
+                                    label: dest.name
+                                }))}
+                                placeholder="Destinasyon seçiniz..."
+                            />
                         </div>
                         <Button onClick={handleFileUpload} disabled={isUploading} className="media-upload-button">
                             {isUploading ? 'Yükleniyor...' : <> <Upload className="mr-2 h-4 w-4" /> Yükle</>}
                         </Button>
                     </TabsContent>
                 </Tabs>
-                <DialogFooter className="media-modal-footer flex-shrink-0 flex justify-start sm:space-x-2 p-6 pt-4 border-t"> {/* justify-start eklendi */}
-                    <Button variant="outline" onClick={onClose} className="media-cancel-button">İptal</Button>
-                    <Button onClick={handleSelectMedia} disabled={isMultiSelect ? selectedMedia.length === 0 : !selectedMedia} className="media-select-button">Seç</Button> {/* Seç butonu disabled durumu güncellendi */}
+                <DialogFooter className="media-modal-footer flex-shrink-0 flex justify-between items-center sm:space-x-2 p-6 pt-4 border-t">
+                    <div className="flex-1 text-sm text-muted-foreground">
+                        {selectedMedia && !Array.isArray(selectedMedia) && (
+                            isEditingInfo ? (
+                                // Düzenleme modu
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <Label className="min-w-[100px]">Etiketler:</Label>
+                                        <Input 
+                                            type="text" 
+                                            value={editTags} 
+                                            onChange={(e) => setEditTags(e.target.value)}
+                                            placeholder="Etiketleri virgülle ayırın"
+                                            className="flex-1 h-8"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Label className="min-w-[100px]">Destinasyonlar:</Label>
+                                        <MultiSelect
+                                            selectedValues={editDestinationIds.map(id => id.toString())}
+                                            onSelect={(values) => setEditDestinationIds(values)}
+                                            options={destinations.map(dest => ({
+                                                value: dest.id.toString(),
+                                                label: dest.name
+                                            }))}
+                                            placeholder="Destinasyon seçiniz..."
+                                            className="flex-1"
+                                        />
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button size="sm" onClick={saveEditedInfo}>Kaydet</Button>
+                                        <Button size="sm" variant="outline" onClick={() => setIsEditingInfo(false)}>İptal</Button>
+                                    </div>
+                                </div>
+                            ) : (
+                                // Görüntüleme modu (tıklanabilir)
+                                <div 
+                                    className="space-y-1 cursor-pointer hover:bg-secondary/20 p-2 -m-2 rounded transition-colors"
+                                    onClick={startEditingInfo}
+                                    title="Düzenlemek için tıklayın"
+                                >
+                                    {(selectedMedia.tags && selectedMedia.tags.length > 0) || (selectedMedia.destination_ids && selectedMedia.destination_ids.length > 0) ? (
+                                        <>
+                                            {selectedMedia.tags && selectedMedia.tags.length > 0 && (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">Etiketler:</span>
+                                                    <span className="flex gap-1">
+                                                        {selectedMedia.tags.map((tag, index) => (
+                                                            <span key={index} className="px-2 py-0.5 bg-secondary rounded text-xs">
+                                                                {tag}
+                                                            </span>
+                                                        ))}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {selectedMedia.destination_ids && selectedMedia.destination_ids.length > 0 && (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">Destinasyonlar:</span>
+                                                    <span className="flex gap-1">
+                                                        {(() => {
+                                                            const destIds = selectedMedia.destination_ids || [];
+                                                            const destNames = destIds.map(id => {
+                                                                const dest = destinations.find(d => d.id == id);
+                                                                return dest ? dest.name : `ID: ${id}`;
+                                                            });
+                                                            return destNames.map((name, index) => (
+                                                                <span key={index} className="px-2 py-0.5 bg-primary/10 rounded text-xs">
+                                                                    {name}
+                                                                </span>
+                                                            ));
+                                                        })()}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <div className="text-muted-foreground italic">
+                                            Etiket ve destinasyon eklemek için tıklayın
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        )}
+                        {Array.isArray(selectedMedia) && selectedMedia.length > 0 && (
+                            <div className="text-sm">
+                                {selectedMedia.length} medya seçildi
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex gap-2">
+                        <Button variant="outline" onClick={onClose} className="media-cancel-button">İptal</Button>
+                        <Button onClick={handleSelectMedia} disabled={isMultiSelect ? selectedMedia.length === 0 : !selectedMedia} className="media-select-button">Seç</Button>
+                    </div>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

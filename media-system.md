@@ -21,7 +21,8 @@ Yeni medya sistemi için temel tablo `media` tablosudur. Bu tablo, görsellerin 
 | `size`         | `BIGINT`   | Dosya boyutu (byte).                                                    |
 | `disk`         | `VARCHAR`  | Dosyanın depolandığı disk adı (örn: `public`).                        |
 | `tags`         | `JSON`     | Görselle ilişkili etiketler (metin olarak, slug değil).                  |
-| `destination_id`| `BIGINT`   | İsteğe bağlı, görselin ilişkili olduğu destinasyonun ID'si (`destinations` tablosuna FK). |
+| `destination_id`| `BIGINT`   | İsteğe bağlı, görselin ilişkili olduğu destinasyonun ID'si (`destinations` tablosuna FK). **Geriye uyumluluk için korunuyor.** |
+| `destination_ids`| `JSON`    | Görselin ilişkili olduğu destinasyonların ID'leri dizisi. **Birden fazla destinasyon desteği için eklenmiştir.** |
 | `created_at`   | `TIMESTAMP`| Oluşturulma zamanı.                                                     |
 | `updated_at`   | `TIMESTAMP`| Son güncelleme zamanı.                                                 |
 
@@ -58,6 +59,8 @@ Görsel işleme ve depolama mantığı, yeniden kullanılabilirlik için `App\Tr
 ### `uploadAndSaveMedia` Metodu
 
 Bu metod, bir görsel dosyasını (URL veya `UploadedFile` olarak) alır ve aşağıdaki işlemleri gerçekleştirir:
+
+**Önemli Güncelleme:** Metod artık birden fazla destinasyon desteği sunmaktadır. `options` parametresinde `destination_ids` dizisi gönderilebilir.
 
 1.  **Geçici Dosya Oluşturma:** Yüklenen görselden geçici bir dosya oluşturulur.
 2.  **Medya Modeli Oluşturma:** Yeni bir `App\Models\Media` kaydı oluşturulur ve `file_name`, `mime_type`, `path`, `size`, `disk`, `tags` ve `destination_id` gibi meta verilerle doldurulur. `save()` çağrısı yapılarak `media_id` elde edilir.
@@ -124,8 +127,10 @@ Bu bileşen, WordPress benzeri bir medya kütüphanesi modalı sağlar. Temel i�
 *   **Medya Listeleme:** `/api/admin/media` API'sinden mevcut medya öğelerini çeker ve görüntüler.
 *   **Filtreleme:** `destination` ve `tags`'e göre medya öğelerini filtreleme yeteneği sunar.
 *   **Yeni Medya Yükleme:** Dosya yükleme formunu ve mantığını içerir. Dosyaları `/api/admin/media` endpoint'ine gönderir.
+    *   **Çoklu Destinasyon Desteği:** MultiSelect bileşeni kullanarak birden fazla destinasyon seçilebilir.
+    *   Form verisinde `destination_ids` dizisi olarak gönderilir.
 *   **Medya Seçimi:** Seçilen medya öğelerini (`onMediaSelect` callback'i aracılığıyla) ana bileşene geri gönderir. `isMultiSelect` prop'una göre tekli veya çoklu seçim yapılabilir.
-*   **UI/UX:** Shadcn UI bileşenlerini kullanarak modern ve kullanıcı dostu bir arayüz sağlar (Dialog, Tabs, Input, Button, Card vb.).
+*   **UI/UX:** Shadcn UI bileşenlerini kullanarak modern ve kullanıcı dostu bir arayüz sağlar (Dialog, Tabs, Input, Button, Card, MultiSelect vb.).
 
 ### `resources/js/Pages/Admin/Tours/Edit.jsx`
 

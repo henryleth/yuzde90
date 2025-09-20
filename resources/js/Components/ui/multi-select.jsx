@@ -61,7 +61,10 @@ const MultiSelect = ({ options, selectedValues, onSelect, placeholder }) => {
                 key={option.value}
                 value={option.label}
                 onSelect={() => {
-                  onSelect(option.value);
+                  const newValues = selectedValues.includes(option.value)
+                    ? selectedValues.filter(val => val !== option.value)
+                    : [...selectedValues, option.value];
+                  onSelect(newValues);
                 }}
               >
                 <Check

@@ -52,7 +52,7 @@ class DestinationController extends Controller
         $destination = Destination::where('slug', $slug)
             ->with([
                 'image:id,disk,file_name,path', // model_id ve model_type kaldırıldı, path eklendi
-                'galleryImages:id,destination_id,disk,file_name,path', // path eklendi
+                // galleryImages accessor'ı kullanılacağı için with'den kaldırıldı
                 'tours' => function ($query) {
                     $query->select(['tours.id', 'title', 'slug', 'summary', 'min_participants', 'max_participants', 'duration_days', 'duration_nights', 'rating', 'featured_media_id'])
                           ->withMin('pricingTiers', 'price_per_person_1')

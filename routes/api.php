@@ -25,7 +25,8 @@ use App\Http\Controllers\BookingController; // BookingController'ı import et
 Route::prefix('admin')->group(function () { // auth:sanctum middleware kaldırıldı
     Route::get('media', [MediaController::class, 'index']);
     Route::post('media', [MediaController::class, 'store']);
-    Route::delete('media/{id}', [MediaController::class, 'destroy']); // Medya silme rotası eklendi
+    Route::put('media/{id}', [MediaController::class, 'update']); // Medya güncelleme rotası
+    Route::delete('media/{id}', [MediaController::class, 'destroy']); // Medya silme rotası
 });
 
 // Destinasyonlar için API rotası (Admin paneli için gerekli olmayabilir ama genel kullanım için)
