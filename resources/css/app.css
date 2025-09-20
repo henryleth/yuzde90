@@ -381,6 +381,35 @@ html {
     letter-spacing: -0.025em;
   }
 
+  .blog-content h1 {
+    font-size: 2.25rem !important; /* 36px */
+    font-weight: 700 !important;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .blog-content h2 {
+    font-size: 1.75rem !important; /* 30px */
+    font-weight: 600 !important;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+  }
+
+  .blog-content h3 {
+    font-size: 1.4rem !important; /* 24px */
+    font-weight: 600 !important;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .blog-content h4 {
+    font-size: 1.2rem !important; /* 20px */
+    font-weight: 500 !important;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
   .blog-content h2 {
     position: relative;
   }
@@ -392,7 +421,7 @@ html {
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--primary) / 0.6));
+    background: hsl(var(--primary));
     border-radius: 2px;
   }
 
@@ -437,18 +466,42 @@ html {
 
   /* Liste stilleri */
   .blog-content ul, .blog-content ol {
-    padding-left: 1.5rem;
+    padding-left: 1.25rem;
+    margin: 1rem 0;
   }
 
   .blog-content li {
-    margin-bottom: 0.5rem;
-    position: relative;
+    margin-bottom: 0.25rem;
   }
 
-  .blog-content ul li::marker {
-    content: "▸";
+  .blog-content ul li {
+    list-style-type: none;
+    position: relative;
+    padding-left: 1rem; /* Nokta için alan */
+  }
+
+  .blog-content ul li::before {
+    content: "•"; /* Nokta işareti */
     color: hsl(var(--primary));
     font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+
+  /* İçindekiler listesi için özel stil - nokta kaldır, sadece ok */
+  .blog-content ul:first-of-type {
+    list-style: none !important;
+  }
+  
+  .blog-content ul:first-of-type li {
+    list-style: none !important;
+    list-style-type: none !important;
+    margin-bottom: 0.75rem;
+  }
+  
+  .blog-content ul:first-of-type li::before {
+    content: "•" !important; /* Ok işareti de yok */
+    display: none !important; /* Tamamen gizle */
   }
 
   .blog-content ol li::marker {
@@ -457,17 +510,22 @@ html {
   }
 
   /* Paragraf stilleri */
-  .blog-content p {
-    text-align: justify;
-    hyphens: auto;
-    word-break: break-word;
-  }
+.blog-content p {
+  font-size: 1rem !important; /* 16px - tüm paragraflar aynı boyut */
+  line-height: 1.7 !important;
+  text-align: justify;
+  hyphens: auto;
+  word-break: break-word;
+  margin-bottom: 1rem;
+}
 
-  .blog-content p:first-of-type {
-    font-size: 1.125rem;
-    color: hsl(var(--foreground) / 0.95);
-    font-weight: 400;
-  }
+.blog-content p:first-of-type {
+  font-size: 1rem !important; /* 16px - ilk paragraf da aynı boyut */
+  color: hsl(var(--foreground) / 0.9);
+  font-weight: 400;
+  line-height: 1.7 !important;
+  margin-bottom: 1rem; /* Margin da aynı */
+}
 
   /* İçindekiler tablosu stilleri */
   .blog-content ul:first-of-type {
@@ -478,22 +536,9 @@ html {
     margin: 2rem 0;
   }
 
-  .blog-content ul:first-of-type::before {
-    content: "📋 İçindekiler";
-    display: block;
-    font-weight: 600;
-    color: hsl(var(--foreground));
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-  }
 
-  .blog-content ul:first-of-type li {
-    margin-bottom: 0.75rem;
-  }
 
-  .blog-content ul:first-of-type li::marker {
-    content: "→";
-  }
+
 
   .blog-content ul:first-of-type a {
     color: hsl(var(--primary));
@@ -516,10 +561,10 @@ html {
       line-height: 1.6;
     }
 
-    .blog-content h1 { font-size: 2rem; }
-    .blog-content h2 { font-size: 1.75rem; }
-    .blog-content h3 { font-size: 1.5rem; }
-    .blog-content h4 { font-size: 1.25rem; }
+    .blog-content h1 { font-size: 1.75rem; }
+    .blog-content h2 { font-size: 1.4rem; }
+    .blog-content h3 { font-size: 1.25rem; }
+    .blog-content h4 { font-size: 1.1rem; }
 
     .blog-content p:first-of-type {
       font-size: 1rem;

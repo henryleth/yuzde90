@@ -21,6 +21,8 @@ import { Code } from 'lucide-react';
  */
 const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, className, showHtmlButton = true }, ref) => {
   const [showHtml, setShowHtml] = useState(false);
+  const [htmlValue, setHtmlValue] = useState(value || ''); // HTML modundaki değer
+  const [richTextValue, setRichTextValue] = useState(value || ''); // Rich text modundaki değer
   const localRef = useRef();
   
   // SSR'da 'document is not defined' hatasını önlemek için
@@ -50,34 +52,54 @@ const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, classNa
     };
   }, []);
 
-  const modules = {
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, false] }, { 'font': [] }],
-        ['bold', 'italic', 'underline', 'blockquote'],
-        [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-        [{ 'align': [] }],
-        [{ 'color': [] }, { 'background': [] }],
-        ['link', 'image', 'video'],
-        ['clean']
-      ],
-      handlers: {
-        link: function(value) {
-          if (value) {
-            const href = prompt('Link URL\'sini girin:');
-            if (href) {
-              // target="_blank" olmadan link ekle
-              const range = this.quill.getSelection();
-              if (range) {
-                this.quill.format('link', href);
-              }
-            }
-          } else {
-            this.quill.format('link', false);
-          }
-        }
-      }
+  // Değerleri sync'te tut - TAM İZOLASYON
+  useEffect(() => {
+    // HTML modundayken Quill'e hiç değer verme
+    if (!showHtml) {
+      setRichTextValue(value || '');
     }
+    // HTML değerini sadece dışarıdan geldiğinde güncelle
+    if (value !== htmlValue) {
+      setHtmlValue(value || '');
+    }
+  }, [value]);
+
+  // Mod geçişi - TAM İZOLASYON
+  const handleModeSwitch = () => {
+    if (showHtml) {
+      // HTML'den editöre geçiş - HTML değerini parent'a gönder ama Quill'e VERME
+      onChange(htmlValue);
+      // Rich text değerini değiştirme, eski halini koru
+    } else {
+      // Editörden HTML'e geçiş - rich text değerini HTML'e aktar
+      setHtmlValue(richTextValue);
+    }
+    setShowHtml(!showHtml);
+  };
+
+  // HTML textarea değişikliği
+  const handleHtmlChange = (e) => {
+    const newHtmlValue = e.target.value;
+    setHtmlValue(newHtmlValue);
+    onChange(newHtmlValue);
+  };
+
+  // Rich text değişikliği
+  const handleRichTextChange = (content) => {
+    setRichTextValue(content);
+    onChange(content);
+  };
+
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }, { 'font': [] }],
+      ['bold', 'italic', 'underline', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+      [{ 'align': [] }],
+      [{ 'color': [] }, { 'background': [] }],
+      ['link', 'image', 'video'],
+      ['clean']
+    ]
   };
 
   const formats = [
@@ -87,6 +109,7 @@ const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, classNa
     'align',
     'color', 'background',
     'link', 'image', 'video',
+    'id', 'class', 'style', // ID, class ve style attribute'larını koru
   ];
 
   // Client tarafında değilsek veya modül henüz yüklenmediyse, bir placeholder göster.
@@ -102,7 +125,7 @@ const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, classNa
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => setShowHtml(!showHtml)}
+            onClick={handleModeSwitch}
           >
             <Code className="h-4 w-4 mr-2" />
             {showHtml ? 'Editöre Dön' : 'HTML Göster'}
@@ -114,20 +137,21 @@ const RichTextEditor = React.forwardRef(({ value, onChange, placeholder, classNa
         {showHtml ? (
           <textarea
             className="w-full h-64 p-2 font-mono text-sm border-none rounded-md bg-gray-900 text-white focus:ring-0"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
+            value={htmlValue}
+            onChange={handleHtmlChange}
             placeholder="HTML kodunu buraya girin..."
           />
         ) : (
           <ReactQuill
             ref={ref || localRef}
             theme="snow"
-            value={value}
-            onChange={onChange}
+            value={richTextValue}
+            onChange={handleRichTextChange}
             modules={modules}
             formats={formats}
             placeholder={placeholder || 'İçeriğinizi buraya yazın...'}
             className="bg-white"
+            preserveWhitespace={true}
           />
         )}
       </div>

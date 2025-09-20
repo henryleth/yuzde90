@@ -129,10 +129,10 @@ class ContentController extends Controller
                 $validated['published_at'] = Carbon::parse($validated['published_at'])->format('Y-m-d H:i:s');
             }
 
-            // İçerikten gereksiz link attribute'larını temizle
-            if (isset($validated['content'])) {
-                $validated['content'] = $this->cleanLinkAttributes($validated['content']);
-            }
+            // HTML içeriğine hiç müdahale etme - kullanıcının yazdığı gibi kaydet
+            // if (isset($validated['content'])) {
+            //     $validated['content'] = $this->cleanLinkAttributes($validated['content']);
+            // }
 
             $content = Content::create($validated);
 
@@ -194,10 +194,10 @@ class ContentController extends Controller
                 $validated['published_at'] = Carbon::parse($validated['published_at'])->format('Y-m-d H:i:s');
             }
 
-            // İçerikten gereksiz link attribute'larını temizle
-            if (isset($validated['content'])) {
-                $validated['content'] = $this->cleanLinkAttributes($validated['content']);
-            }
+            // HTML içeriğine hiç müdahale etme - kullanıcının yazdığı gibi kaydet
+            // if (isset($validated['content'])) {
+            //     $validated['content'] = $this->cleanLinkAttributes($validated['content']);
+            // }
 
             $content->update($validated);
 
@@ -233,8 +233,8 @@ class ContentController extends Controller
     }
 
     /**
-     * Link attribute'larını temizleyen helper fonksiyon
-     * target="_blank" ve rel="noopener noreferrer" attribute'larını kaldırır
+     * Sadece otomatik eklenen gereksiz link attribute'larını temizler
+     * Diğer tüm HTML attribute'larına dokunmaz (id, class, style vb.)
      */
     private function cleanLinkAttributes($content)
     {
@@ -242,18 +242,15 @@ class ContentController extends Controller
             return $content;
         }
 
-        // target="_blank" attribute'unu kaldır
-        $content = preg_replace('/\s*target\s*=\s*["\'][^"\']*["\']/i', '', $content);
+        // Sadece target="_blank" kaldır (diğer target değerlerine dokunma)
+        $content = preg_replace('/\s+target\s*=\s*["\']_blank["\']/i', '', $content);
         
-        // rel="noopener noreferrer" attribute'unu kaldır
-        $content = preg_replace('/\s*rel\s*=\s*["\'][^"\']*["\']/i', '', $content);
+        // Sadece rel="noopener noreferrer" veya benzer kombinasyonları kaldır
+        $content = preg_replace('/\s+rel\s*=\s*["\'](?:noopener\s*noreferrer|noreferrer\s*noopener|noopener|noreferrer)["\']/i', '', $content);
         
-        // Çift boşlukları tek boşluğa çevir
-        $content = preg_replace('/\s+/', ' ', $content);
+        // Fazla boşlukları temizle ama içeriği değiştirme
+        $content = preg_replace('/\s{2,}/', ' ', $content);
         
-        // Link tag'lerindeki fazla boşlukları temizle
-        $content = preg_replace('/<a\s+([^>]+)>/i', '<a $1>', $content);
-        
-        return $content;
+        return trim($content);
     }
 }
