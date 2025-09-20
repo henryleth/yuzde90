@@ -327,7 +327,7 @@ export default function TourDetail({ tour, config, seo }) {
           <img
             src={featuredImageUrl || '/images/placeholder.png'}
             alt={tour?.title}
-            fetchPriority="high"
+            fetchpriority="high"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/45"></div>
