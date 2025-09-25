@@ -712,7 +712,7 @@ export default function TourDetail({ tour, config, seo }) {
             <div className="lg:col-span-1">
               <div ref={bookingFormRef} className="sticky top-32">
                 <Card className="overflow-hidden shadow-lg">
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 md:p-4">
                     {/* Form başlığı */}
                     <div className="text-center mb-6">
                       <h3 className="text-xl font-semibold mb-2">{t('tour_detail.booking.title', 'Rezervasyon Talebi')}</h3>
@@ -721,35 +721,35 @@ export default function TourDetail({ tour, config, seo }) {
                     
                     {/* Rezervasyon formu */}
                     <form className="space-y-4" onSubmit={handleFormSubmit}>
-                      {/* İsim (8) ve Tur Tarihi (4) - Masaüstünde */}
+                      {/* İsim (7) ve Tur Tarihi (5) - Yan yana */}
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                        <div className="space-y-2 md:col-span-8">
+                        <div className="space-y-2 md:col-span-7">
                           <Label htmlFor="name" className="text-sm font-medium">{t('tour_detail.booking.name', 'İsim')} <span className="text-destructive">*</span></Label>
                           <Input id="name" name="name" type="text" required placeholder={t('tour_detail.booking.name_placeholder', 'Adınız')} />
                         </div>
                         
-                        <div className="space-y-2 md:col-span-4">
+                        <div className="space-y-2 md:col-span-5">
                           <Label htmlFor="tour_date" className="text-sm font-medium">{t('tour_detail.booking.date', 'Tur Tarihi')} <span className="text-destructive">*</span></Label>
                           <Input id="tour_date" name="tour_date" type="text" required placeholder={t('tour_detail.booking.date_placeholder', 'Planlanan seyahat tarihi')} />
                         </div>
                       </div>
                       
-                      {/* Email (9) ve Katılımcı Sayısı (3) - Masaüstünde */}
+                      {/* Email (7) ve Katılımcı Sayısı (5) - Yan yana */}
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                        <div className="space-y-2 md:col-span-9">
+                        <div className="space-y-2 md:col-span-7">
                           <Label htmlFor="email" className="text-sm font-medium">{t('tour_detail.booking.email', 'E-posta')} <span className="text-destructive">*</span></Label>
                           <Input id="email" name="email" type="email" required placeholder={t('tour_detail.booking.email_placeholder', 'ornek@email.com')} />
                         </div>
                         
-                        <div className="space-y-2 md:col-span-3">
+                        <div className="space-y-2 md:col-span-5">
                           <Label htmlFor="participants" className="text-sm font-medium">{t('tour_detail.booking.participants', 'Katılımcı')} <span className="text-destructive">*</span></Label>
                           <Input id="participants" name="participants" type="number" min="1" required placeholder="2" />
                         </div>
                       </div>
                       
-                      {/* Ülke (6) ve WhatsApp (6) - Masaüstünde */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
+                      {/* Ülke (5) ve WhatsApp (7) - Masaüstünde */}
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div className="space-y-2 md:col-span-5">
                           <Label htmlFor="country" className="text-sm font-medium">{t('tour_detail.booking.country', 'Ülke')} <span className="text-destructive">*</span></Label>
                           <Select name="country">
                             <SelectTrigger id="country">
@@ -765,8 +765,8 @@ export default function TourDetail({ tour, config, seo }) {
                           </Select>
                         </div>
                         
-                        <div className="space-y-2">
-                          <Label htmlFor="whatsapp" className="text-sm font-medium">{t('tour_detail.booking.whatsapp', 'WhatsApp')} {t('tour_detail.booking.whatsapp_note', '(izinsiz arama yapılmayacak)')}</Label>
+                        <div className="space-y-2 md:col-span-7">
+                          <Label htmlFor="whatsapp" className="text-sm font-medium">{t('tour_detail.booking.whatsapp', 'WhatsApp')}</Label>
                           <Input 
                             id="whatsapp" 
                             name="whatsapp"
@@ -774,6 +774,11 @@ export default function TourDetail({ tour, config, seo }) {
                             placeholder={t('tour_detail.booking.whatsapp_placeholder', '+90 555 123 45 67')} 
                           />
                         </div>
+                      </div>
+                      
+                      {/* WhatsApp ve Ülke Notu */}
+                      <div className="text-xs text-muted-foreground">
+                        <p>{t('tour_detail.booking.whatsapp_note', 'İzinsiz arama yapılmayacaktır.')}</p>
                       </div>
                       
                       {/* Mesaj alanı */}
@@ -787,17 +792,17 @@ export default function TourDetail({ tour, config, seo }) {
                         />
                       </div>
                       
-                      {/* reCAPTCHA Widget - Kompakt */}
+                      {/* reCAPTCHA Widget - Normal Yatay */}
                       {recaptchaEnabled && (
                         <div className="flex justify-center mb-4">
                           <div 
                             className="g-recaptcha" 
                             data-sitekey="6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg"
                             data-theme="light"
-                            data-size="compact"
+                            data-size="normal"
                             data-callback="onRecaptchaSuccess"
                             data-expired-callback="onRecaptchaExpired"
-                            style={{transform: 'scale(0.85)', transformOrigin: 'center'}}
+                            style={{transform: 'scale(1)', transformOrigin: 'center'}}
                           ></div>
                         </div>
                       )}

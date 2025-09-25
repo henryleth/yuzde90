@@ -267,7 +267,7 @@ return [
             'country' => 'País',
             'country_placeholder' => 'Seleccione su país',
             'whatsapp' => 'WhatsApp',
-            'whatsapp_note' => '(no llamaremos sin permiso)',
+            'whatsapp_note' => 'No llamaremos sin permiso.',
             'whatsapp_placeholder' => '+34 600 123 456',
             'message' => 'Su Mensaje',
             'message_placeholder' => 'Sus solicitudes especiales, preguntas...',
