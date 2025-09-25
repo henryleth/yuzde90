@@ -303,6 +303,8 @@ return [
             'no_image' => 'No Image',
             'no_price' => 'Price not specified',
             'no_activities' => 'No optional activities are available for this tour.',
+            'read_more' => 'Read more',
+            'read_less' => 'Read less',
         ],
         'booking' => [
             'title' => 'Quick Booking',

@@ -38,6 +38,7 @@ export default function TourDetail({ tour, config, seo }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedActivities, setExpandedActivities] = useState({});
   const { darkMode, setHeaderShrunk } = useTheme();
+  const recaptchaTheme = darkMode ? 'dark' : 'light';
   const tourNavRef = useRef(null);
   const bookingFormRef = useRef(null);
   const heroRef = useRef(null);
@@ -686,7 +687,7 @@ export default function TourDetail({ tour, config, seo }) {
                                       }))}
                                       className="text-primary hover:text-primary/80 font-medium mt-2 text-sm"
                                     >
-                                      {isExpanded ? 'Daha az göster' : 'Devamını oku'}
+                                      {isExpanded ? t('tour_detail.optional.read_less', 'Daha az göster') : t('tour_detail.optional.read_more', 'Devamını oku')}
                                     </button>
                                   )}
                                 </div>
@@ -798,7 +799,7 @@ export default function TourDetail({ tour, config, seo }) {
                           <div 
                             className="g-recaptcha" 
                             data-sitekey="6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg"
-                            data-theme="light"
+                            data-theme={recaptchaTheme}
                             data-size="normal"
                             data-callback="onRecaptchaSuccess"
                             data-expired-callback="onRecaptchaExpired"

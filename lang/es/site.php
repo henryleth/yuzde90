@@ -330,6 +330,8 @@ return [
             'title' => 'Actividades Opcionales',
             'no_image' => 'Sin Imagen',
             'no_price' => 'Precio no especificado',
+            'read_more' => 'Leer más',
+            'read_less' => 'Leer menos',
             'no_activities' => 'No hay actividades opcionales disponibles for este tour.',
         ],
     ],

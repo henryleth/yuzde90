@@ -309,6 +309,8 @@ return [
             'no_image' => 'Görsel Yok',
             'no_price' => 'Fiyat Belirtilmemiş',
             'no_activities' => 'Bu tur için opsiyonel aktivite bulunmamaktadır.',
+            'read_more' => 'Devamını oku',
+            'read_less' => 'Daha az göster',
         ],
         'booking' => [
             'title' => 'Hızlı Rezervasyon',
