@@ -76,26 +76,58 @@ export default function TourDetail({ tour, config, seo }) {
   const galleryImages = tour.gallery_images_urls || [];
   const featuredImageUrl = tour.image?.original_url;
 
-  // reCAPTCHA script'ini yükle (seviyeye göre)
+  // reCAPTCHA script'ini yükle
   useEffect(() => {
     // SSR kontrolü - sadece client-side'da çalıştır
     if (typeof window === 'undefined') return;
     
     if (recaptchaEnabled) {
+      console.log('reCAPTCHA script yükleniyor...');
+      
+      // Zaten yüklenmiş script var mı kontrol et
+      const existingScript = document.querySelector('script[src*="recaptcha"]');
+      if (existingScript) {
+        console.log('reCAPTCHA script zaten yüklü');
+        return;
+      }
+      
       const script = document.createElement('script');
       script.src = 'https://www.google.com/recaptcha/api.js';
       script.async = true;
       script.defer = true;
+      script.onload = () => {
+        console.log('reCAPTCHA script başarıyla yüklendi');
+      };
+      script.onerror = () => {
+        console.error('reCAPTCHA script yüklenemedi');
+      };
       document.head.appendChild(script);
 
       return () => {
-        const existingScript = document.querySelector('script[src*="recaptcha"]');
-        if (existingScript) {
-          document.head.removeChild(existingScript);
+        const scriptToRemove = document.querySelector('script[src*="recaptcha"]');
+        if (scriptToRemove) {
+          document.head.removeChild(scriptToRemove);
         }
       };
     }
   }, [recaptchaEnabled]);
+
+  // reCAPTCHA callback fonksiyonları
+  useEffect(() => {
+    // Global callback fonksiyonlarını tanımla
+    window.onRecaptchaSuccess = (token) => {
+      console.log('reCAPTCHA başarılı:', token);
+    };
+    
+    window.onRecaptchaExpired = () => {
+      console.log('reCAPTCHA süresi doldu');
+    };
+    
+    return () => {
+      delete window.onRecaptchaSuccess;
+      delete window.onRecaptchaExpired;
+    };
+  }, []);
 
   // Form submit fonksiyonu
   const handleFormSubmit = async (e) => {
@@ -724,14 +756,23 @@ export default function TourDetail({ tour, config, seo }) {
                         />
                       </div>
                       
-                      {/* reCAPTCHA Widget (seviye 1 ve 2 için) */}
+                      {/* reCAPTCHA Widget */}
                       {recaptchaEnabled && (
                         <div className="flex justify-center mb-4">
                           <div 
                             className="g-recaptcha" 
                             data-sitekey="6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg"
                             data-theme="light"
+                            data-callback="onRecaptchaSuccess"
+                            data-expired-callback="onRecaptchaExpired"
                           ></div>
+                          {/* Debug bilgisi */}
+                          <div className="ml-4 text-sm text-gray-500">
+                            {typeof window !== 'undefined' && window.grecaptcha ? 
+                              '✅ reCAPTCHA yüklendi' : 
+                              '⏳ reCAPTCHA yükleniyor...'
+                            }
+                          </div>
                         </div>
                       )}
                       
