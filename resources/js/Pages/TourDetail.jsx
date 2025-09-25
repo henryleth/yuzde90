@@ -36,6 +36,7 @@ export default function TourDetail({ tour, config, seo }) {
   const [isNavSticky, setNavSticky] = useState(false);
   const [navTop, setNavTop] = useState(64); // Alt menünün 'top' pozisyonu için state
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [expandedActivities, setExpandedActivities] = useState({});
   const { darkMode, setHeaderShrunk } = useTheme();
   const tourNavRef = useRef(null);
   const bookingFormRef = useRef(null);
@@ -52,7 +53,7 @@ export default function TourDetail({ tour, config, seo }) {
     { value: 'co', name: 'Colombia' },
     { value: 'cr', name: 'Costa Rica' },
     { value: 'cu', name: 'Cuba' },
-    { value: 'do', name: 'República Dominicana' },
+    { value: 'do', name: 'Rep. Dominicana' },
     { value: 'ec', name: 'Ecuador' },
     { value: 'sv', name: 'El Salvador' },
     { value: 'gq', name: 'Guinea Ecuatorial' },
@@ -665,8 +666,37 @@ export default function TourDetail({ tour, config, seo }) {
                           </div>
                           <div className="p-4">
                             <h3 className="font-semibold text-lg mb-2 text-foreground">{activity.name}</h3>
-                            <div className="text-sm text-muted-foreground mb-4" dangerouslySetInnerHTML={{ __html: activity.description }} />
-                            <div className="flex items-center justify-between"><span className="text-lg font-bold text-primary">{activity.price ? `€${activity.price}` : t('tour_detail.optional.no_price', 'Fiyat Belirtilmemiş')}</span></div>
+                            {(() => {
+                              const isExpanded = expandedActivities[activity.id];
+                              const description = activity.description || '';
+                              const shouldTruncate = description.length > 300;
+                              const displayText = shouldTruncate && !isExpanded 
+                                ? description.substring(0, 300) + '...' 
+                                : description;
+                              
+                              return (
+                                <div className="text-sm text-muted-foreground mb-4">
+                                  <div dangerouslySetInnerHTML={{ __html: displayText }} />
+                                  {shouldTruncate && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setExpandedActivities(prev => ({
+                                        ...prev,
+                                        [activity.id]: !prev[activity.id]
+                                      }))}
+                                      className="text-primary hover:text-primary/80 font-medium mt-2 text-sm"
+                                    >
+                                      {isExpanded ? 'Daha az göster' : 'Devamını oku'}
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                            <div className="flex items-center justify-between">
+                              <span className="text-lg font-bold text-primary">
+                                {activity.price ? activity.price : t('tour_detail.optional.no_price', 'Fiyat Belirtilmemiş')}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -691,58 +721,59 @@ export default function TourDetail({ tour, config, seo }) {
                     
                     {/* Rezervasyon formu */}
                     <form className="space-y-4" onSubmit={handleFormSubmit}>
-                      {/* İsim ve E-posta - Yan yana */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
+                      {/* İsim (8) ve Tur Tarihi (4) - Masaüstünde */}
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div className="space-y-2 md:col-span-8">
                           <Label htmlFor="name" className="text-sm font-medium">{t('tour_detail.booking.name', 'İsim')} <span className="text-destructive">*</span></Label>
                           <Input id="name" name="name" type="text" required placeholder={t('tour_detail.booking.name_placeholder', 'Adınız')} />
                         </div>
                         
-                        <div className="space-y-2">
-                          <Label htmlFor="email" className="text-sm font-medium">{t('tour_detail.booking.email', 'E-posta')} <span className="text-destructive">*</span></Label>
-                          <Input id="email" name="email" type="email" required placeholder={t('tour_detail.booking.email_placeholder', 'ornek@email.com')} />
-                        </div>
-                      </div>
-                      
-                      {/* Tarih ve Katılımcı - Yan yana */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
+                        <div className="space-y-2 md:col-span-4">
                           <Label htmlFor="tour_date" className="text-sm font-medium">{t('tour_detail.booking.date', 'Tur Tarihi')} <span className="text-destructive">*</span></Label>
                           <Input id="tour_date" name="tour_date" type="text" required placeholder={t('tour_detail.booking.date_placeholder', 'Planlanan seyahat tarihi')} />
                         </div>
+                      </div>
+                      
+                      {/* Email (9) ve Katılımcı Sayısı (3) - Masaüstünde */}
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div className="space-y-2 md:col-span-9">
+                          <Label htmlFor="email" className="text-sm font-medium">{t('tour_detail.booking.email', 'E-posta')} <span className="text-destructive">*</span></Label>
+                          <Input id="email" name="email" type="email" required placeholder={t('tour_detail.booking.email_placeholder', 'ornek@email.com')} />
+                        </div>
                         
-                        <div className="space-y-2">
+                        <div className="space-y-2 md:col-span-3">
                           <Label htmlFor="participants" className="text-sm font-medium">{t('tour_detail.booking.participants', 'Katılımcı')} <span className="text-destructive">*</span></Label>
                           <Input id="participants" name="participants" type="number" min="1" required placeholder="2" />
                         </div>
                       </div>
                       
-                      {/* Ülke seçimi */}
-                      <div className="space-y-2">
-                        <Label htmlFor="country" className="text-sm font-medium">{t('tour_detail.booking.country', 'Ülke')} <span className="text-destructive">*</span></Label>
-                        <Select name="country">
-                          <SelectTrigger id="country">
-                            <SelectValue placeholder={t('tour_detail.booking.country_placeholder', 'Ülkenizi seçin')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {spanishSpeakingCountries.map((country) => (
-                              <SelectItem key={country.value} value={country.name}>
-                                {country.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      {/* WhatsApp numarası */}
-                      <div className="space-y-2">
-                        <Label htmlFor="whatsapp" className="text-sm font-medium">{t('tour_detail.booking.whatsapp', 'WhatsApp')} {t('tour_detail.booking.whatsapp_note', '(izinsiz arama yapılmayacak)')}</Label>
-                        <Input 
-                          id="whatsapp" 
-                          name="whatsapp"
-                          type="tel" 
-                          placeholder={t('tour_detail.booking.whatsapp_placeholder', '+90 555 123 45 67')} 
-                        />
+                      {/* Ülke (6) ve WhatsApp (6) - Masaüstünde */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="country" className="text-sm font-medium">{t('tour_detail.booking.country', 'Ülke')} <span className="text-destructive">*</span></Label>
+                          <Select name="country">
+                            <SelectTrigger id="country">
+                              <SelectValue placeholder={t('tour_detail.booking.country_placeholder', 'Ülkenizi seçin')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {spanishSpeakingCountries.map((country) => (
+                                <SelectItem key={country.value} value={country.name}>
+                                  {country.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="whatsapp" className="text-sm font-medium">{t('tour_detail.booking.whatsapp', 'WhatsApp')} {t('tour_detail.booking.whatsapp_note', '(izinsiz arama yapılmayacak)')}</Label>
+                          <Input 
+                            id="whatsapp" 
+                            name="whatsapp"
+                            type="tel" 
+                            placeholder={t('tour_detail.booking.whatsapp_placeholder', '+90 555 123 45 67')} 
+                          />
+                        </div>
                       </div>
                       
                       {/* Mesaj alanı */}
@@ -756,23 +787,18 @@ export default function TourDetail({ tour, config, seo }) {
                         />
                       </div>
                       
-                      {/* reCAPTCHA Widget */}
+                      {/* reCAPTCHA Widget - Kompakt */}
                       {recaptchaEnabled && (
                         <div className="flex justify-center mb-4">
                           <div 
                             className="g-recaptcha" 
                             data-sitekey="6Les_MErAAAAAKOMOQDbmBLDzEaZ6It_kDDyLuLg"
                             data-theme="light"
+                            data-size="compact"
                             data-callback="onRecaptchaSuccess"
                             data-expired-callback="onRecaptchaExpired"
+                            style={{transform: 'scale(0.85)', transformOrigin: 'center'}}
                           ></div>
-                          {/* Debug bilgisi */}
-                          <div className="ml-4 text-sm text-gray-500">
-                            {typeof window !== 'undefined' && window.grecaptcha ? 
-                              '✅ reCAPTCHA yüklendi' : 
-                              '⏳ reCAPTCHA yükleniyor...'
-                            }
-                          </div>
                         </div>
                       )}
                       
