@@ -234,7 +234,11 @@ class TourController extends Controller
                     'description' => $activity->description,
                     'price' => $activity->price,
                     'is_published' => $activity->is_published,
-                    'image_url' => $activity->image?->thumbnail_url,
+                    'image' => $activity->image ? [
+                        'id' => $activity->image->id,
+                        'thumbnail_url' => $activity->image->thumbnail_url,
+                        'original_url' => $activity->image->original_url,
+                    ] : null,
                 ];
             }),
             'destinations' => $tour->destinations->map(function ($destination) {
