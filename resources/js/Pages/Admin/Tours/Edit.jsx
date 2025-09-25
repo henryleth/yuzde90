@@ -146,12 +146,11 @@ export default function Edit({ auth, tour, destinations, optionalActivities, med
         });
     };
 
-    const handleOptionalActivitySelect = (activityId) => {
-        setData(prevData => {
-            const currentActivities = prevData.optional_activity_ids || [];
-            const isSelected = currentActivities.includes(activityId);
-            return { ...prevData, optional_activity_ids: isSelected ? currentActivities.filter(id => id !== activityId) : [...currentActivities, activityId] };
-        });
+    const handleOptionalActivitySelect = (selectedActivityIds) => {
+        setData(prevData => ({
+            ...prevData, 
+            optional_activity_ids: selectedActivityIds
+        }));
     };
 
     const addCityToHotels = (cityName) => {

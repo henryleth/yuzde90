@@ -77,7 +77,7 @@ class OptionalActivityController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('optional_activities')->ignore($optionalActivity->id)],
             'description' => 'nullable|string',
-            'price' => 'nullable|numeric|min:0',
+            'price' => 'nullable|string|max:255',
             'is_published' => 'boolean',
             'image_id' => 'nullable|exists:media,id',
         ]);

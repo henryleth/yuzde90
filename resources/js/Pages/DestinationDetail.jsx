@@ -291,7 +291,7 @@ export default function DestinationDetail({ seo }) {
                                 setVisibleContents(4); // Filtre değiştiğinde gösterilen içerik sayısını sıfırla
                               }}
                             >
-                              {t('all', 'Tümü')}
+                              {t('contents_page.filters.all', 'Todos')}
                             </Button>
                             {uniqueCategories.map(category => (
                               <Button
@@ -327,7 +327,7 @@ export default function DestinationDetail({ seo }) {
                                 <CardContent className="content-card-content p-4 flex flex-col flex-grow w-full sm:w-2/3">
                                   {/* Başlık (Tıklanabilir) */}
                                   <Link href={route('contents.show', { slug: content.slug })} className="group">
-                                    <h3 className="content-card-title text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-2">
+                                    <h3 className="content-card-title text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
                                       {content.title}
                                     </h3>
                                   </Link>

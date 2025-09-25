@@ -155,17 +155,11 @@ export default function Create({ auth, destinations, optionalActivities, media_f
         });
     };
     
-    const handleOptionalActivitySelect = (activityId) => {
-        setData(prevData => {
-            const currentActivities = prevData.optional_activity_ids || [];
-            const isSelected = currentActivities.includes(activityId);
-
-            if (isSelected) {
-                return { ...prevData, optional_activity_ids: currentActivities.filter(id => id !== activityId) };
-            } else {
-                return { ...prevData, optional_activity_ids: [...currentActivities, activityId] };
-            }
-        });
+    const handleOptionalActivitySelect = (selectedActivityIds) => {
+        setData(prevData => ({
+            ...prevData, 
+            optional_activity_ids: selectedActivityIds
+        }));
     };
 
     const addCityToHotels = (cityName) => {

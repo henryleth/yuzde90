@@ -21,7 +21,6 @@ class OptionalActivity extends Model
 
     protected $casts = [
         'is_published' => 'boolean',
-        'price' => 'float',
     ];
 
     protected $appends = []; // original_image accessor kaldırıldı

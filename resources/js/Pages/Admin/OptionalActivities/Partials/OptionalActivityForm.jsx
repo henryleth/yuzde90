@@ -34,14 +34,15 @@ export default function OptionalActivityForm({ data, setData, errors, media_file
             </div>
 
             <div>
-                <Label htmlFor="price">Fiyat (€)</Label>
+                <Label htmlFor="price">Fiyat</Label>
                 <Input
                     id="price"
-                    type="number"
+                    type="text"
                     name="price"
                     value={data.price || ''}
                     className="mt-1 block w-full"
                     onChange={(e) => setData('price', e.target.value)}
+                    placeholder="Örn: 50€, Ücretsiz, Talep Üzerine"
                 />
                 <InputError className="mt-2" message={errors.price} />
             </div>

@@ -342,7 +342,7 @@ export default function AboutUs() {
                                         </p>
                                     </div>
                                 </div>
-                            </Card>
+                        </Card>
                         </div>
                     </div>
 
