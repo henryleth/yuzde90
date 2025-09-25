@@ -177,7 +177,7 @@ class TourController extends Controller
                 'tourDays:id,tour_id,day_number,title',
                 'tourDays.dayActivities:id,tour_day_id,description,is_highlight,order',
                 'pricingTiers:tour_id,category_name,price_per_person_1,price_per_person_2,price_per_person_3,season_name',
-                'optionalActivities:id,name,description,price,is_published',
+                'optionalActivities:id,name,description,price,is_published,image_id',
                 'optionalActivities.image:id,disk,file_name,path',
                 'destinations:id,name,slug'
             ])
