@@ -30,6 +30,11 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
+            Log::warning('Booking validation failed', [
+                'errors' => $validator->errors(),
+                'request_data' => $request->all()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Geçersiz form verileri.',
@@ -37,16 +42,12 @@ class BookingController extends Controller
             ], 422);
         }
 
-        // reCAPTCHA kontrolü (seviyeye göre)
-        $recaptchaLevel = env('RECAPTCHA_LEVEL', 0);
-        
-        if ($recaptchaLevel > 0) {
-            if (!$this->verifyRecaptcha($request->recaptcha_token, $recaptchaLevel)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'reCAPTCHA doğrulaması başarısız.'
-                ], 422);
-            }
+        // reCAPTCHA kontrolü
+        if (!$this->verifyRecaptcha($request->recaptcha_token)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'reCAPTCHA doğrulaması başarısız.'
+            ], 422);
         }
 
         try {
@@ -85,17 +86,20 @@ class BookingController extends Controller
     /**
      * reCAPTCHA token'ını doğrula
      * @param string $token
-     * @param int $level (1: görünmez v3, 2: tıklamalı v2)
      */
-    private function verifyRecaptcha($token, $level = 1)
+    private function verifyRecaptcha($token)
     {
-        // Bypass token kontrolü
+        // Development bypass
         if ($token === 'no_recaptcha' || $token === 'development_bypass') {
             return true;
         }
         
+        // Token boş ise hata
+        if (empty($token)) {
+            return false;
+        }
+        
         try {
-            // Tek secret key kullan (hem level 1 hem 2 için aynı)
             $secretKey = env('RECAPTCHA_SECRET_KEY');
             
             $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
@@ -105,7 +109,6 @@ class BookingController extends Controller
 
             $result = $response->json();
             
-            // Level 1 ve 2 için sadece success kontrolü (v2 checkbox)
             return ($result['success'] ?? false);
             
         } catch (\Exception $e) {

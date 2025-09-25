@@ -42,7 +42,7 @@ export default function OptionalActivityForm({ data, setData, errors, media_file
                     value={data.price || ''}
                     className="mt-1 block w-full"
                     onChange={(e) => setData('price', e.target.value)}
-                    placeholder="Örn: 50€, Ücretsiz, Talep Üzerine"
+                    placeholder="Örn: 50€, 140-270€, Ücretsiz, Talep Üzerine"
                 />
                 <InputError className="mt-2" message={errors.price} />
             </div>

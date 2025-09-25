@@ -42,7 +42,7 @@ export default function TourDetail({ tour, config, seo }) {
   const heroRef = useRef(null);
   
   // reCAPTCHA seviyesi (0: kapalı, 1: görünmez v3, 2: tıklamalı v2)
-  const recaptchaLevel = config?.recaptchaLevel || (typeof window !== 'undefined' ? window.recaptchaLevel : 0) || 0;
+  const recaptchaEnabled = true; // reCAPTCHA her zaman aktif
 
   // İspanyolca konuşulan ülkelerin listesi
   const spanishSpeakingCountries = [
@@ -81,9 +81,8 @@ export default function TourDetail({ tour, config, seo }) {
     // SSR kontrolü - sadece client-side'da çalıştır
     if (typeof window === 'undefined') return;
     
-    if (recaptchaLevel > 0) {
+    if (recaptchaEnabled) {
       const script = document.createElement('script');
-      // Level 1 ve 2 için aynı v2 checkbox script
       script.src = 'https://www.google.com/recaptcha/api.js';
       script.async = true;
       script.defer = true;
@@ -96,7 +95,7 @@ export default function TourDetail({ tour, config, seo }) {
         }
       };
     }
-  }, [recaptchaLevel]);
+  }, [recaptchaEnabled]);
 
   // Form submit fonksiyonu
   const handleFormSubmit = async (e) => {
@@ -104,22 +103,11 @@ export default function TourDetail({ tour, config, seo }) {
     setIsSubmitting(true);
 
     try {
+      // reCAPTCHA token'ını al
       let recaptchaToken = 'no_recaptcha';
       
-      // Seviyeye göre reCAPTCHA token al
-      if (recaptchaLevel === 1) {
-        // v1 basit checkbox - grecaptcha.getResponse() kullan
-        if (typeof window !== 'undefined' && window.grecaptcha && window.grecaptcha.getResponse) {
-          recaptchaToken = window.grecaptcha.getResponse();
-          if (!recaptchaToken) {
-            alert(t('tour_detail.booking.recaptcha_required', 'Lütfen "Ben robot değilim" kutucuğunu işaretleyin.'));
-            setIsSubmitting(false);
-            return;
-          }
-        }
-      } else if (recaptchaLevel === 2) {
-        // v2 tıklamalı (aynı)
-        recaptchaToken = (typeof window !== 'undefined' ? (document.querySelector('[name="g-recaptcha-response"]')?.value || window.grecaptcha?.getResponse()) : null);
+      if (typeof window !== 'undefined' && window.grecaptcha && window.grecaptcha.getResponse) {
+        recaptchaToken = window.grecaptcha.getResponse();
         if (!recaptchaToken) {
           alert(t('tour_detail.booking.recaptcha_required', 'Lütfen "Ben robot değilim" kutucuğunu işaretleyin.'));
           setIsSubmitting(false);
@@ -146,11 +134,25 @@ export default function TourDetail({ tour, config, seo }) {
         alert(t('tour_detail.booking.success', 'Talebiniz başarıyla gönderildi. En kısa sürede size dönüş yapacağız.'));
         e.target.reset(); // Formu temizle
       } else {
-        throw new Error('Form gönderimi başarısız');
+        // Hata detaylarını al
+        const errorData = await response.json();
+        console.error('Server error:', errorData);
+        
+        let errorMessage = t('tour_detail.booking.error', 'Ocurrió un error. Por favor, inténtelo de nuevo.');
+        
+        // Validation hatalarını göster
+        if (errorData.errors) {
+          const errorMessages = Object.values(errorData.errors).flat();
+          errorMessage = errorMessages.join('\n');
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+        
+        alert(errorMessage);
       }
     } catch (error) {
       console.error('Form gönderim hatası:', error);
-      alert(t('tour_detail.booking.error', 'Bir hata oluştu. Lütfen tekrar deneyin.'));
+      alert(t('tour_detail.booking.error', 'Ocurrió un error. Por favor, inténtelo de nuevo.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -723,7 +725,7 @@ export default function TourDetail({ tour, config, seo }) {
                       </div>
                       
                       {/* reCAPTCHA Widget (seviye 1 ve 2 için) */}
-                      {(recaptchaLevel === 1 || recaptchaLevel === 2) && (
+                      {recaptchaEnabled && (
                         <div className="flex justify-center mb-4">
                           <div 
                             className="g-recaptcha" 

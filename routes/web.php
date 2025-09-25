@@ -45,8 +45,7 @@ Route::get(config('dynamic_routes.contact_us', 'contact'), function () {
     return Inertia::render('ContactUs');
 })->name('contact.us');
 
-// Rezervasyon talebi rotası
-Route::post('api/booking-request', [App\Http\Controllers\BookingController::class, 'store']);
+// Rezervasyon talebi rotası api.php'ye taşındı
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
